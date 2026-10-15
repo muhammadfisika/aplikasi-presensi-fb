@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#166534">
+  <title>Admin Siswa - Presensi SMAN 2 Rangkasbitung</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    .admin-wrap { max-width: 1100px; margin: 24px auto; padding: 16px; }
+    .admin-panel { background: white; padding: 20px; border-radius: 14px; margin-bottom: 18px; box-shadow: 0 3px 14px #0000000d; }
+    .admin-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .admin-form label { display: block; font-size: 14px; margin-bottom: 5px; }
+    .admin-form input, .admin-form select, .search-input {
+      box-sizing: border-box; width: 100%; padding: 10px;
+      border: 1px solid #d1d5db; border-radius: 8px;
+    }
+    .admin-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .admin-actions button, .small-btn {
+      border: 0; border-radius: 8px; padding: 10px 14px;
+      cursor: pointer; background: #166534; color: white;
+    }
+    .secondary-btn { background: #475569 !important; }
+    .danger-btn { background: #b91c1c !important; }
+    .table-scroll { overflow-x: auto; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th, .admin-table td { padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: left; white-space: nowrap; }
+    .status-message { margin-top: 12px; overflow-wrap: anywhere; }
+    @media(max-width:650px) { .admin-form { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">PS</div>
+      <div>
+        <strong>Presensi Siswa</strong>
+        <div>SMAN 2 Rangkasbitung</div>
+      </div>
+    </div>
+    <button class="login-btn" id="btnKeluar" type="button">Keluar</button>
+  </header>
+
+  <main class="admin-wrap">
+    <h1>Manajemen Data Siswa</h1>
+    <p id="identitasAdmin">Memeriksa akses admin...</p>
+
+    <section class="admin-panel">
+      <h2 id="judulForm">Tambah Siswa</h2>
+      <form id="formSiswa">
+        <div class="admin-form">
+          <div>
+            <label for="nama">Nama siswa</label>
+            <input id="nama" required maxlength="100">
+          </div>
+          <div>
+            <label for="nisn">NISN</label>
+            <input id="nisn" required inputmode="numeric"
+                   pattern="[0-9]{10}" minlength="10" maxlength="10"
+                   title="NISN harus terdiri dari 10 angka">
+          </div>
+          <div>
+            <label for="kelas">Kelas</label>
+            <input id="kelas" required maxlength="30"
+                   placeholder="Contoh: X-1">
+          </div>
+        </div>
+        <div class="admin-actions">
+          <button type="submit" id="btnSimpan">Simpan Siswa</button>
+          <button type="button" id="btnBatal" class="secondary-btn">
+            Batal Edit
+          </button>
+        </div>
+      </form>
+      <p id="pesanForm" class="status-message" role="status"></p>
+    </section>
+
+    <section class="admin-panel">
+      <h2>Import Data CSV</h2>
+      <p>Format kolom: <code>nama,nisn,kelas</code></p>
+      <p>
+        <a href="./template-siswa.csv" download>
+          Unduh contoh template CSV
+        </a>
+        (tautan ini aktif setelah file template dibuat).
+      </p>
+      <input id="fileCsv" type="file" accept=".csv,text/csv">
+      <div class="admin-actions">
+        <button id="btnImport" type="button">Import CSV</button>
+      </div>
+      <p id="pesanImport" class="status-message" role="status"></p>
+    </section>
+
+    <section class="admin-panel">
+      <h2>Daftar Siswa</h2>
+      <div class="admin-form">
+        <div>
+          <label for="cari">Cari nama/NISN</label>
+          <input id="cari" class="search-input"
+                 placeholder="Ketik nama atau NISN">
+        </div>
+        <div>
+          <label for="filterKelas">Filter kelas</label>
+          <select id="filterKelas">
+            <option value="">Semua kelas</option>
+          </select>
+        </div>
+      </div>
+      <p id="jumlahSiswa">Memuat data...</p>
+      <div class="table-scroll">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>No.</th><th>Nama</th><th>NISN</th>
+              <th>Kelas</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tabelSiswa">
+            <tr><td colspan="5">Memuat data siswa...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <a href="./index.html">← Kembali ke dashboard</a>
+  </main>
+
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>
