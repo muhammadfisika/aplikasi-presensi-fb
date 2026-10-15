@@ -235,7 +235,7 @@ function parseCSV(teks) {
       } else {
         quoted = !quoted;
       }
-    } else if (c === "," && !quoted) {
+    } else if (c === ";" && !quoted) {
       row.push(cell);
       cell = "";
     } else if ((c === "\n" || c === "\r") && !quoted) {
