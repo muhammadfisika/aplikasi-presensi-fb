@@ -1,0 +1,79 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#166534">
+  <title>Login - Presensi Siswa</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    .login-container {
+      max-width: 420px;
+      margin: 60px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.08);
+    }
+    .login-container h1 { font-size: 24px; margin-top: 0; }
+    .login-container input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+    .login-container button {
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      border-radius: 8px;
+      background: #166534;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #pesan { margin-top: 14px; overflow-wrap: anywhere; }
+    .kembali { display: inline-block; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">PS</div>
+      <div>
+        <strong>Presensi Siswa</strong>
+        <div>SMAN 2 Rangkasbitung</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="login-container">
+      <h1>Login Pengguna</h1>
+      <p>Masuk menggunakan akun yang terdaftar.</p>
+
+      <form id="formLogin">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username"
+               placeholder="Masukkan email" required>
+
+        <label for="password">Kata sandi</label>
+        <input id="password" type="password"
+               autocomplete="current-password"
+               placeholder="Masukkan kata sandi" required>
+
+        <button id="tombolLogin" type="submit">Masuk</button>
+      </form>
+
+      <p id="pesan" role="status" aria-live="polite"></p>
+      <a class="kembali" href="./index.html">← Kembali ke dashboard</a>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
+```
