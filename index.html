@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#14532d">
-
   <title>Dashboard Presensi Siswa | SMAN 2 Rangkasbitung</title>
 
   <style>
@@ -20,9 +19,7 @@
       --merah: #b91c1c;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -35,13 +32,20 @@
     .header {
       background: var(--hijau-gelap);
       color: white;
-      padding: 25px 20px;
+      padding: 22px 20px;
     }
 
-    .header-inner,
-    .container {
+    .header-inner, .container {
       max-width: 1200px;
       margin: 0 auto;
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
     .header h1 {
@@ -54,9 +58,22 @@
       color: #dcfce7;
     }
 
-    .container {
-      padding: 22px 16px 35px;
+    .btn-login {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      color: var(--hijau-gelap);
+      border-radius: 8px;
+      padding: 10px 17px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
     }
+
+    .btn-login:hover { background: #dcfce7; }
+
+    .container { padding: 22px 16px 35px; }
 
     .panel {
       background: var(--putih);
@@ -64,13 +81,10 @@
       border-radius: 13px;
       padding: 20px;
       margin-bottom: 18px;
-      box-shadow: 0 2px 7px rgba(0, 0, 0, .035);
+      box-shadow: 0 2px 7px rgba(0,0,0,.035);
     }
 
-    .panel h2 {
-      margin: 0 0 16px;
-      font-size: 19px;
-    }
+    .panel h2 { margin: 0 0 16px; font-size: 19px; }
 
     .filter-grid {
       display: grid;
@@ -85,8 +99,7 @@
       margin-bottom: 6px;
     }
 
-    input,
-    select {
+    input, select {
       width: 100%;
       min-height: 43px;
       border: 1px solid #cbd5e1;
@@ -97,8 +110,7 @@
       color: var(--teks);
     }
 
-    button,
-    .button {
+    button {
       min-height: 42px;
       border: 0;
       border-radius: 8px;
@@ -106,27 +118,11 @@
       font-weight: 700;
       font-size: 14px;
       cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      gap: 7px;
     }
 
-    .btn-primary {
-      background: var(--hijau);
-      color: white;
-    }
-
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-    }
+    .btn-primary { background: var(--hijau); color: white; }
+    .btn-secondary { background: #e5e7eb; color: #111827; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
 
     .actions {
       display: flex;
@@ -150,33 +146,12 @@
       min-width: 0;
     }
 
-    .stat-label {
-      color: var(--abu);
-      font-size: 13px;
-      margin-bottom: 7px;
-    }
-
-    .stat-value {
-      font-size: clamp(23px, 3vw, 30px);
-      font-weight: 800;
-      overflow-wrap: anywhere;
-    }
-
-    .green {
-      color: #15803d;
-    }
-
-    .red {
-      color: var(--merah);
-    }
-
-    .blue {
-      color: #1d4ed8;
-    }
-
-    .orange {
-      color: #b45309;
-    }
+    .stat-label { color: var(--abu); font-size: 13px; margin-bottom: 7px; }
+    .stat-value { font-size: clamp(23px, 3vw, 30px); font-weight: 800; overflow-wrap: anywhere; }
+    .green { color: #15803d; }
+    .red { color: var(--merah); }
+    .blue { color: #1d4ed8; }
+    .orange { color: #b45309; }
 
     .table-heading {
       display: flex;
@@ -187,14 +162,9 @@
       margin-bottom: 14px;
     }
 
-    .table-heading h2 {
-      margin: 0;
-    }
+    .table-heading h2 { margin: 0; }
 
-    .table-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
+    .table-wrap { width: 100%; overflow-x: auto; }
 
     table {
       width: 100%;
@@ -203,34 +173,17 @@
       font-size: 14px;
     }
 
-    th,
-    td {
+    th, td {
       padding: 12px 13px;
       border-bottom: 1px solid var(--garis);
       text-align: left;
       white-space: nowrap;
     }
 
-    th {
-      background: #f0fdf4;
-      color: #14532d;
-      font-weight: 700;
-    }
-
-    td.number,
-    th.number {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    tbody tr:hover {
-      background: #f9fafb;
-    }
-
-    tfoot {
-      background: #f9fafb;
-      font-weight: 800;
-    }
+    th { background: #f0fdf4; color: #14532d; font-weight: 700; }
+    td.number, th.number { text-align: right; font-variant-numeric: tabular-nums; }
+    tbody tr:hover { background: #f9fafb; }
+    tfoot { background: #f9fafb; font-weight: 800; }
 
     .message {
       padding: 13px 15px;
@@ -241,31 +194,11 @@
       overflow-wrap: anywhere;
     }
 
-    .message.info {
-      display: block;
-      color: #1e40af;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-    }
+    .message.info { display: block; color: #1e40af; background: #eff6ff; border: 1px solid #bfdbfe; }
+    .message.error { display: block; color: #991b1b; background: #fef2f2; border: 1px solid #fecaca; }
+    .message.success { display: block; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; }
 
-    .message.error {
-      display: block;
-      color: #991b1b;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-    }
-
-    .message.success {
-      display: block;
-      color: #166534;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-    }
-
-    .muted {
-      color: var(--abu);
-      font-size: 13px;
-    }
+    .muted { color: var(--abu); font-size: 13px; }
 
     .footer {
       text-align: center;
@@ -275,21 +208,11 @@
     }
 
     @media (max-width: 700px) {
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .filter-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .panel {
-        padding: 15px;
-      }
-
-      .actions button {
-        flex: 1;
-      }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .filter-grid { grid-template-columns: 1fr; }
+      .panel { padding: 15px; }
+      .actions button { flex: 1; }
+      .header-inner { align-items: flex-start; }
     }
   </style>
 </head>
@@ -297,14 +220,16 @@
 <body>
   <header class="header">
     <div class="header-inner">
-      <h1>Dashboard Presensi Siswa</h1>
-      <p>SMAN 2 Rangkasbitung</p>
-      <p>Rekap kehadiran siswa berdasarkan kelas dan periode</p>
+      <div>
+        <h1>Dashboard Presensi Siswa</h1>
+        <p>SMAN 2 Rangkasbitung</p>
+        <p>Rekap kehadiran siswa berdasarkan kelas dan periode</p>
+      </div>
+      <a href="login.html" class="btn-login">Login Pengguna</a>
     </div>
   </header>
 
   <main class="container">
-
     <div id="pesan" class="message" role="status" aria-live="polite"></div>
 
     <section class="panel">
@@ -315,7 +240,6 @@
           <label for="tanggalMulai">Tanggal mulai</label>
           <input type="date" id="tanggalMulai">
         </div>
-
         <div>
           <label for="tanggalAkhir">Tanggal akhir</label>
           <input type="date" id="tanggalAkhir">
@@ -323,22 +247,14 @@
       </div>
 
       <div class="actions">
-        <button type="button" id="btnTampilkan" class="btn-primary">
-          Tampilkan Rekap
-        </button>
-
-        <button type="button" id="btnHariIni" class="btn-secondary">
-          Hari Ini
-        </button>
-
-        <button type="button" id="btnUnduh" class="btn-secondary">
-          Unduh CSV
-        </button>
+        <button type="button" id="btnTampilkan" class="btn-primary">Tampilkan Rekap</button>
+        <button type="button" id="btnHariIni" class="btn-secondary">Hari Ini</button>
+        <button type="button" id="btnUnduh" class="btn-secondary" disabled>Unduh CSV</button>
       </div>
 
       <p class="muted">
-        Rekap dihitung berdasarkan data harian per kelas yang tersedia
-        di Firestore. Tanggal awal dan akhir termasuk dalam periode.
+        Sumber data: koleksi Firestore presensi. Rekap menghitung satu siswa
+        paling banyak satu kali per tanggal dan kelas.
       </p>
     </section>
 
@@ -347,17 +263,14 @@
         <div class="stat-label">Hadir</div>
         <div class="stat-value green" id="totalHadir">0</div>
       </div>
-
       <div class="stat">
         <div class="stat-label">Sakit</div>
         <div class="stat-value orange" id="totalSakit">0</div>
       </div>
-
       <div class="stat">
         <div class="stat-label">Izin</div>
         <div class="stat-value blue" id="totalIzin">0</div>
       </div>
-
       <div class="stat">
         <div class="stat-label">Alpa</div>
         <div class="stat-value red" id="totalAlpa">0</div>
@@ -368,12 +281,9 @@
       <div class="table-heading">
         <div>
           <h2>Rekap Presensi per Kelas</h2>
-          <div class="muted" id="infoPeriode">
-            Menunggu data...
-          </div>
+          <div class="muted" id="infoPeriode">Menunggu data...</div>
         </div>
-
-        <div style="min-width: 170px;">
+        <div style="min-width:170px">
           <label for="filterKelas">Tampilkan kelas</label>
           <select id="filterKelas">
             <option value="semua">Semua kelas</option>
@@ -395,22 +305,18 @@
               <th class="number">% Hadir</th>
             </tr>
           </thead>
-
           <tbody id="rekapBody">
-            <tr>
-              <td colspan="8">Memuat data...</td>
-            </tr>
+            <tr><td colspan="8">Memuat data...</td></tr>
           </tbody>
-
           <tfoot id="rekapFooter"></tfoot>
         </table>
       </div>
     </section>
 
     <p class="muted">
-      Persentase hadir = jumlah status Hadir dibagi seluruh status harian
-      yang tercatat. Siswa yang tidak memiliki catatan presensi pada
-      tanggal tertentu tidak otomatis dihitung sebagai Alpa.
+      Persentase hadir = jumlah status harian Hadir dibagi seluruh status
+      harian yang tercatat. Siswa tanpa catatan presensi tidak otomatis
+      dihitung sebagai Alpa.
     </p>
   </main>
 
@@ -433,11 +339,7 @@
       getDocs
     } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    // ==================================================
-    // KONFIGURASI FIREBASE
-    // Gunakan konfigurasi yang sama dengan aplikasi Anda.
-    // ==================================================
-
+    // Konfigurasi Firebase yang digunakan aplikasi Bapak.
     const firebaseConfig = {
       apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmnNrCfWWhCI",
       authDomain: "aplikasi-presensi-fb.firebaseapp.com",
@@ -452,12 +354,7 @@
       : initializeApp(firebaseConfig);
 
     const db = getFirestore(app);
-
-    // ==================================================
-    // ELEMEN HTML
-    // ==================================================
-
-    const $ = (id) => document.getElementById(id);
+    const $ = id => document.getElementById(id);
 
     const tanggalMulaiEl = $("tanggalMulai");
     const tanggalAkhirEl = $("tanggalAkhir");
@@ -471,15 +368,10 @@
 
     let dataRekap = [];
 
-    // ==================================================
-    // UTILITAS
-    // ==================================================
-
     function tanggalLokal(date = new Date()) {
       const tahun = date.getFullYear();
       const bulan = String(date.getMonth() + 1).padStart(2, "0");
       const hari = String(date.getDate()).padStart(2, "0");
-
       return `${tahun}-${bulan}-${hari}`;
     }
 
@@ -526,133 +418,172 @@
 
     function hitungPersenHadir(item) {
       const total = hitungTotal(item);
-      return total > 0 ? (item.hadir / total) * 100 : 0;
+      return total > 0 ? item.hadir / total * 100 : 0;
     }
 
-    // ==================================================
-    // MEMUAT REKAP PUBLIK BERDASARKAN RENTANG TANGGAL
-    // ==================================================
+    // Jika siswa memiliki beberapa jadwal pada tanggal yang sama,
+    // status hariannya ditentukan dengan prioritas berikut.
+    // Hadir didahulukan agar siswa yang tercatat hadir pada salah satu
+    // jadwal tidak langsung dianggap alpa sepanjang hari.
+    const prioritasStatus = {
+      "Hadir": 4,
+      "Izin": 3,
+      "Sakit": 2,
+      "Alpa": 1
+    };
+
+    function normalisasiStatus(status) {
+      const nilai = String(status || "").trim().toLowerCase();
+
+      if (nilai === "hadir") return "Hadir";
+      if (nilai === "sakit") return "Sakit";
+      if (nilai === "izin") return "Izin";
+      if (nilai === "alpa" || nilai === "alpa/tanpa keterangan") {
+        return "Alpa";
+      }
+
+      return null;
+    }
+
+    function identitasSiswa(data) {
+      // Presensi-guru.js menyimpan NISN pada siswaId dan nisn.
+      // Gunakan NISN sebagai identitas utama untuk menghindari
+      // penghitungan ganda lintas jadwal.
+      const nisn = String(data.nisn || data.siswaId || "").trim();
+
+      if (nisn) return nisn;
+
+      // Fallback hanya bila data lama tidak memiliki NISN/siswaId.
+      return String(data.namaSiswa || "").trim().toLowerCase();
+    }
+
+    // =========================================================
+    // MEMBACA LANGSUNG DARI KOLEKSI "presensi"
+    // =========================================================
 
     async function muatRekap() {
       const mulai = tanggalMulaiEl.value;
       const akhir = tanggalAkhirEl.value;
 
       if (!mulai || !akhir) {
-        tampilkanPesan(
-          "Tanggal mulai dan tanggal akhir wajib diisi.",
-          "error"
-        );
+        tampilkanPesan("Tanggal mulai dan tanggal akhir wajib diisi.", "error");
         return;
       }
 
       if (mulai > akhir) {
-        tampilkanPesan(
-          "Tanggal mulai tidak boleh melewati tanggal akhir.",
-          "error"
-        );
+        tampilkanPesan("Tanggal mulai tidak boleh melewati tanggal akhir.", "error");
         return;
       }
 
       btnTampilkan.disabled = true;
       btnUnduh.disabled = true;
-
-      tampilkanPesan("Sedang mengambil data rekap dari Firebase...");
-      rekapBodyEl.innerHTML =
-        '<tr><td colspan="8">Memuat data...</td></tr>';
+      tampilkanPesan("Sedang mengambil data dari koleksi presensi...");
+      rekapBodyEl.innerHTML = '<tr><td colspan="8">Memuat data...</td></tr>';
       rekapFooterEl.innerHTML = "";
 
       try {
-        // Hanya membaca koleksi rekap publik, bukan data pribadi siswa.
-        // Field tanggal pada setiap dokumen harus berupa string YYYY-MM-DD.
-        const qRekap = query(
-          collection(db, "rekap_publik"),
+        const qPresensi = query(
+          collection(db, "presensi"),
           where("tanggal", ">=", mulai),
           where("tanggal", "<=", akhir)
         );
 
-        const snapshot = await getDocs(qRekap);
+        const snapshot = await getDocs(qPresensi);
 
-        // Rekap lintas tanggal: jumlahkan catatan harian per kelas.
-        const gabunganKelas = new Map();
+        // Key unik: tanggal + kelas + identitas siswa.
+        // Semua jadwal siswa yang sama pada hari dan kelas yang sama
+        // digabung menjadi satu catatan harian.
+        const catatanHarian = new Map();
 
-        snapshot.forEach((dokumen) => {
+        snapshot.forEach(dokumen => {
           const data = dokumen.data();
+          const tanggal = String(data.tanggal || "").trim();
+          const kelas = String(data.kelas || "").trim();
+          const siswa = identitasSiswa(data);
+          const status = normalisasiStatus(data.status);
 
-          if (!Array.isArray(data.perKelas)) {
-            console.warn(
-              `Dokumen ${dokumen.id} tidak memiliki perKelas berupa Array.`
-            );
+          if (!tanggal || !kelas || !siswa || !status) {
+            console.warn("Dokumen presensi tidak lengkap:", dokumen.id, data);
             return;
           }
 
-          const tanggalDokumen = String(data.tanggal || dokumen.id);
+          if (tanggal < mulai || tanggal > akhir) return;
 
-          if (
-            tanggalDokumen < mulai ||
-            tanggalDokumen > akhir
-          ) {
-            return;
-          }
+          const key = `${tanggal}__${kelas}__${siswa}`;
+          const lama = catatanHarian.get(key);
 
-          data.perKelas.forEach((item) => {
-            const kelas = String(item.kelas || "").trim();
+          if (!lama) {
+            catatanHarian.set(key, {
+              tanggal,
+              kelas,
+              siswa,
+              status,
+              namaSiswa: String(data.namaSiswa || ""),
+              jadwalDihitung: 1
+            });
+          } else {
+            lama.jadwalDihitung++;
 
-            if (!kelas) return;
-
-            if (!gabunganKelas.has(kelas)) {
-              gabunganKelas.set(kelas, {
-                kelas,
-                hadir: 0,
-                sakit: 0,
-                izin: 0,
-                alpa: 0
-              });
+            if (prioritasStatus[status] > prioritasStatus[lama.status]) {
+              lama.status = status;
             }
 
-            const tujuan = gabunganKelas.get(kelas);
-
-            tujuan.hadir += angka(item.hadir);
-            tujuan.sakit += angka(item.sakit);
-            tujuan.izin += angka(item.izin);
-            tujuan.alpa += angka(item.alpa);
-          });
+            if (!lama.namaSiswa && data.namaSiswa) {
+              lama.namaSiswa = String(data.namaSiswa);
+            }
+          }
         });
 
+        // Jumlahkan catatan harian yang sudah unik ke setiap kelas.
+        const gabunganKelas = new Map();
+
+        for (const catatan of catatanHarian.values()) {
+          if (!gabunganKelas.has(catatan.kelas)) {
+            gabunganKelas.set(catatan.kelas, {
+              kelas: catatan.kelas,
+              hadir: 0,
+              sakit: 0,
+              izin: 0,
+              alpa: 0
+            });
+          }
+
+          const tujuan = gabunganKelas.get(catatan.kelas);
+
+          if (catatan.status === "Hadir") tujuan.hadir++;
+          else if (catatan.status === "Sakit") tujuan.sakit++;
+          else if (catatan.status === "Izin") tujuan.izin++;
+          else if (catatan.status === "Alpa") tujuan.alpa++;
+        }
+
         dataRekap = Array.from(gabunganKelas.values()).sort(
-          (a, b) => a.kelas.localeCompare(
-            b.kelas,
-            "id",
-            { numeric: true }
-          )
+          (a, b) => a.kelas.localeCompare(b.kelas, "id", { numeric: true })
         );
 
         isiFilterKelas();
-
         renderDashboard();
 
         if (snapshot.empty) {
           tampilkanPesan(
-            "Tidak ada dokumen rekap untuk rentang tanggal tersebut. " +
-            "Periksa koleksi rekap_publik dan field tanggal.",
+            "Tidak ada data pada koleksi presensi untuk periode tersebut. " +
+            "Pastikan tanggal pada Firestore berupa string YYYY-MM-DD.",
             "info"
           );
         } else if (dataRekap.length === 0) {
           tampilkanPesan(
-            "Dokumen ditemukan, tetapi tidak ada data perKelas yang valid. " +
-            "Periksa struktur dokumen rekap_publik.",
+            "Dokumen ditemukan, tetapi tidak ada catatan presensi yang valid. " +
+            "Periksa field tanggal, kelas, siswaId/nisn, dan status.",
             "error"
           );
         } else {
           tampilkanPesan(
-            `Rekap berhasil dimuat. ${dataRekap.length} kelas ditemukan ` +
-            `dari ${snapshot.size} dokumen tanggal.`,
+            `Rekap berhasil dimuat dari ${snapshot.size} dokumen presensi. ` +
+            `${catatanHarian.size} catatan siswa-hari unik dihitung.`,
             "success"
           );
         }
-
       } catch (error) {
-        console.error("Gagal memuat rekap:", error);
-
+        console.error("Gagal memuat presensi:", error);
         dataRekap = [];
         isiFilterKelas();
         renderDashboard();
@@ -662,14 +593,14 @@
           error.code === "firestore/permission-denied"
         ) {
           tampilkanPesan(
-            "Akses ditolak oleh Firestore Rules. Pastikan pengunjung " +
-            "diizinkan membaca rekap_publik, tanpa memberikan akses " +
-            "publik ke koleksi presensi.",
+            "Akses baca koleksi presensi ditolak oleh Firestore Rules. " +
+            "Jangan membuka data pribadi siswa untuk publik. " +
+            "Gunakan akses terautentikasi atau rekap agregat yang aman.",
             "error"
           );
         } else {
           tampilkanPesan(
-            `Gagal memuat rekap: ${error.message || "Kesalahan tidak diketahui."}`,
+            `Gagal memuat data: ${error.message || "Kesalahan tidak diketahui."}`,
             "error"
           );
         }
@@ -679,9 +610,9 @@
       }
     }
 
-    // ==================================================
+    // =========================================================
     // FILTER KELAS
-    // ==================================================
+    // =========================================================
 
     function isiFilterKelas() {
       const pilihanLama = filterKelasEl.value;
@@ -689,7 +620,7 @@
       filterKelasEl.innerHTML =
         '<option value="semua">Semua kelas</option>';
 
-      dataRekap.forEach((item) => {
+      dataRekap.forEach(item => {
         const option = document.createElement("option");
         option.value = item.kelas;
         option.textContent = item.kelas;
@@ -703,9 +634,9 @@
       filterKelasEl.value = masihAda ? pilihanLama : "semua";
     }
 
-    // ==================================================
-    // MENAMPILKAN TABEL DAN RINGKASAN
-    // ==================================================
+    // =========================================================
+    // TABEL DAN RINGKASAN
+    // =========================================================
 
     function renderDashboard() {
       const pilihanKelas = filterKelasEl.value;
@@ -714,14 +645,9 @@
         ? dataRekap
         : dataRekap.filter(item => item.kelas === pilihanKelas);
 
-      const total = {
-        hadir: 0,
-        sakit: 0,
-        izin: 0,
-        alpa: 0
-      };
+      const total = { hadir: 0, sakit: 0, izin: 0, alpa: 0 };
 
-      tampil.forEach((item) => {
+      tampil.forEach(item => {
         total.hadir += item.hadir;
         total.sakit += item.sakit;
         total.izin += item.izin;
@@ -736,10 +662,9 @@
       $("infoPeriode").textContent =
         `${tanggalMulaiEl.value || "-"} sampai ${tanggalAkhirEl.value || "-"}`;
 
-      if (tampil.length === 0) {
+      if (!tampil.length) {
         rekapBodyEl.innerHTML =
           '<tr><td colspan="8">Tidak ada data rekap untuk ditampilkan.</td></tr>';
-
         rekapFooterEl.innerHTML = "";
         return;
       }
@@ -764,7 +689,7 @@
 
       const jumlahSemua = hitungTotal(total);
       const persenSemua = jumlahSemua > 0
-        ? (total.hadir / jumlahSemua) * 100
+        ? total.hadir / jumlahSemua * 100
         : 0;
 
       rekapFooterEl.innerHTML = `
@@ -780,32 +705,23 @@
       `;
     }
 
-    // ==================================================
+    // =========================================================
     // UNDUH CSV
-    // ==================================================
+    // =========================================================
 
     function unduhCSV() {
       const pilihanKelas = filterKelasEl.value;
-
       const tampil = pilihanKelas === "semua"
         ? dataRekap
         : dataRekap.filter(item => item.kelas === pilihanKelas);
 
-      if (tampil.length === 0) {
+      if (!tampil.length) {
         tampilkanPesan("Tidak ada data untuk diunduh.", "error");
         return;
       }
 
       const baris = [
-        [
-          "Kelas",
-          "Hadir",
-          "Sakit",
-          "Izin",
-          "Alpa",
-          "Total",
-          "Persentase Hadir"
-        ],
+        ["Kelas", "Hadir", "Sakit", "Izin", "Alpa", "Total", "Persentase Hadir"],
         ...tampil.map(item => [
           item.kelas,
           item.hadir,
@@ -818,15 +734,10 @@
       ];
 
       const csv = "\uFEFF" + baris.map(row =>
-        row.map(value =>
-          `"${String(value).replace(/"/g, '""')}"`
-        ).join(";")
+        row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(";")
       ).join("\r\n");
 
-      const blob = new Blob([csv], {
-        type: "text/csv;charset=utf-8;"
-      });
-
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
 
@@ -837,40 +748,30 @@
       document.body.appendChild(link);
       link.click();
       link.remove();
-
       URL.revokeObjectURL(url);
 
       tampilkanPesan("File CSV berhasil disiapkan.", "success");
     }
 
-    // ==================================================
+    // =========================================================
     // EVENT
-    // ==================================================
+    // =========================================================
 
     btnTampilkan.addEventListener("click", muatRekap);
 
     btnHariIni.addEventListener("click", () => {
       const hariIni = tanggalLokal();
-
       tanggalMulaiEl.value = hariIni;
       tanggalAkhirEl.value = hariIni;
-
       muatRekap();
     });
 
     btnUnduh.addEventListener("click", unduhCSV);
-
     filterKelasEl.addEventListener("change", renderDashboard);
 
-    // ==================================================
-    // MULAI
-    // ==================================================
-
-    const hariIni = tanggalLokal();
-
+    // Tampilkan tujuh hari terakhir sampai hari ini.
     tanggalMulaiEl.value = tanggalBeberapaHariLalu(6);
-    tanggalAkhirEl.value = hariIni;
-
+    tanggalAkhirEl.value = tanggalLokal();
     muatRekap();
   </script>
 </body>
