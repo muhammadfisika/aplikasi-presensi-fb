@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#123b67">
+  <title>Kelola Pengguna - Presensi Siswa</title>
+  <link rel="stylesheet" href="./css/style.css">
+
+  <style>
+    .page-wrap {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 16px;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field input,
+    .field select,
+    .search-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 7px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .actions button,
+    .table-action {
+      padding: 9px 12px;
+      border: 0;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #123b67;
+      color: white;
+    }
+
+    .secondary {
+      background: #e8edf3;
+      color: #172b42;
+    }
+
+    .danger {
+      background: #f8e2e2;
+      color: #8c2020;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #e3e3e3;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f2f5f8;
+    }
+
+    .status-message {
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .muted {
+      color: #666;
+      font-size: 0.92rem;
+    }
+
+    .status-active {
+      color: #18713b;
+      font-weight: 600;
+    }
+
+    .status-inactive {
+      color: #a12727;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page-wrap">
+    <h1>Pengelolaan Guru dan Kepala Sekolah</h1>
+    <p>SMAN 2 Rangkasbitung</p>
+
+    <div id="pesan" class="status-message" role="status" hidden></div>
+
+    <section class="panel">
+      <h2>Data Pengguna</h2>
+      <p class="muted">
+        Buat akun terlebih dahulu melalui Firebase Authentication.
+        Formulir ini mengelola profil pengguna di Firestore.
+      </p>
+
+      <form id="formPengguna">
+        <div class="form-grid">
+          <label class="field">
+            UID Firebase Authentication
+            <input id="uid" required autocomplete="off"
+              placeholder="Tempel UID akun Firebase">
+          </label>
+
+          <label class="field">
+            Nama lengkap
+            <input id="nama" required maxlength="120"
+              placeholder="Nama guru atau kepala sekolah">
+          </label>
+
+          <label class="field">
+            Email
+            <input id="email" type="email" required maxlength="200"
+              placeholder="nama@sekolah.sch.id">
+          </label>
+
+          <label class="field">
+            NIP
+            <input id="nip" maxlength="30" placeholder="NIP (opsional)">
+          </label>
+
+          <label class="field">
+            Peran
+            <select id="role" required>
+              <option value="guru">Guru</option>
+              <option value="kepsek">Kepala Sekolah</option>
+            </select>
+          </label>
+
+          <label class="field">
+            Status akun
+            <select id="aktif" required>
+              <option value="true">Aktif</option>
+              <option value="false">Tidak aktif</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="primary" id="btnSimpan">
+            Simpan Profil
+          </button>
+          <button type="button" class="secondary" id="btnBatal">
+            Form Baru
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Daftar Guru dan Kepala Sekolah</h2>
+      <input id="pencarian" class="search-input"
+        placeholder="Cari nama, email, NIP, atau UID...">
+
+      <p id="jumlahData" class="muted">Memuat data...</p>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Email</th>
+              <th>NIP</th>
+              <th>Peran</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="daftarPengguna">
+            <tr>
+              <td colspan="6">Memuat data pengguna...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="btnKembali" class="secondary" type="button">
+        Kembali ke Admin
+      </button>
+      <button id="btnKeluar" class="danger" type="button">
+        Keluar
+      </button>
+    </div>
+  </main>
+
+  <script type="module" src="./admin-guru.js"></script>
+</body>
+</html>
