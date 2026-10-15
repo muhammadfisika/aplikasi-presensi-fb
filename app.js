@@ -89,7 +89,8 @@ if (profil.role === "admin") {
   location.replace("./admin.html");
 } else if (profil.role === "guru") {
   location.replace("./presensi-guru.html");
- } else if (profil.role === "kepsek") {
+} else if (profil.role === "kepsek") {
+  // Halaman kepala sekolah akan dibuat pada tahap berikutnya.
   tampilkanPesan(
     "Login berhasil. Halaman kepala sekolah akan tersedia pada tahap berikutnya.",
     true
