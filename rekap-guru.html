@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14532d">
+
+  <title>Rekap Presensi Guru</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background: #14532d;
+      color: white;
+      padding: 20px 16px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: white;
+      padding: 18px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #0000000a;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
+
+    input, select, button {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    input, select {
+      border: 1px solid #cbd5e1;
+      background: white;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #166534;
+      color: white;
+    }
+
+    .btn-pdf {
+      background: #1d4ed8;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .stat span {
+      display: block;
+      color: #64748b;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .stat strong {
+      font-size: 24px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 750px;
+    }
+
+    th, td {
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f8fafc;
+    }
+
+    .message {
+      margin-bottom: 14px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 14px;
+    }
+
+    .error {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      .no-print, header .no-print {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+      }
+
+      .card {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Rekap Presensi Siswa</h1>
+    <p>SMAN 2 Rangkasbitung</p>
+  </header>
+
+  <main>
+    <div id="pesan" class="message">Memeriksa akun guru...</div>
+
+    <section id="konten" class="hidden">
+      <div class="card">
+        <h2>Filter Rekap</h2>
+
+        <p id="namaGuru" class="muted"></p>
+
+        <div class="form-grid">
+          <div>
+            <label for="jenisRekap">Jenis Rekap</label>
+            <select id="jenisRekap">
+              <option value="harian">Harian — detail per tanggal</option>
+              <option value="bulanan">Bulanan — ringkasan per siswa</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="kelas">Kelas</label>
+            <select id="kelas">
+              <option value="">Semua kelas yang diajar</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="tanggalMulai">Tanggal Mulai</label>
+            <input type="date" id="tanggalMulai" required>
+          </div>
+
+          <div>
+            <label for="tanggalAkhir">Tanggal Akhir</label>
+            <input type="date" id="tanggalAkhir" required>
+          </div>
+        </div>
+
+        <div class="actions no-print">
+          <button id="btnTampilkan" class="btn-primary">
+            Tampilkan Rekap
+          </button>
+          <button id="btnPDF" class="btn-pdf" disabled>
+            Unduh PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 id="judulRekap">Hasil Rekap</h2>
+        <p id="periode" class="muted">Belum ada data ditampilkan.</p>
+
+        <div class="stats">
+          <div class="stat">
+            <span>Total Catatan</span>
+            <strong id="jumlahCatatan">0</strong>
+          </div>
+          <div class="stat">
+            <span>Hadir</span>
+            <strong id="jumlahHadir">0</strong>
+          </div>
+          <div class="stat">
+            <span>Sakit</span>
+            <strong id="jumlahSakit">0</strong>
+          </div>
+          <div class="stat">
+            <span>Izin</span>
+            <strong id="jumlahIzin">0</strong>
+          </div>
+          <div class="stat">
+            <span>Alpa</span>
+            <strong id="jumlahAlpa">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="statusHasil" class="muted">
+          Pilih periode, lalu tekan Tampilkan Rekap.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead id="tabelHead"></thead>
+            <tbody id="tabelBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="no-print">
+        <button id="btnKembali" class="btn-secondary">
+          Kembali ke Presensi Guru
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Library untuk membuat PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+
+  <script type="module" src="./rekap-guru.js"></script>
+</body>
+</html>
