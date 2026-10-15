@@ -195,6 +195,8 @@ function escapeHTML(nilai) {
   })[karakter]);
 }
 
+//Perbaikan pemilihan tanggal merubah jadwal
+
 function tanggalHariIni() {
   const sekarang = new Date();
   const tahun = sekarang.getFullYear();
@@ -203,6 +205,30 @@ function tanggalHariIni() {
 
   return `${tahun}-${bulan}-${hari}`;
 }
+
+// Mengubah tanggal input menjadi nama hari dalam bahasa Indonesia.
+function namaHariDariTanggal(tanggal) {
+  if (!tanggal) return "";
+
+  const [tahun, bulan, hari] = tanggal.split("-").map(Number);
+
+  const tanggalObjek = new Date(tahun, bulan - 1, hari);
+
+  const namaHari = [
+    "Minggu",
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu"
+  ];
+
+  return namaHari[tanggalObjek.getDay()];
+}
+
+
+//======================================
 
 function formatWaktu(jam) {
   return String(jam ?? "-");
