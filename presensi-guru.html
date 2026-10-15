@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b67">
+  <title>Presensi Guru - SMAN 2 Rangkasbitung</title>
+  <link rel="stylesheet" href="./css/style.css">
+
+  <style>
+    .wrap {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 16px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 7px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 7px;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .primary {
+      background: #123b67;
+      color: white;
+    }
+
+    .secondary {
+      background: #e8edf3;
+      color: #173a5e;
+    }
+
+    .danger {
+      background: #f8e2e2;
+      color: #8c2020;
+    }
+
+    .scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #f2f5f8;
+    }
+
+    td select {
+      min-width: 130px;
+      padding: 8px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+    }
+
+    #pesan {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .muted {
+      color: #666;
+      font-size: .92rem;
+    }
+
+    .stat {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat span {
+      background: #f2f5f8;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <h1>Presensi Siswa</h1>
+    <p>SMAN 2 Rangkasbitung</p>
+
+    <p id="namaGuru" class="muted">Memeriksa akun guru...</p>
+    <div id="pesan" role="status" hidden></div>
+
+    <section class="panel">
+      <h2>Pilih Jadwal</h2>
+
+      <div class="grid">
+        <label class="field">
+          Tanggal Presensi
+          <input id="tanggal" type="date" required>
+        </label>
+
+        <label class="field">
+          Jadwal Mengajar
+          <select id="jadwal" required disabled>
+            <option value="">Memuat jadwal...</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="infoJadwal" class="muted" style="margin-top:12px">
+        Pilih tanggal dan jadwal untuk menampilkan daftar siswa.
+      </div>
+
+      <div class="actions">
+        <button id="btnMuat" class="secondary" type="button">
+          Tampilkan Siswa
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Daftar Presensi</h2>
+      <p class="muted">
+        Pilih status setiap siswa. Gunakan Hadir Semua untuk mengisi
+        seluruh siswa dengan status Hadir sebelum menyimpan.
+      </p>
+
+      <div class="stat">
+        <span id="totalSiswa">Siswa: 0</span>
+        <span id="totalHadir">Hadir: 0</span>
+        <span id="totalSakit">Sakit: 0</span>
+        <span id="totalIzin">Izin: 0</span>
+        <span id="totalAlpa">Alpa: 0</span>
+      </div>
+
+      <div class="actions">
+        <button id="btnHadirSemua" class="secondary" type="button" disabled>
+          Hadir Semua
+        </button>
+        <button id="btnSimpan" class="primary" type="button" disabled>
+          Simpan Presensi
+        </button>
+      </div>
+
+      <div class="scroll" style="margin-top:16px">
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>NISN</th>
+              <th>Nama Siswa</th>
+              <th>Kelas</th>
+              <th>Status Kehadiran</th>
+            </tr>
+          </thead>
+          <tbody id="tabelSiswa">
+            <tr>
+              <td colspan="5">Pilih jadwal terlebih dahulu.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="btnKeluar" class="danger" type="button">
+        Keluar
+      </button>
+    </div>
+  </main>
+
+  <script type="module" src="./presensi-guru.js"></script>
+</body>
+</html>
