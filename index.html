@@ -3,455 +3,873 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#14532d">
-  <meta name="description" content="Dashboard presensi siswa SMAN 2 Rangkasbitung">
-  <title>Presensi Siswa | SMAN 2 Rangkasbitung</title>
 
-  <link rel="manifest" href="./manifest.json">
-  <link rel="icon" href="./icon-192.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Dashboard Presensi Siswa | SMAN 2 Rangkasbitung</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --hijau: #166534;
+      --hijau-gelap: #14532d;
+      --latar: #f3f6f4;
+      --putih: #ffffff;
+      --teks: #1f2937;
+      --abu: #6b7280;
+      --garis: #e5e7eb;
+      --merah: #b91c1c;
+    }
 
-  <link rel="stylesheet" href="./css/style.css">
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--latar);
+      color: var(--teks);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    .header {
+      background: var(--hijau-gelap);
+      color: white;
+      padding: 25px 20px;
+    }
+
+    .header-inner,
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: clamp(21px, 4vw, 30px);
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      color: #dcfce7;
+    }
+
+    .container {
+      padding: 22px 16px 35px;
+    }
+
+    .panel {
+      background: var(--putih);
+      border: 1px solid var(--garis);
+      border-radius: 13px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, .035);
+    }
+
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 19px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 43px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 9px 11px;
+      font: inherit;
+      background: white;
+      color: var(--teks);
+    }
+
+    button,
+    .button {
+      min-height: 42px;
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-primary {
+      background: var(--hijau);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 13px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid var(--garis);
+      border-radius: 12px;
+      padding: 17px;
+      min-width: 0;
+    }
+
+    .stat-label {
+      color: var(--abu);
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .stat-value {
+      font-size: clamp(23px, 3vw, 30px);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .green {
+      color: #15803d;
+    }
+
+    .red {
+      color: var(--merah);
+    }
+
+    .blue {
+      color: #1d4ed8;
+    }
+
+    .orange {
+      color: #b45309;
+    }
+
+    .table-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .table-heading h2 {
+      margin: 0;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--garis);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f0fdf4;
+      color: #14532d;
+      font-weight: 700;
+    }
+
+    td.number,
+    th.number {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    tfoot {
+      background: #f9fafb;
+      font-weight: 800;
+    }
+
+    .message {
+      padding: 13px 15px;
+      border-radius: 9px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      display: none;
+      overflow-wrap: anywhere;
+    }
+
+    .message.info {
+      display: block;
+      color: #1e40af;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+    }
+
+    .message.error {
+      display: block;
+      color: #991b1b;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+
+    .message.success {
+      display: block;
+      color: #166534;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .muted {
+      color: var(--abu);
+      font-size: 13px;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--abu);
+      font-size: 12px;
+      padding: 12px 10px 25px;
+    }
+
+    @media (max-width: 700px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 15px;
+      }
+
+      .actions button {
+        flex: 1;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-icon" aria-hidden="true">🎓</div>
-      <div>
-        <h1>Presensi Siswa</h1>
-        <p>SMAN 2 Rangkasbitung</p>
-      </div>
+  <header class="header">
+    <div class="header-inner">
+      <h1>Dashboard Presensi Siswa</h1>
+      <p>SMAN 2 Rangkasbitung</p>
+      <p>Rekap kehadiran siswa berdasarkan kelas dan periode</p>
     </div>
-    <a href="./login.html" class="login-btn">
-  Masuk / Login ↗
-    </a>
-    
   </header>
 
-  <main>
-    <section class="intro">
-      <div>
-        <h2>Dashboard Presensi</h2>
-        <p>Pantau rekap kehadiran siswa berdasarkan tanggal dan kelas.</p>
+  <main class="container">
+
+    <div id="pesan" class="message" role="status" aria-live="polite"></div>
+
+    <section class="panel">
+      <h2>Filter Periode Presensi</h2>
+
+      <div class="filter-grid">
+        <div>
+          <label for="tanggalMulai">Tanggal mulai</label>
+          <input type="date" id="tanggalMulai">
+        </div>
+
+        <div>
+          <label for="tanggalAkhir">Tanggal akhir</label>
+          <input type="date" id="tanggalAkhir">
+        </div>
       </div>
 
-      <div class="filters">
-        <div class="field">
-          <label for="tanggal">Tanggal presensi</label>
-          <input type="date" id="tanggal">
-        </div>
-        <div class="field">
-          <label for="kelasFilter">Pilih kelas</label>
-          <select id="kelasFilter">
-            <option value="SEMUA">Semua kelas</option>
-          </select>
-        </div>
-        <button class="primary-btn" id="refreshBtn" type="button">
-          Tampilkan
+      <div class="actions">
+        <button type="button" id="btnTampilkan" class="btn-primary">
+          Tampilkan Rekap
+        </button>
+
+        <button type="button" id="btnHariIni" class="btn-secondary">
+          Hari Ini
+        </button>
+
+        <button type="button" id="btnUnduh" class="btn-secondary">
+          Unduh CSV
         </button>
       </div>
-    </section>
 
-    <div class="notice" id="notice" role="status" aria-live="polite">
-      Menghubungkan ke database presensi...
-    </div>
+      <p class="muted">
+        Rekap dihitung berdasarkan data harian per kelas yang tersedia
+        di Firestore. Tanggal awal dan akhir termasuk dalam periode.
+      </p>
+    </section>
 
     <section class="stats">
-      <article class="stat">
-        <div class="stat-label">Total data presensi</div>
-        <div class="stat-value" id="total">0</div>
-        <div class="stat-note">Jumlah catatan per jam pelajaran</div>
-      </article>
-      <article class="stat">
+      <div class="stat">
         <div class="stat-label">Hadir</div>
-        <div class="stat-value green" id="hadir">0</div>
-        <div class="stat-note" id="hadirPct">0% dari data presensi</div>
-      </article>
-      <article class="stat">
-        <div class="stat-label">Sakit + Izin</div>
-        <div class="stat-value yellow" id="sakitIzin">0</div>
-        <div class="stat-note" id="sakitIzinPct">0% dari data presensi</div>
-      </article>
-      <article class="stat">
+        <div class="stat-value green" id="totalHadir">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Sakit</div>
+        <div class="stat-value orange" id="totalSakit">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Izin</div>
+        <div class="stat-value blue" id="totalIzin">0</div>
+      </div>
+
+      <div class="stat">
         <div class="stat-label">Alpa</div>
-        <div class="stat-value red" id="alpa">0</div>
-        <div class="stat-note" id="alpaPct">0% dari data presensi</div>
-      </article>
+        <div class="stat-value red" id="totalAlpa">0</div>
+      </div>
     </section>
 
-    <section class="content-grid">
-      <article class="panel">
-        <div class="panel-heading">
-          <div>
-            <h3>Diagram Status Presensi</h3>
-            <p id="chartSubtitle">Ringkasan semua kelas</p>
+    <section class="panel">
+      <div class="table-heading">
+        <div>
+          <h2>Rekap Presensi per Kelas</h2>
+          <div class="muted" id="infoPeriode">
+            Menunggu data...
           </div>
         </div>
-        <div class="chart-wrap">
-          <canvas id="attendanceChart" aria-label="Diagram pai presensi"></canvas>
-        </div>
-        <div class="chart-legend" id="chartLegend"></div>
-      </article>
 
-      <article class="panel">
-        <div class="panel-heading">
-          <div>
-            <h3>Persentase Kehadiran</h3>
-            <p>Distribusi status dari seluruh catatan presensi.</p>
-          </div>
-        </div>
-        <div id="progressArea">
-          <div class="empty">Belum ada data presensi.</div>
-        </div>
-      </article>
-    </section>
-
-    <section class="panel table-panel">
-      <div class="table-header">
-        <div class="panel-heading" style="margin:0">
-          <div>
-            <h3>Rekap Presensi per Kelas</h3>
-            <p id="tableSubtitle">Data pada tanggal yang dipilih.</p>
-          </div>
+        <div style="min-width: 170px;">
+          <label for="filterKelas">Tampilkan kelas</label>
+          <select id="filterKelas">
+            <option value="semua">Semua kelas</option>
+          </select>
         </div>
       </div>
-      <div class="table-scroll">
+
+      <div class="table-wrap">
         <table>
           <thead>
             <tr>
+              <th>No.</th>
               <th>Kelas</th>
-              <th class="num">Hadir</th>
-              <th class="num">Sakit</th>
-              <th class="num">Izin</th>
-              <th class="num">Alpa</th>
-              <th class="num">Total</th>
-              <th class="num">Kehadiran</th>
+              <th class="number">Hadir</th>
+              <th class="number">Sakit</th>
+              <th class="number">Izin</th>
+              <th class="number">Alpa</th>
+              <th class="number">Total</th>
+              <th class="number">% Hadir</th>
             </tr>
           </thead>
+
           <tbody id="rekapBody">
-            <tr><td colspan="7" class="empty">Menunggu data...</td></tr>
+            <tr>
+              <td colspan="8">Memuat data...</td>
+            </tr>
           </tbody>
+
+          <tfoot id="rekapFooter"></tfoot>
         </table>
       </div>
     </section>
+
+    <p class="muted">
+      Persentase hadir = jumlah status Hadir dibagi seluruh status harian
+      yang tercatat. Siswa yang tidak memiliki catatan presensi pada
+      tanggal tertentu tidak otomatis dihitung sebagai Alpa.
+    </p>
   </main>
 
-  <footer>
-    SMAN 2 Rangkasbitung CERIA<br>
-    Cerdas, Empati, Religius, Inovatif, Aman dan nyaman.<br>
-    Aplikasi Presensi Siswa
+  <footer class="footer">
+    SMAN 2 Rangkasbitung CERIA
+    (Cerdas, Empati, Religius, Inovatif, Aman dan nyaman)
   </footer>
 
   <script type="module">
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import {
+      initializeApp,
+      getApps
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
     import {
       getFirestore,
-      doc,
-      getDoc
+      collection,
+      query,
+      where,
+      getDocs
     } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    // GANTI DENGAN KONFIGURASI FIREBASE MILIK ANDA.
+    // ==================================================
+    // KONFIGURASI FIREBASE
+    // Gunakan konfigurasi yang sama dengan aplikasi Anda.
+    // ==================================================
+
     const firebaseConfig = {
-      apiKey: "GANTI_API_KEY",
-      authDomain: "GANTI_PROJECT_ID.firebaseapp.com",
-      projectId: "GANTI_PROJECT_ID",
-      storageBucket: "GANTI_STORAGE_BUCKET",
-      messagingSenderId: "GANTI_MESSAGING_SENDER_ID",
-      appId: "GANTI_APP_ID"
+      apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmnNrCfWWhCI",
+      authDomain: "aplikasi-presensi-fb.firebaseapp.com",
+      projectId: "aplikasi-presensi-fb",
+      storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
+      messagingSenderId: "1018611782868",
+      appId: "1:1018611782868:web:37304037cece90197c9741"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length
+      ? getApps()[0]
+      : initializeApp(firebaseConfig);
+
     const db = getFirestore(app);
+
+    // ==================================================
+    // ELEMEN HTML
+    // ==================================================
 
     const $ = (id) => document.getElementById(id);
 
-    const STATUS = {
-      hadir: { label: "Hadir", color: "#16a34a" },
-      sakit: { label: "Sakit", color: "#f59e0b" },
-      izin:  { label: "Izin", color: "#3b82f6" },
-      alpa:  { label: "Alpa", color: "#dc2626" }
-    };
+    const tanggalMulaiEl = $("tanggalMulai");
+    const tanggalAkhirEl = $("tanggalAkhir");
+    const btnTampilkan = $("btnTampilkan");
+    const btnHariIni = $("btnHariIni");
+    const btnUnduh = $("btnUnduh");
+    const filterKelasEl = $("filterKelas");
+    const rekapBodyEl = $("rekapBody");
+    const rekapFooterEl = $("rekapFooter");
+    const pesanEl = $("pesan");
 
-    let chart = null;
-    let dataKelas = [];
+    let dataRekap = [];
+
+    // ==================================================
+    // UTILITAS
+    // ==================================================
 
     function tanggalLokal(date = new Date()) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, "0");
-      const d = String(date.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
+      const tahun = date.getFullYear();
+      const bulan = String(date.getMonth() + 1).padStart(2, "0");
+      const hari = String(date.getDate()).padStart(2, "0");
+
+      return `${tahun}-${bulan}-${hari}`;
     }
 
-    function angka(value) {
-      return Number(value || 0);
+    function tanggalBeberapaHariLalu(jumlahHari) {
+      const tanggal = new Date();
+      tanggal.setDate(tanggal.getDate() - jumlahHari);
+      return tanggalLokal(tanggal);
     }
 
-    function persentase(value, total) {
-      return total ? (value / total * 100) : 0;
+    function angka(nilai) {
+      const hasil = Number(nilai);
+      return Number.isFinite(hasil) && hasil >= 0 ? hasil : 0;
     }
 
-    function formatPct(value) {
-      return `${value.toLocaleString("id-ID", {
+    function formatAngka(nilai) {
+      return Number(nilai || 0).toLocaleString("id-ID");
+    }
+
+    function formatPersen(nilai) {
+      return `${Number(nilai || 0).toLocaleString("id-ID", {
+        minimumFractionDigits: 1,
         maximumFractionDigits: 1
       })}%`;
     }
 
-    function kosongkanRingkasan() {
-      $("total").textContent = "0";
-      $("hadir").textContent = "0";
-      $("sakitIzin").textContent = "0";
-      $("alpa").textContent = "0";
-      $("hadirPct").textContent = "0% dari data presensi";
-      $("sakitIzinPct").textContent = "0% dari data presensi";
-      $("alpaPct").textContent = "0% dari data presensi";
-      $("chartLegend").innerHTML = "";
-      $("progressArea").innerHTML =
-        '<div class="empty">Belum ada data presensi.</div>';
-      $("rekapBody").innerHTML =
-        '<tr><td colspan="7" class="empty">Belum ada data pada tanggal ini.</td></tr>';
-
-      if (chart) {
-        chart.destroy();
-        chart = null;
-      }
-    }
-
-    function renderDashboard(classes, selectedClass) {
-      const visible = selectedClass === "SEMUA"
-        ? classes
-        : classes.filter(item => item.kelas === selectedClass);
-
-      const total = { hadir: 0, sakit: 0, izin: 0, alpa: 0 };
-
-      for (const item of visible) {
-        for (const key of Object.keys(total)) {
-          total[key] += angka(item[key]);
-        }
-      }
-
-      const n = total.hadir + total.sakit + total.izin + total.alpa;
-      $("total").textContent = n.toLocaleString("id-ID");
-      $("hadir").textContent = total.hadir.toLocaleString("id-ID");
-      $("sakitIzin").textContent =
-        (total.sakit + total.izin).toLocaleString("id-ID");
-      $("alpa").textContent = total.alpa.toLocaleString("id-ID");
-
-      $("hadirPct").textContent =
-        `${formatPct(persentase(total.hadir, n))} dari data presensi`;
-      $("sakitIzinPct").textContent =
-        `${formatPct(persentase(total.sakit + total.izin, n))} dari data presensi`;
-      $("alpaPct").textContent =
-        `${formatPct(persentase(total.alpa, n))} dari data presensi`;
-
-      $("chartSubtitle").textContent = selectedClass === "SEMUA"
-        ? "Ringkasan semua kelas"
-        : `Ringkasan kelas ${selectedClass}`;
-
-      const keys = Object.keys(STATUS);
-      const values = keys.map(key => total[key]);
-      const colors = keys.map(key => STATUS[key].color);
-
-      if (chart) chart.destroy();
-
-      chart = new Chart($("attendanceChart"), {
-        type: "doughnut",
-        data: {
-          labels: keys.map(key => STATUS[key].label),
-          datasets: [{
-            data: values,
-            backgroundColor: colors,
-            borderWidth: 2,
-            borderColor: "#ffffff",
-            hoverOffset: 5
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: "62%",
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: context => {
-                  const value = context.raw || 0;
-                  return `${context.label}: ${value} (${formatPct(persentase(value, n))})`;
-                }
-              }
-            }
-          }
-        }
-      });
-
-      $("chartLegend").innerHTML = keys.map(key => `
-        <div class="legend-item">
-          <span class="dot" style="background:${STATUS[key].color}"></span>
-          <span>${STATUS[key].label}</span>
-          <strong>${total[key]}</strong>
-        </div>
-      `).join("");
-
-      $("progressArea").innerHTML = keys.map(key => {
-        const pct = persentase(total[key], n);
-        return `
-          <div class="progress-row">
-            <div class="progress-label">
-              <span>${STATUS[key].label}</span>
-              <span>${total[key]} · ${formatPct(pct)}</span>
-            </div>
-            <div class="progress">
-              <div style="width:${pct}%;background:${STATUS[key].color}"></div>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      if (!visible.length) {
-        $("rekapBody").innerHTML =
-          '<tr><td colspan="7" class="empty">Belum ada rekap kelas untuk tanggal ini.</td></tr>';
-        return;
-      }
-
-      $("rekapBody").innerHTML = visible
-        .slice()
-        .sort((a, b) => a.kelas.localeCompare(b.kelas, "id"))
-        .map(item => {
-          const sum = keys.reduce((acc, key) => acc + angka(item[key]), 0);
-          const hadirPct = persentase(angka(item.hadir), sum);
-
-          return `
-            <tr>
-              <td><span class="class-badge">${escapeHTML(item.kelas)}</span></td>
-              <td class="num">${angka(item.hadir)}</td>
-              <td class="num">${angka(item.sakit)}</td>
-              <td class="num">${angka(item.izin)}</td>
-              <td class="num">${angka(item.alpa)}</td>
-              <td class="num"><strong>${sum}</strong></td>
-              <td class="num">${formatPct(hadirPct)}</td>
-            </tr>
-          `;
-        }).join("");
-    }
-
-    function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, char => ({
+    function escapeHTML(nilai) {
+      return String(nilai ?? "").replace(/[&<>"']/g, karakter => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#39;"
-      })[char]);
+      })[karakter]);
     }
 
-    function isiFilterKelas(classes) {
-      const select = $("kelasFilter");
-      const sebelumnya = select.value;
-      const names = [...new Set(classes.map(item => item.kelas))].sort(
-        (a, b) => a.localeCompare(b, "id")
-      );
-
-      select.innerHTML = '<option value="SEMUA">Semua kelas</option>';
-
-      for (const name of names) {
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        select.appendChild(option);
-      }
-
-      select.value = names.includes(sebelumnya) ? sebelumnya : "SEMUA";
+    function tampilkanPesan(teks, jenis = "info") {
+      pesanEl.textContent = teks;
+      pesanEl.className = `message ${jenis}`;
     }
+
+    function hitungTotal(item) {
+      return item.hadir + item.sakit + item.izin + item.alpa;
+    }
+
+    function hitungPersenHadir(item) {
+      const total = hitungTotal(item);
+      return total > 0 ? (item.hadir / total) * 100 : 0;
+    }
+
+    // ==================================================
+    // MEMUAT REKAP PUBLIK BERDASARKAN RENTANG TANGGAL
+    // ==================================================
 
     async function muatRekap() {
-      const tanggal = $("tanggal").value;
-      const selectedClass = $("kelasFilter").value;
+      const mulai = tanggalMulaiEl.value;
+      const akhir = tanggalAkhirEl.value;
 
-      if (!tanggal) {
-        $("notice").className = "notice error";
-        $("notice").textContent = "Silakan pilih tanggal terlebih dahulu.";
+      if (!mulai || !akhir) {
+        tampilkanPesan(
+          "Tanggal mulai dan tanggal akhir wajib diisi.",
+          "error"
+        );
         return;
       }
 
-      $("notice").className = "notice";
-      $("notice").textContent = "Mengambil rekap dari Firebase...";
-      $("refreshBtn").disabled = true;
+      if (mulai > akhir) {
+        tampilkanPesan(
+          "Tanggal mulai tidak boleh melewati tanggal akhir.",
+          "error"
+        );
+        return;
+      }
+
+      btnTampilkan.disabled = true;
+      btnUnduh.disabled = true;
+
+      tampilkanPesan("Sedang mengambil data rekap dari Firebase...");
+      rekapBodyEl.innerHTML =
+        '<tr><td colspan="8">Memuat data...</td></tr>';
+      rekapFooterEl.innerHTML = "";
 
       try {
-        // Dokumen rekap publik disimpan dengan ID tanggal YYYY-MM-DD.
-        const ref = doc(db, "rekap_publik", tanggal);
-        const snapshot = await getDoc(ref);
+        // Hanya membaca koleksi rekap publik, bukan data pribadi siswa.
+        // Field tanggal pada setiap dokumen harus berupa string YYYY-MM-DD.
+        const qRekap = query(
+          collection(db, "rekap_publik"),
+          where("tanggal", ">=", mulai),
+          where("tanggal", "<=", akhir)
+        );
 
-        if (!snapshot.exists()) {
-          dataKelas = [];
-          isiFilterKelas(dataKelas);
-          kosongkanRingkasan();
-          $("tableSubtitle").textContent =
-            `Belum ada rekap tersimpan untuk ${tanggal}.`;
-          $("notice").textContent =
-            "Data rekap untuk tanggal ini belum tersedia. Setelah modul presensi dan rekap diaktifkan, data akan tampil di sini.";
-          return;
+        const snapshot = await getDocs(qRekap);
+
+        // Rekap lintas tanggal: jumlahkan catatan harian per kelas.
+        const gabunganKelas = new Map();
+
+        snapshot.forEach((dokumen) => {
+          const data = dokumen.data();
+
+          if (!Array.isArray(data.perKelas)) {
+            console.warn(
+              `Dokumen ${dokumen.id} tidak memiliki perKelas berupa Array.`
+            );
+            return;
+          }
+
+          const tanggalDokumen = String(data.tanggal || dokumen.id);
+
+          if (
+            tanggalDokumen < mulai ||
+            tanggalDokumen > akhir
+          ) {
+            return;
+          }
+
+          data.perKelas.forEach((item) => {
+            const kelas = String(item.kelas || "").trim();
+
+            if (!kelas) return;
+
+            if (!gabunganKelas.has(kelas)) {
+              gabunganKelas.set(kelas, {
+                kelas,
+                hadir: 0,
+                sakit: 0,
+                izin: 0,
+                alpa: 0
+              });
+            }
+
+            const tujuan = gabunganKelas.get(kelas);
+
+            tujuan.hadir += angka(item.hadir);
+            tujuan.sakit += angka(item.sakit);
+            tujuan.izin += angka(item.izin);
+            tujuan.alpa += angka(item.alpa);
+          });
+        });
+
+        dataRekap = Array.from(gabunganKelas.values()).sort(
+          (a, b) => a.kelas.localeCompare(
+            b.kelas,
+            "id",
+            { numeric: true }
+          )
+        );
+
+        isiFilterKelas();
+
+        renderDashboard();
+
+        if (snapshot.empty) {
+          tampilkanPesan(
+            "Tidak ada dokumen rekap untuk rentang tanggal tersebut. " +
+            "Periksa koleksi rekap_publik dan field tanggal.",
+            "info"
+          );
+        } else if (dataRekap.length === 0) {
+          tampilkanPesan(
+            "Dokumen ditemukan, tetapi tidak ada data perKelas yang valid. " +
+            "Periksa struktur dokumen rekap_publik.",
+            "error"
+          );
+        } else {
+          tampilkanPesan(
+            `Rekap berhasil dimuat. ${dataRekap.length} kelas ditemukan ` +
+            `dari ${snapshot.size} dokumen tanggal.`,
+            "success"
+          );
         }
-
-        const data = snapshot.data();
-        const list = Array.isArray(data.perKelas) ? data.perKelas : [];
-
-        // Pastikan setiap kelas mempunyai empat status numerik.
-        dataKelas = list
-          .filter(item => item && typeof item.kelas === "string")
-          .map(item => ({
-            kelas: item.kelas,
-            hadir: angka(item.hadir),
-            sakit: angka(item.sakit),
-            izin: angka(item.izin),
-            alpa: angka(item.alpa)
-          }));
-
-        isiFilterKelas(dataKelas);
-        $("tableSubtitle").textContent =
-          `Tanggal: ${tanggal}. Data berupa catatan presensi setiap jam pelajaran.`;
-        $("notice").textContent =
-          `Rekap berhasil dimuat untuk tanggal ${tanggal}.`;
-
-        renderDashboard(dataKelas, selectedClass);
-        // Samakan tampilan dengan filter yang benar-benar terpilih.
-        renderDashboard(dataKelas, $("kelasFilter").value);
 
       } catch (error) {
         console.error("Gagal memuat rekap:", error);
-        kosongkanRingkasan();
-        $("notice").className = "notice error";
-        $("notice").textContent =
-          `Gagal mengambil data Firebase (${error.code || error.message}). Periksa konfigurasi Firebase dan Firestore Rules.`;
+
+        dataRekap = [];
+        isiFilterKelas();
+        renderDashboard();
+
+        if (
+          error.code === "permission-denied" ||
+          error.code === "firestore/permission-denied"
+        ) {
+          tampilkanPesan(
+            "Akses ditolak oleh Firestore Rules. Pastikan pengunjung " +
+            "diizinkan membaca rekap_publik, tanpa memberikan akses " +
+            "publik ke koleksi presensi.",
+            "error"
+          );
+        } else {
+          tampilkanPesan(
+            `Gagal memuat rekap: ${error.message || "Kesalahan tidak diketahui."}`,
+            "error"
+          );
+        }
       } finally {
-        $("refreshBtn").disabled = false;
+        btnTampilkan.disabled = false;
+        btnUnduh.disabled = dataRekap.length === 0;
       }
     }
 
-    $("tanggal").value = tanggalLokal();
-    $("tanggal").max = tanggalLokal();
+    // ==================================================
+    // FILTER KELAS
+    // ==================================================
 
-    $("refreshBtn").addEventListener("click", muatRekap);
-    $("tanggal").addEventListener("change", muatRekap);
-    $("kelasFilter").addEventListener("change", () => {
-      renderDashboard(dataKelas, $("kelasFilter").value);
+    function isiFilterKelas() {
+      const pilihanLama = filterKelasEl.value;
+
+      filterKelasEl.innerHTML =
+        '<option value="semua">Semua kelas</option>';
+
+      dataRekap.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item.kelas;
+        option.textContent = item.kelas;
+        filterKelasEl.appendChild(option);
+      });
+
+      const masihAda = Array.from(filterKelasEl.options).some(
+        option => option.value === pilihanLama
+      );
+
+      filterKelasEl.value = masihAda ? pilihanLama : "semua";
+    }
+
+    // ==================================================
+    // MENAMPILKAN TABEL DAN RINGKASAN
+    // ==================================================
+
+    function renderDashboard() {
+      const pilihanKelas = filterKelasEl.value;
+
+      const tampil = pilihanKelas === "semua"
+        ? dataRekap
+        : dataRekap.filter(item => item.kelas === pilihanKelas);
+
+      const total = {
+        hadir: 0,
+        sakit: 0,
+        izin: 0,
+        alpa: 0
+      };
+
+      tampil.forEach((item) => {
+        total.hadir += item.hadir;
+        total.sakit += item.sakit;
+        total.izin += item.izin;
+        total.alpa += item.alpa;
+      });
+
+      $("totalHadir").textContent = formatAngka(total.hadir);
+      $("totalSakit").textContent = formatAngka(total.sakit);
+      $("totalIzin").textContent = formatAngka(total.izin);
+      $("totalAlpa").textContent = formatAngka(total.alpa);
+
+      $("infoPeriode").textContent =
+        `${tanggalMulaiEl.value || "-"} sampai ${tanggalAkhirEl.value || "-"}`;
+
+      if (tampil.length === 0) {
+        rekapBodyEl.innerHTML =
+          '<tr><td colspan="8">Tidak ada data rekap untuk ditampilkan.</td></tr>';
+
+        rekapFooterEl.innerHTML = "";
+        return;
+      }
+
+      rekapBodyEl.innerHTML = tampil.map((item, index) => {
+        const jumlah = hitungTotal(item);
+        const persen = hitungPersenHadir(item);
+
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td><strong>${escapeHTML(item.kelas)}</strong></td>
+            <td class="number">${formatAngka(item.hadir)}</td>
+            <td class="number">${formatAngka(item.sakit)}</td>
+            <td class="number">${formatAngka(item.izin)}</td>
+            <td class="number">${formatAngka(item.alpa)}</td>
+            <td class="number">${formatAngka(jumlah)}</td>
+            <td class="number">${formatPersen(persen)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const jumlahSemua = hitungTotal(total);
+      const persenSemua = jumlahSemua > 0
+        ? (total.hadir / jumlahSemua) * 100
+        : 0;
+
+      rekapFooterEl.innerHTML = `
+        <tr>
+          <td colspan="2">TOTAL</td>
+          <td class="number">${formatAngka(total.hadir)}</td>
+          <td class="number">${formatAngka(total.sakit)}</td>
+          <td class="number">${formatAngka(total.izin)}</td>
+          <td class="number">${formatAngka(total.alpa)}</td>
+          <td class="number">${formatAngka(jumlahSemua)}</td>
+          <td class="number">${formatPersen(persenSemua)}</td>
+        </tr>
+      `;
+    }
+
+    // ==================================================
+    // UNDUH CSV
+    // ==================================================
+
+    function unduhCSV() {
+      const pilihanKelas = filterKelasEl.value;
+
+      const tampil = pilihanKelas === "semua"
+        ? dataRekap
+        : dataRekap.filter(item => item.kelas === pilihanKelas);
+
+      if (tampil.length === 0) {
+        tampilkanPesan("Tidak ada data untuk diunduh.", "error");
+        return;
+      }
+
+      const baris = [
+        [
+          "Kelas",
+          "Hadir",
+          "Sakit",
+          "Izin",
+          "Alpa",
+          "Total",
+          "Persentase Hadir"
+        ],
+        ...tampil.map(item => [
+          item.kelas,
+          item.hadir,
+          item.sakit,
+          item.izin,
+          item.alpa,
+          hitungTotal(item),
+          hitungPersenHadir(item).toFixed(1) + "%"
+        ])
+      ];
+
+      const csv = "\uFEFF" + baris.map(row =>
+        row.map(value =>
+          `"${String(value).replace(/"/g, '""')}"`
+        ).join(";")
+      ).join("\r\n");
+
+      const blob = new Blob([csv], {
+        type: "text/csv;charset=utf-8;"
+      });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download =
+        `rekap-presensi-${tanggalMulaiEl.value}-sampai-${tanggalAkhirEl.value}.csv`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      URL.revokeObjectURL(url);
+
+      tampilkanPesan("File CSV berhasil disiapkan.", "success");
+    }
+
+    // ==================================================
+    // EVENT
+    // ==================================================
+
+    btnTampilkan.addEventListener("click", muatRekap);
+
+    btnHariIni.addEventListener("click", () => {
+      const hariIni = tanggalLokal();
+
+      tanggalMulaiEl.value = hariIni;
+      tanggalAkhirEl.value = hariIni;
+
+      muatRekap();
     });
 
-   
+    btnUnduh.addEventListener("click", unduhCSV);
 
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js")
-          .catch(error => console.warn("Service worker belum aktif:", error));
-      });
-    }
+    filterKelasEl.addEventListener("change", renderDashboard);
+
+    // ==================================================
+    // MULAI
+    // ==================================================
+
+    const hariIni = tanggalLokal();
+
+    tanggalMulaiEl.value = tanggalBeberapaHariLalu(6);
+    tanggalAkhirEl.value = hariIni;
 
     muatRekap();
   </script>
