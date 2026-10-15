@@ -1,0 +1,14 @@
+
+{
+  "id": "./",
+  "name": "Presensi Siswa SMAN 2 Rangkasbitung",
+  "short_name": "Presensi Siswa",
+  "description": "Dashboard presensi siswa SMAN 2 Rangkasbitung",
+  "lang": "id-ID",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f7f5",
+  "theme_color": "#14532d"
+}
