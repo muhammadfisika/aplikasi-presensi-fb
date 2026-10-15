@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b67">
+  <title>Jadwal Pelajaran - Presensi Siswa</title>
+  <link rel="stylesheet" href="./css/style.css">
+
+  <style>
+    .wrap {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 16px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field input,
+    .field select,
+    #cari {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 7px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    button {
+      padding: 9px 12px;
+      border: 0;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .primary {
+      color: white;
+      background: #123b67;
+    }
+
+    .secondary {
+      color: #173a5e;
+      background: #e8edf3;
+    }
+
+    .danger {
+      color: #8c2020;
+      background: #f8e2e2;
+    }
+
+    .scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 850px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #f2f5f8;
+    }
+
+    #pesan {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .muted {
+      color: #666;
+      font-size: .92rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <h1>Pengelolaan Jadwal Pelajaran</h1>
+    <p>SMAN 2 Rangkasbitung</p>
+
+    <div id="pesan" role="status" hidden></div>
+
+    <section class="panel">
+      <h2>Form Jadwal</h2>
+      <form id="formJadwal">
+        <div class="grid">
+          <label class="field">
+            Hari
+            <select id="hari" required>
+              <option value="Senin">Senin</option>
+              <option value="Selasa">Selasa</option>
+              <option value="Rabu">Rabu</option>
+              <option value="Kamis">Kamis</option>
+              <option value="Jumat">Jumat</option>
+              <option value="Sabtu">Sabtu</option>
+            </select>
+          </label>
+
+          <label class="field">
+            Kelas
+            <input id="kelas" required maxlength="30"
+              placeholder="Contoh: X-1">
+          </label>
+
+          <label class="field">
+            Mata Pelajaran
+            <input id="mapel" required maxlength="100"
+              placeholder="Contoh: Fisika">
+          </label>
+
+          <label class="field">
+            Guru
+            <select id="guruUid" required>
+              <option value="">Memuat guru...</option>
+            </select>
+          </label>
+
+          <label class="field">
+            Jam Pelajaran Mulai
+            <input id="jamMulai" type="number" min="1" max="20" required>
+          </label>
+
+          <label class="field">
+            Jam Pelajaran Selesai
+            <input id="jamSelesai" type="number" min="1" max="20" required>
+          </label>
+
+          <label class="field">
+            Status
+            <select id="aktif">
+              <option value="true">Aktif</option>
+              <option value="false">Tidak aktif</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="btnSimpan" class="primary" type="submit">
+            Simpan Jadwal
+          </button>
+          <button id="btnBatal" class="secondary" type="button">
+            Form Baru
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Daftar Jadwal</h2>
+      <input id="cari" placeholder="Cari hari, kelas, mapel, atau guru...">
+      <p id="jumlah" class="muted">Memuat jadwal...</p>
+
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Hari</th>
+              <th>Kelas</th>
+              <th>Mata Pelajaran</th>
+              <th>Guru</th>
+              <th>Jam</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tabelJadwal">
+            <tr><td colspan="7">Memuat jadwal...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button class="secondary" id="btnKembali" type="button">
+        Kembali ke Admin
+      </button>
+      <button class="danger" id="btnKeluar" type="button">
+        Keluar
+      </button>
+    </div>
+  </main>
+
+  <script type="module" src="./admin-jadwal.js"></script>
+</body>
+</html>
