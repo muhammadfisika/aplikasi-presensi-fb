@@ -84,10 +84,21 @@ if (formLogin) {
 
       // Tahap 3: verifikasi login dan peran.
       // Halaman fitur sesuai peran dibuat pada tahap berikutnya.
-      tampilkanPesan(
-        `Login berhasil. Peran: ${profil.role}. Fitur pengguna disiapkan pada tahap berikutnya.`,
-        true
-      );
+     
+if (profil.role === "admin") {
+  location.replace("./admin.html");
+} else if (profil.role === "guru") {
+  tampilkanPesan(
+    "Login berhasil. Halaman guru akan tersedia pada tahap berikutnya.",
+    true
+  );
+} else if (profil.role === "kepsek") {
+  tampilkanPesan(
+    "Login berhasil. Halaman kepala sekolah akan tersedia pada tahap berikutnya.",
+    true
+  );
+}
+
 
       document.getElementById("password").value = "";
     } catch (error) {
