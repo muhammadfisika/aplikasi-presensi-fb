@@ -1,0 +1,538 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b66">
+  <title>Pembaruan Rekap Presensi</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #172033;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 25px auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 14px #0000000d;
+    }
+
+    h1 { font-size: 24px; margin-top: 0; }
+    h2 { font-size: 18px; }
+
+    p {
+      line-height: 1.6;
+      color: #475569;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button, .link {
+      display: inline-block;
+      border: 0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      background: #123b66;
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .secondary { background: #475569; }
+    .danger { background: #a61b1b; }
+
+    .status {
+      padding: 12px;
+      margin-top: 16px;
+      border-radius: 8px;
+      background: #e2e8f0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .hidden { display: none; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .actions button { margin-top: 4px; }
+
+    small { color: #64748b; }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="card">
+    <h1>Pembaruan Rekap Presensi</h1>
+    <p>
+      SMAN 2 Rangkasbitung. Gunakan halaman ini untuk
+      memperbarui rekap publik berdasarkan data Firestore
+      pada koleksi presensi.
+    </p>
+    <a class="link" href="index.html">Kembali ke Dashboard</a>
+  </div>
+
+  <div class="card" id="loginCard">
+    <h2>Login Admin</h2>
+
+    <form id="loginForm">
+      <label for="email">Email admin</label>
+      <input id="email" type="email" required autocomplete="username">
+
+      <label for="password">Password</label>
+      <input id="password" type="password" required
+             autocomplete="current-password">
+
+      <button id="loginButton" type="submit">Login</button>
+    </form>
+  </div>
+
+  <div class="card hidden" id="adminCard">
+    <h2 id="adminGreeting">Admin</h2>
+    <p>
+      Pembaruan akan menghitung satu status harian per siswa
+      per kelas. Jika siswa mempunyai beberapa catatan dalam
+      satu hari, prioritas status adalah Hadir, Izin, Sakit,
+      kemudian Alpa.
+    </p>
+
+    <label for="tanggal">Tanggal rekap tertentu</label>
+    <input id="tanggal" type="date">
+
+    <div class="actions">
+      <button id="todayButton">Perbarui Rekap Tanggal Ini</button>
+      <button id="allButton">Perbarui Semua Rekap</button>
+      <button id="logoutButton" class="secondary">Logout</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Status Proses</h2>
+    <div id="status" class="status" role="status" aria-live="polite">
+      Silakan login menggunakan akun admin aktif.
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  writeBatch
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+// Konfigurasi Firebase proyek Anda
+const firebaseConfig = {
+  apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmnNrCfWWhCI",
+  authDomain: "aplikasi-presensi-fb.firebaseapp.com",
+  projectId: "aplikasi-presensi-fb",
+  storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
+  messagingSenderId: "1018611782868",
+  appId: "1:1018611782868:web:37304037cece90197c9741"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+
+let adminTerverifikasi = false;
+let sedangMemproses = false;
+
+const prioritas = {
+  Hadir: 4,
+  Izin: 3,
+  Sakit: 2,
+  Alpa: 1
+};
+
+function tampilkanStatus(pesan) {
+  $("status").textContent = pesan;
+}
+
+function ubahTombol(nonaktif) {
+  $("todayButton").disabled = nonaktif;
+  $("allButton").disabled = nonaktif;
+  $("logoutButton").disabled = nonaktif;
+  $("loginButton").disabled = nonaktif;
+}
+
+function tanggalHariIni() {
+  const sekarang = new Date();
+  const tahun = sekarang.getFullYear();
+  const bulan = String(sekarang.getMonth() + 1).padStart(2, "0");
+  const hari = String(sekarang.getDate()).padStart(2, "0");
+  return `${tahun}-${bulan}-${hari}`;
+}
+
+$("tanggal").value = tanggalHariIni();
+
+async function periksaAdmin(user) {
+  const profilRef = doc(db, "users", user.uid);
+  const profilSnap = await getDoc(profilRef);
+
+  if (!profilSnap.exists()) {
+    throw new Error("Profil pengguna tidak ditemukan.");
+  }
+
+  const profil = profilSnap.data();
+
+  if (profil.role !== "admin" || profil.aktif !== true) {
+    throw new Error("Akun bukan admin aktif. Akses ditolak.");
+  }
+
+  return profil;
+}
+
+onAuthStateChanged(auth, async user => {
+  adminTerverifikasi = false;
+  $("adminCard").classList.add("hidden");
+  $("loginCard").classList.remove("hidden");
+
+  if (!user) {
+    tampilkanStatus("Silakan login menggunakan akun admin aktif.");
+    return;
+  }
+
+  try {
+    const profil = await periksaAdmin(user);
+
+    adminTerverifikasi = true;
+    $("loginCard").classList.add("hidden");
+    $("adminCard").classList.remove("hidden");
+    $("adminGreeting").textContent =
+      `Login sebagai admin: ${profil.nama || user.email}`;
+
+    tampilkanStatus(
+      "Login berhasil. Silakan pilih tanggal atau perbarui semua rekap."
+    );
+  } catch (error) {
+    tampilkanStatus(error.message);
+    await signOut(auth);
+  }
+});
+
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  try {
+    $("loginButton").disabled = true;
+
+    await signInWithEmailAndPassword(
+      auth,
+      $("email").value.trim(),
+      $("password").value
+    );
+
+    tampilkanStatus("Login berhasil. Memeriksa hak akses admin...");
+  } catch (error) {
+    tampilkanStatus("Login gagal: " + error.message);
+  } finally {
+    $("loginButton").disabled = false;
+  }
+});
+
+$("logoutButton").addEventListener("click", async () => {
+  await signOut(auth);
+  tampilkanStatus("Anda telah logout.");
+});
+
+function statusValid(status) {
+  const nilai = String(status || "").trim().toLowerCase();
+
+  const normalisasi = {
+    hadir: "Hadir",
+    sakit: "Sakit",
+    izin: "Izin",
+    alpa: "Alpa",
+    alpha: "Alpa"
+  };
+
+  return normalisasi[nilai] || null;
+}
+
+async function bacaSemuaPresensi() {
+  // Hanya dipanggil setelah hak akses admin diperiksa.
+  const snapshot = await getDocs(collection(db, "presensi"));
+  return snapshot.docs.map(d => ({
+    id: d.id,
+    ...d.data()
+  }));
+}
+
+function hitungRekap(dataPresensi, filterTanggal = null) {
+  const kelompok = new Map();
+
+  for (const data of dataPresensi) {
+    const tanggal = String(data.tanggal || "").trim();
+    const kelas = String(data.kelas || "").trim();
+
+    // Gunakan NISN sebagai identitas utama siswa.
+    const siswaId = String(
+      data.nisn || data.siswaId || ""
+    ).trim();
+
+    const status = statusValid(data.status);
+
+    if (!tanggal || !kelas || !siswaId || !status) continue;
+    if (filterTanggal && tanggal !== filterTanggal) continue;
+
+    if (!kelompok.has(tanggal)) {
+      kelompok.set(tanggal, new Map());
+    }
+
+    const perKelas = kelompok.get(tanggal);
+
+    if (!perKelas.has(kelas)) {
+      perKelas.set(kelas, new Map());
+    }
+
+    const siswa = perKelas.get(kelas);
+    const statusLama = siswa.get(siswaId);
+
+    if (
+      !statusLama ||
+      prioritas[status] > prioritas[statusLama]
+    ) {
+      siswa.set(siswaId, status);
+    }
+  }
+
+  const hasil = new Map();
+
+  for (const [tanggal, perKelas] of kelompok) {
+    const daftarKelas = [];
+
+    for (const [kelas, siswa] of perKelas) {
+      const rekap = {
+        kelas,
+        hadir: 0,
+        sakit: 0,
+        izin: 0,
+        alpa: 0
+      };
+
+      for (const status of siswa.values()) {
+        rekap[status.toLowerCase()]++;
+      }
+
+      daftarKelas.push(rekap);
+    }
+
+    daftarKelas.sort((a, b) =>
+      a.kelas.localeCompare(b.kelas, "id")
+    );
+
+    hasil.set(tanggal, {
+      tanggal,
+      perKelas: daftarKelas
+    });
+  }
+
+  return hasil;
+}
+
+async function tulisDalamBatch(operasi) {
+  // Batasi jumlah operasi per batch agar di bawah
+  // batas maksimum 500 operasi Firestore.
+  for (let i = 0; i < operasi.length; i += 400) {
+    const batch = writeBatch(db);
+    const bagian = operasi.slice(i, i + 400);
+
+    for (const aksi of bagian) {
+      if (aksi.jenis === "set") {
+        batch.set(aksi.ref, aksi.data);
+      } else {
+        batch.delete(aksi.ref);
+      }
+    }
+
+    await batch.commit();
+  }
+}
+
+async function perbaruiRekap(filterTanggal = null) {
+  if (!auth.currentUser || !adminTerverifikasi) {
+    throw new Error("Silakan login sebagai admin aktif.");
+  }
+
+  if (sedangMemproses) {
+    throw new Error("Proses pembaruan sedang berlangsung.");
+  }
+
+  sedangMemproses = true;
+  ubahTombol(true);
+
+  try {
+    // Periksa kembali hak akses sebelum operasi.
+    await periksaAdmin(auth.currentUser);
+
+    tampilkanStatus("Membaca data presensi dari Firestore...");
+
+    const dataPresensi = await bacaSemuaPresensi();
+    const semuaRekap = hitungRekap(dataPresensi);
+
+    const snapshotRekap = await getDocs(
+      collection(db, "rekap_publik")
+    );
+
+    const operasi = [];
+    const tanggalYangDitulis = new Set();
+
+    if (filterTanggal) {
+      // Hanya memperbarui satu tanggal.
+      const data = semuaRekap.get(filterTanggal);
+      const ref = doc(db, "rekap_publik", filterTanggal);
+
+      if (data) {
+        operasi.push({
+          jenis: "set",
+          ref,
+          data
+        });
+      } else {
+        // Hapus rekap tanggal ini jika tidak ada
+        // lagi data presensi yang valid.
+        operasi.push({
+          jenis: "delete",
+          ref
+        });
+      }
+
+      tanggalYangDitulis.add(filterTanggal);
+    } else {
+      // Memperbarui semua tanggal yang mempunyai data.
+      for (const [tanggal, data] of semuaRekap) {
+        operasi.push({
+          jenis: "set",
+          ref: doc(db, "rekap_publik", tanggal),
+          data
+        });
+
+        tanggalYangDitulis.add(tanggal);
+      }
+
+      // Hapus dokumen rekap lama yang sudah tidak
+      // mempunyai data sumber.
+      for (const dokumen of snapshotRekap.docs) {
+        if (!tanggalYangDitulis.has(dokumen.id)) {
+          operasi.push({
+            jenis: "delete",
+            ref: dokumen.ref
+          });
+        }
+      }
+    }
+
+    tampilkanStatus(
+      `Data presensi terbaca: ${dataPresensi.length}\n` +
+      `Tanggal yang dihitung: ${
+        filterTanggal ? 1 : semuaRekap.size
+      }\n` +
+      "Menyimpan hasil rekap..."
+    );
+
+    await tulisDalamBatch(operasi);
+
+    tampilkanStatus(
+      "Pembaruan rekap berhasil.\n" +
+      `Data presensi diperiksa: ${dataPresensi.length}\n` +
+      `Tanggal dengan rekap: ${
+        filterTanggal
+          ? (semuaRekap.has(filterTanggal) ? 1 : 0)
+          : semuaRekap.size
+      }\n` +
+      "Dashboard publik sekarang dapat membaca hasil terbaru."
+    );
+
+  } catch (error) {
+    console.error(error);
+
+    tampilkanStatus(
+      "Pembaruan gagal.\n" +
+      error.message +
+      "\n\nPeriksa Firestore Rules, akun admin, dan koneksi."
+    );
+  } finally {
+    sedangMemproses = false;
+    ubahTombol(false);
+  }
+}
+
+$("todayButton").addEventListener("click", async () => {
+  const tanggal = $("tanggal").value;
+
+  if (!tanggal) {
+    tampilkanStatus("Pilih tanggal terlebih dahulu.");
+    return;
+  }
+
+  await perbaruiRekap(tanggal);
+});
+
+$("allButton").addEventListener("click", async () => {
+  const yakin = confirm(
+    "Perbarui seluruh rekap berdasarkan semua data presensi?"
+  );
+
+  if (yakin) {
+    await perbaruiRekap();
+  }
+});
+</script>
+</body>
+</html>
