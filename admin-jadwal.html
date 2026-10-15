@@ -180,6 +180,64 @@
       </form>
     </section>
 
+    <!---PENAMBAHAN FORM IMPORT CSV JADWAL--->
+    
+<section class="panel">
+  <h2>Import Jadwal dari CSV</h2>
+  <p class="muted">
+    Pilih file CSV UTF-8 dengan kolom hari, kelas, mataPelajaran,
+    guruUid, jamMulai, dan jamSelesai.
+  </p>
+
+  <div class="field">
+    <label for="fileJadwal">File CSV jadwal</label>
+    <input
+      id="fileJadwal"
+      type="file"
+      accept=".csv,text/csv"
+    >
+  </div>
+
+  <div class="actions">
+    <button type="button" id="btnPratinjau" class="secondary">
+      Pratinjau CSV
+    </button>
+    <button type="button" id="btnImport" class="primary">
+      Import Jadwal
+    </button>
+  </div>
+
+  <p id="infoImport" class="muted" aria-live="polite">
+    Belum ada file yang dipilih.
+  </p>
+
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Baris CSV</th>
+          <th>Hari</th>
+          <th>Kelas</th>
+          <th>Mata Pelajaran</th>
+          <th>UID Guru</th>
+          <th>Jam</th>
+          <th>Status Validasi</th>
+        </tr>
+      </thead>
+      <tbody id="pratinjauJadwal">
+        <tr>
+          <td colspan="7">Pratinjau akan tampil di sini.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+    
+    <!--->
+    
+    
+    
     <section class="panel">
       <h2>Daftar Jadwal</h2>
       <input id="cari" placeholder="Cari hari, kelas, mapel, atau guru...">
