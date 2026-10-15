@@ -88,10 +88,9 @@ if (formLogin) {
 if (profil.role === "admin") {
   location.replace("./admin.html");
 } else if (profil.role === "guru") {
-  tampilkanPesan(
-    "Login berhasil. Halaman guru akan tersedia pada tahap berikutnya.",
-    true
+  location.replace("./presensi-guru.html");
   );
+  
 } else if (profil.role === "kepsek") {
   tampilkanPesan(
     "Login berhasil. Halaman kepala sekolah akan tersedia pada tahap berikutnya.",
