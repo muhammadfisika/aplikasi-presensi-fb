@@ -1,0 +1,835 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14532d">
+  <meta name="description" content="Dashboard presensi siswa SMAN 2 Rangkasbitung">
+  <title>Presensi Siswa | SMAN 2 Rangkasbitung</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --green: #166534;
+      --green-dark: #14532d;
+      --green-light: #dcfce7;
+      --bg: #f4f7f5;
+      --card: #ffffff;
+      --text: #17251c;
+      --muted: #647067;
+      --border: #e3eae5;
+      --red: #dc2626;
+      --yellow: #d97706;
+      --blue: #2563eb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button, input, select { font: inherit; }
+
+    button { cursor: pointer; }
+
+    .topbar {
+      background: var(--green-dark);
+      color: white;
+      padding: 14px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.14);
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: #d1fae5;
+      font-size: 12px;
+    }
+
+    .login-btn {
+      border: 1px solid rgba(255,255,255,.5);
+      color: white;
+      background: transparent;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .login-btn:hover { background: rgba(255,255,255,.12); }
+
+    main {
+      width: min(1180px, 92%);
+      margin: 26px auto 40px;
+    }
+
+    .intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .intro h2 {
+      font-size: clamp(22px, 4vw, 30px);
+      margin: 0 0 7px;
+      letter-spacing: -.7px;
+    }
+
+    .intro p {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .filters {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field input, .field select {
+      min-height: 42px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 9px;
+      color: var(--text);
+      min-width: 145px;
+    }
+
+    .primary-btn {
+      min-height: 42px;
+      padding: 10px 15px;
+      border: 0;
+      background: var(--green);
+      color: white;
+      border-radius: 9px;
+      font-weight: 700;
+    }
+
+    .primary-btn:hover { background: var(--green-dark); }
+
+    .notice {
+      padding: 12px 14px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .notice.error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat, .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 3px 12px rgba(20, 50, 30, .035);
+    }
+
+    .stat { padding: 18px; }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: clamp(25px, 3vw, 32px);
+      font-weight: 800;
+      margin-top: 10px;
+    }
+
+    .stat-note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .yellow { color: var(--yellow); }
+    .blue { color: var(--blue); }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .85fr) minmax(0, 1.5fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .panel { padding: 20px; min-width: 0; }
+
+    .panel-heading {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .panel-heading h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .panel-heading p {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 0 0;
+      line-height: 1.5;
+    }
+
+    .chart-wrap {
+      width: 100%;
+      max-width: 340px;
+      height: 250px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .chart-legend {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .legend-item {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .legend-item strong {
+      color: var(--text);
+      margin-left: auto;
+    }
+
+    .progress-row { margin: 20px 0; }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .progress-label span:last-child {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .progress {
+      height: 8px;
+      background: #edf1ee;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .progress > div {
+      height: 100%;
+      border-radius: inherit;
+      transition: width .25s;
+    }
+
+    .table-panel { padding: 0; overflow: hidden; }
+
+    .table-header { padding: 20px 20px 14px; }
+
+    .table-scroll { overflow-x: auto; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    th, td {
+      padding: 13px 16px;
+      border-top: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      background: #fafcfb;
+    }
+
+    td.num, th.num { text-align: right; }
+
+    tbody tr:hover { background: #f8fbf9; }
+
+    .class-badge {
+      background: var(--green-light);
+      color: var(--green-dark);
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-weight: 700;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 16px;
+      white-space: normal;
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      padding: 20px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 800px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .chart-wrap { height: 230px; }
+    }
+
+    @media (max-width: 480px) {
+      .topbar { padding: 12px 4%; gap: 8px; }
+      .brand { gap: 8px; }
+      .brand-icon { width: 37px; height: 37px; font-size: 20px; }
+      .brand h1 { font-size: 13px; }
+      .brand p { font-size: 10px; }
+      .login-btn { padding: 9px 10px; font-size: 12px; }
+      main { width: 92%; margin-top: 20px; }
+      .intro { align-items: stretch; }
+      .filters { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+      .field input, .field select { min-width: 0; width: 100%; }
+      .filters .primary-btn { grid-column: 1 / -1; }
+      .stat { padding: 14px; border-radius: 12px; }
+      .stat-value { font-size: 25px; }
+      .panel { padding: 15px; border-radius: 13px; }
+      .table-header { padding: 16px 15px 12px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">🎓</div>
+      <div>
+        <h1>Presensi Siswa</h1>
+        <p>SMAN 2 Rangkasbitung</p>
+      </div>
+    </div>
+    <button class="login-btn" id="loginBtn" type="button">
+      Masuk / Login ↗
+    </button>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div>
+        <h2>Dashboard Presensi</h2>
+        <p>Pantau rekap kehadiran siswa berdasarkan tanggal dan kelas.</p>
+      </div>
+
+      <div class="filters">
+        <div class="field">
+          <label for="tanggal">Tanggal presensi</label>
+          <input type="date" id="tanggal">
+        </div>
+        <div class="field">
+          <label for="kelasFilter">Pilih kelas</label>
+          <select id="kelasFilter">
+            <option value="SEMUA">Semua kelas</option>
+          </select>
+        </div>
+        <button class="primary-btn" id="refreshBtn" type="button">
+          Tampilkan
+        </button>
+      </div>
+    </section>
+
+    <div class="notice" id="notice" role="status" aria-live="polite">
+      Menghubungkan ke database presensi...
+    </div>
+
+    <section class="stats">
+      <article class="stat">
+        <div class="stat-label">Total data presensi</div>
+        <div class="stat-value" id="total">0</div>
+        <div class="stat-note">Jumlah catatan per jam pelajaran</div>
+      </article>
+      <article class="stat">
+        <div class="stat-label">Hadir</div>
+        <div class="stat-value green" id="hadir">0</div>
+        <div class="stat-note" id="hadirPct">0% dari data presensi</div>
+      </article>
+      <article class="stat">
+        <div class="stat-label">Sakit + Izin</div>
+        <div class="stat-value yellow" id="sakitIzin">0</div>
+        <div class="stat-note" id="sakitIzinPct">0% dari data presensi</div>
+      </article>
+      <article class="stat">
+        <div class="stat-label">Alpa</div>
+        <div class="stat-value red" id="alpa">0</div>
+        <div class="stat-note" id="alpaPct">0% dari data presensi</div>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h3>Diagram Status Presensi</h3>
+            <p id="chartSubtitle">Ringkasan semua kelas</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="attendanceChart" aria-label="Diagram pai presensi"></canvas>
+        </div>
+        <div class="chart-legend" id="chartLegend"></div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h3>Persentase Kehadiran</h3>
+            <p>Distribusi status dari seluruh catatan presensi.</p>
+          </div>
+        </div>
+        <div id="progressArea">
+          <div class="empty">Belum ada data presensi.</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="table-header">
+        <div class="panel-heading" style="margin:0">
+          <div>
+            <h3>Rekap Presensi per Kelas</h3>
+            <p id="tableSubtitle">Data pada tanggal yang dipilih.</p>
+          </div>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Kelas</th>
+              <th class="num">Hadir</th>
+              <th class="num">Sakit</th>
+              <th class="num">Izin</th>
+              <th class="num">Alpa</th>
+              <th class="num">Total</th>
+              <th class="num">Kehadiran</th>
+            </tr>
+          </thead>
+          <tbody id="rekapBody">
+            <tr><td colspan="7" class="empty">Menunggu data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    SMAN 2 Rangkasbitung CERIA<br>
+    Cerdas, Empati, Religius, Inovatif, Aman dan nyaman.<br>
+    Aplikasi Presensi Siswa
+  </footer>
+
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    // GANTI DENGAN KONFIGURASI FIREBASE MILIK ANDA.
+    const firebaseConfig = {
+      apiKey: "GANTI_API_KEY",
+      authDomain: "GANTI_PROJECT_ID.firebaseapp.com",
+      projectId: "GANTI_PROJECT_ID",
+      storageBucket: "GANTI_STORAGE_BUCKET",
+      messagingSenderId: "GANTI_MESSAGING_SENDER_ID",
+      appId: "GANTI_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const $ = (id) => document.getElementById(id);
+
+    const STATUS = {
+      hadir: { label: "Hadir", color: "#16a34a" },
+      sakit: { label: "Sakit", color: "#f59e0b" },
+      izin:  { label: "Izin", color: "#3b82f6" },
+      alpa:  { label: "Alpa", color: "#dc2626" }
+    };
+
+    let chart = null;
+    let dataKelas = [];
+
+    function tanggalLokal(date = new Date()) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function angka(value) {
+      return Number(value || 0);
+    }
+
+    function persentase(value, total) {
+      return total ? (value / total * 100) : 0;
+    }
+
+    function formatPct(value) {
+      return `${value.toLocaleString("id-ID", {
+        maximumFractionDigits: 1
+      })}%`;
+    }
+
+    function kosongkanRingkasan() {
+      $("total").textContent = "0";
+      $("hadir").textContent = "0";
+      $("sakitIzin").textContent = "0";
+      $("alpa").textContent = "0";
+      $("hadirPct").textContent = "0% dari data presensi";
+      $("sakitIzinPct").textContent = "0% dari data presensi";
+      $("alpaPct").textContent = "0% dari data presensi";
+      $("chartLegend").innerHTML = "";
+      $("progressArea").innerHTML =
+        '<div class="empty">Belum ada data presensi.</div>';
+      $("rekapBody").innerHTML =
+        '<tr><td colspan="7" class="empty">Belum ada data pada tanggal ini.</td></tr>';
+
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+    }
+
+    function renderDashboard(classes, selectedClass) {
+      const visible = selectedClass === "SEMUA"
+        ? classes
+        : classes.filter(item => item.kelas === selectedClass);
+
+      const total = { hadir: 0, sakit: 0, izin: 0, alpa: 0 };
+
+      for (const item of visible) {
+        for (const key of Object.keys(total)) {
+          total[key] += angka(item[key]);
+        }
+      }
+
+      const n = total.hadir + total.sakit + total.izin + total.alpa;
+      $("total").textContent = n.toLocaleString("id-ID");
+      $("hadir").textContent = total.hadir.toLocaleString("id-ID");
+      $("sakitIzin").textContent =
+        (total.sakit + total.izin).toLocaleString("id-ID");
+      $("alpa").textContent = total.alpa.toLocaleString("id-ID");
+
+      $("hadirPct").textContent =
+        `${formatPct(persentase(total.hadir, n))} dari data presensi`;
+      $("sakitIzinPct").textContent =
+        `${formatPct(persentase(total.sakit + total.izin, n))} dari data presensi`;
+      $("alpaPct").textContent =
+        `${formatPct(persentase(total.alpa, n))} dari data presensi`;
+
+      $("chartSubtitle").textContent = selectedClass === "SEMUA"
+        ? "Ringkasan semua kelas"
+        : `Ringkasan kelas ${selectedClass}`;
+
+      const keys = Object.keys(STATUS);
+      const values = keys.map(key => total[key]);
+      const colors = keys.map(key => STATUS[key].color);
+
+      if (chart) chart.destroy();
+
+      chart = new Chart($("attendanceChart"), {
+        type: "doughnut",
+        data: {
+          labels: keys.map(key => STATUS[key].label),
+          datasets: [{
+            data: values,
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: "#ffffff",
+            hoverOffset: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "62%",
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: context => {
+                  const value = context.raw || 0;
+                  return `${context.label}: ${value} (${formatPct(persentase(value, n))})`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      $("chartLegend").innerHTML = keys.map(key => `
+        <div class="legend-item">
+          <span class="dot" style="background:${STATUS[key].color}"></span>
+          <span>${STATUS[key].label}</span>
+          <strong>${total[key]}</strong>
+        </div>
+      `).join("");
+
+      $("progressArea").innerHTML = keys.map(key => {
+        const pct = persentase(total[key], n);
+        return `
+          <div class="progress-row">
+            <div class="progress-label">
+              <span>${STATUS[key].label}</span>
+              <span>${total[key]} · ${formatPct(pct)}</span>
+            </div>
+            <div class="progress">
+              <div style="width:${pct}%;background:${STATUS[key].color}"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (!visible.length) {
+        $("rekapBody").innerHTML =
+          '<tr><td colspan="7" class="empty">Belum ada rekap kelas untuk tanggal ini.</td></tr>';
+        return;
+      }
+
+      $("rekapBody").innerHTML = visible
+        .slice()
+        .sort((a, b) => a.kelas.localeCompare(b.kelas, "id"))
+        .map(item => {
+          const sum = keys.reduce((acc, key) => acc + angka(item[key]), 0);
+          const hadirPct = persentase(angka(item.hadir), sum);
+
+          return `
+            <tr>
+              <td><span class="class-badge">${escapeHTML(item.kelas)}</span></td>
+              <td class="num">${angka(item.hadir)}</td>
+              <td class="num">${angka(item.sakit)}</td>
+              <td class="num">${angka(item.izin)}</td>
+              <td class="num">${angka(item.alpa)}</td>
+              <td class="num"><strong>${sum}</strong></td>
+              <td class="num">${formatPct(hadirPct)}</td>
+            </tr>
+          `;
+        }).join("");
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function isiFilterKelas(classes) {
+      const select = $("kelasFilter");
+      const sebelumnya = select.value;
+      const names = [...new Set(classes.map(item => item.kelas))].sort(
+        (a, b) => a.localeCompare(b, "id")
+      );
+
+      select.innerHTML = '<option value="SEMUA">Semua kelas</option>';
+
+      for (const name of names) {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+      }
+
+      select.value = names.includes(sebelumnya) ? sebelumnya : "SEMUA";
+    }
+
+    async function muatRekap() {
+      const tanggal = $("tanggal").value;
+      const selectedClass = $("kelasFilter").value;
+
+      if (!tanggal) {
+        $("notice").className = "notice error";
+        $("notice").textContent = "Silakan pilih tanggal terlebih dahulu.";
+        return;
+      }
+
+      $("notice").className = "notice";
+      $("notice").textContent = "Mengambil rekap dari Firebase...";
+      $("refreshBtn").disabled = true;
+
+      try {
+        // Dokumen rekap publik disimpan dengan ID tanggal YYYY-MM-DD.
+        const ref = doc(db, "rekap_publik", tanggal);
+        const snapshot = await getDoc(ref);
+
+        if (!snapshot.exists()) {
+          dataKelas = [];
+          isiFilterKelas(dataKelas);
+          kosongkanRingkasan();
+          $("tableSubtitle").textContent =
+            `Belum ada rekap tersimpan untuk ${tanggal}.`;
+          $("notice").textContent =
+            "Data rekap untuk tanggal ini belum tersedia. Setelah modul presensi dan rekap diaktifkan, data akan tampil di sini.";
+          return;
+        }
+
+        const data = snapshot.data();
+        const list = Array.isArray(data.perKelas) ? data.perKelas : [];
+
+        // Pastikan setiap kelas mempunyai empat status numerik.
+        dataKelas = list
+          .filter(item => item && typeof item.kelas === "string")
+          .map(item => ({
+            kelas: item.kelas,
+            hadir: angka(item.hadir),
+            sakit: angka(item.sakit),
+            izin: angka(item.izin),
+            alpa: angka(item.alpa)
+          }));
+
+        isiFilterKelas(dataKelas);
+        $("tableSubtitle").textContent =
+          `Tanggal: ${tanggal}. Data berupa catatan presensi setiap jam pelajaran.`;
+        $("notice").textContent =
+          `Rekap berhasil dimuat untuk tanggal ${tanggal}.`;
+
+        renderDashboard(dataKelas, selectedClass);
+        // Samakan tampilan dengan filter yang benar-benar terpilih.
+        renderDashboard(dataKelas, $("kelasFilter").value);
+
+      } catch (error) {
+        console.error("Gagal memuat rekap:", error);
+        kosongkanRingkasan();
+        $("notice").className = "notice error";
+        $("notice").textContent =
+          `Gagal mengambil data Firebase (${error.code || error.message}). Periksa konfigurasi Firebase dan Firestore Rules.`;
+      } finally {
+        $("refreshBtn").disabled = false;
+      }
+    }
+
+    $("tanggal").value = tanggalLokal();
+    $("tanggal").max = tanggalLokal();
+
+    $("refreshBtn").addEventListener("click", muatRekap);
+    $("tanggal").addEventListener("change", muatRekap);
+    $("kelasFilter").addEventListener("change", () => {
+      renderDashboard(dataKelas, $("kelasFilter").value);
+    });
+
+    $("loginBtn").addEventListener("click", () => {
+      // Form login lengkap akan dibuat pada Tahap 3.
+      alert("Fitur login admin, guru, dan kepala sekolah akan diaktifkan pada Tahap 3.");
+    });
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js")
+          .catch(error => console.warn("Service worker belum aktif:", error));
+      });
+    }
+
+    muatRekap();
+  </script>
+</body>
+</html>
