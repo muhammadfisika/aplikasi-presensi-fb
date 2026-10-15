@@ -129,6 +129,48 @@
       padding: 8px 12px;
       border-radius: 8px;
     }
+
+    .status-radio {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  min-width: 240px;
+}
+
+.status-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 2px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.status-option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #16803d;
+}
+
+.status-option:has(input:checked) {
+  border-color: #16803d;
+  background: #ecfdf3;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .status-radio {
+    min-width: 220px;
+  }
+}
+
+
+    
   </style>
 </head>
 
