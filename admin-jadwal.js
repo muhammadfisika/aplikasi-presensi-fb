@@ -364,7 +364,7 @@ function parseCSVJadwal(teks) {
       } else {
         dalamKutip = !dalamKutip;
       }
-    } else if (c === "," && !dalamKutip) {
+    } else if (c === ";" && !dalamKutip) {
       baris.push(nilai.trim());
       nilai = "";
     } else if ((c === "\n" || c === "\r") && !dalamKutip) {
