@@ -82,18 +82,25 @@ if (formLogin) {
 
       const profil = await periksaPeran(hasil.user);
 
-      // Tahap 3: verifikasi login dan peran.
-      // Halaman fitur sesuai peran dibuat pada tahap berikutnya.
-     
 if (profil.role === "admin") {
-  location.replace("./admin.html");
+  // Alur login admin tetap seperti sebelumnya.
+  window.location.replace("./admin.html");
+
 } else if (profil.role === "guru") {
-  location.replace("./presensi-guru.html");
+  // Arahkan guru ke halaman presensi.
+  window.location.replace("./presensi-guru.html");
+
 } else if (profil.role === "kepsek") {
-  // Halaman kepala sekolah akan dibuat pada tahap berikutnya.
+  // Halaman kepala sekolah belum dibuat.
   tampilkanPesan(
-    "Login berhasil. Halaman kepala sekolah akan tersedia pada tahap berikutnya.",
+    "Login berhasil. Halaman kepala sekolah tersedia pada tahap berikutnya.",
     true
+  );
+
+} else {
+  tampilkanPesan(
+    "Peran akun tidak dikenali. Hubungi administrator.",
+    false
   );
 }
 
