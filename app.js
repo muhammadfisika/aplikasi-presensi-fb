@@ -88,7 +88,7 @@ if (profil.role === "admin") {
 } else if (profil.role === "guru") {
   window.location.replace("./presensi-guru.html");
 } else if (profil.role === "kepsek") {
-  window.location.replace("./index.html");
+  window.location.replace("./kepsek.html");
 } else {
   throw new Error("Peran akun tidak dikenali. Hubungi administrator.");
 }
