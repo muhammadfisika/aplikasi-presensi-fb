@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#123b2c">
-  <title>Pemantauan Presensi Guru</title>
+  <title>Pemantauan Presensi Guru | SMAN 2 Rangkasbitung</title>
 
   <link rel="stylesheet" href="./css/style.css">
 
@@ -14,7 +14,6 @@
       --hijau: #176b48;
       --gelap: #123b2c;
       --merah: #b42318;
-      --kuning: #946200;
       --latar: #f3f6f4;
       --garis: #dce5df;
     }
@@ -41,8 +40,8 @@
 
     header p {
       margin: 0;
-      opacity: .9;
       font-size: 14px;
+      opacity: .9;
     }
 
     main {
@@ -60,12 +59,14 @@
       box-shadow: 0 2px 8px #00000008;
     }
 
-    .kontrol {
+    .kontrol, .filter {
       display: flex;
       gap: 12px;
       align-items: end;
       flex-wrap: wrap;
     }
+
+    .filter { margin-bottom: 15px; }
 
     .field {
       display: flex;
@@ -93,22 +94,27 @@
       font-weight: bold;
     }
 
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+    }
+
     .btn-utama {
-      background: var(--hijau);
       color: white;
+      background: var(--hijau);
       border-color: var(--hijau);
     }
 
     .btn-netral {
-      background: white;
       color: var(--gelap);
+      background: white;
     }
 
     .ringkasan {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
-      margin-bottom: 18px;
+      margin: 18px 0;
     }
 
     .angka {
@@ -119,8 +125,8 @@
     }
 
     .angka .label {
-      font-size: 13px;
       color: #5c6b61;
+      font-size: 13px;
       margin-bottom: 9px;
     }
 
@@ -129,19 +135,23 @@
       font-weight: bold;
     }
 
+    .total { color: var(--gelap); }
     .sudah { color: var(--hijau); }
     .belum { color: var(--merah); }
-    .total { color: var(--gelap); }
 
-    .filter {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-bottom: 15px;
+    .pesan {
+      padding: 12px;
+      border-radius: 8px;
+      background: #eef4ef;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+      margin: 0 0 18px;
     }
 
-    .filter select { min-width: 190px; }
+    .error {
+      color: #a32018;
+      background: #fff0ee;
+    }
 
     .tabel-wrap {
       width: 100%;
@@ -150,9 +160,9 @@
 
     table {
       width: 100%;
+      min-width: 720px;
       border-collapse: collapse;
       font-size: 13px;
-      min-width: 720px;
     }
 
     th, td {
@@ -170,45 +180,26 @@
 
     .badge {
       display: inline-block;
-      border-radius: 20px;
       padding: 5px 9px;
+      border-radius: 20px;
       font-size: 12px;
       font-weight: bold;
       white-space: nowrap;
     }
 
     .badge-sudah {
-      background: #d9f4e3;
       color: #176b48;
+      background: #d9f4e3;
     }
 
     .badge-belum {
-      background: #fde5e3;
       color: #a32018;
+      background: #fde5e3;
     }
 
     .badge-jadwal {
-      background: #fff1c9;
       color: #795600;
-    }
-
-    .pesan {
-      padding: 12px;
-      border-radius: 8px;
-      background: #eef4ef;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    .error {
-      color: #a32018;
-      background: #fff0ee;
-    }
-
-    .catatan {
-      font-size: 12px;
-      color: #637066;
-      line-height: 1.6;
+      background: #fff1c9;
     }
 
     .kosong {
@@ -217,12 +208,20 @@
       color: #647067;
     }
 
+    .catatan {
+      color: #637066;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
     footer {
       padding: 20px;
       text-align: center;
-      font-size: 12px;
       color: #657067;
+      font-size: 12px;
     }
+
+    a { color: var(--hijau); }
 
     @media (max-width: 600px) {
       main { padding: 12px; }
@@ -248,11 +247,11 @@
           <input type="date" id="tanggalPantau">
         </div>
 
-        <button class="btn-utama" id="btnMuat">
+        <button class="btn-utama" id="btnMuat" disabled>
           Tampilkan Data
         </button>
 
-        <button class="btn-netral" id="btnHariIni">
+        <button class="btn-netral" id="btnHariIni" disabled>
           Hari Ini
         </button>
 
@@ -263,10 +262,10 @@
     </section>
 
     <div id="statusDashboard" class="pesan" role="status">
-      Menghubungkan ke Firebase...
+      Memeriksa sesi login Firebase...
     </div>
 
-    <section class="ringkasan" style="margin-top:18px">
+    <section class="ringkasan">
       <div class="angka">
         <div class="label">Total Guru Aktif</div>
         <div class="nilai total" id="jumlahGuru">—</div>
@@ -301,10 +300,10 @@
         <div class="field">
           <label for="cariGuru">Cari nama atau mata pelajaran</label>
           <input id="cariGuru" type="search"
-            placeholder="Ketik nama guru...">
+            placeholder="Ketik nama guru..." disabled>
         </div>
 
-        <button class="btn-netral" id="btnCsv">
+        <button class="btn-netral" id="btnCsv" disabled>
           Unduh CSV
         </button>
       </div>
@@ -325,7 +324,7 @@
           <tbody id="tabelGuru">
             <tr>
               <td colspan="7" class="kosong">
-                Menunggu data Firebase...
+                Menunggu autentikasi...
               </td>
             </tr>
           </tbody>
@@ -342,14 +341,15 @@
   </footer>
 
   <script type="module">
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
     import {
       getAuth,
       onAuthStateChanged,
-      signOut
+      signOut,
+      setPersistence,
+      browserLocalPersistence
     } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
     import {
@@ -362,14 +362,15 @@
       where
     } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
+    // WAJIB: salin konfigurasi aktual dari Firebase Console.
     const firebaseConfig = {
-      apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmNnrCfWWhCI",
-      authDomain: "aplikasi-presensi-fb.firebaseapp.com",
-      projectId: "aplikasi-presensi-fb",
-      storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
-      messagingSenderId: "1018611782868",
-      appId: "1:1018611782868:web:37304037cece90197c9741"
-    };
+  apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmnNrCfWWhCI",
+  authDomain: "aplikasi-presensi-fb.firebaseapp.com",
+  projectId: "aplikasi-presensi-fb",
+  storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
+  messagingSenderId: "1018611782868",
+  appId: "1:1018611782868:web:37304037cece90197c9741"
+};
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -383,6 +384,7 @@
     let dataJadwal = [];
     let dataPresensi = [];
     let sedangMemuat = false;
+    let sedangKeluar = false;
 
     function tanggalLokal(date = new Date()) {
       const tahun = date.getFullYear();
@@ -430,25 +432,30 @@
     function hariIndonesia(dateString) {
       const [y, m, d] = dateString.split("-").map(Number);
       const date = new Date(y, m - 1, d);
+
       return [
         "Minggu", "Senin", "Selasa", "Rabu",
         "Kamis", "Jumat", "Sabtu"
       ][date.getDay()];
     }
 
-    function samaHari(a, b) {
-      return String(a || "").trim().toLowerCase()
-        === String(b || "").trim().toLowerCase();
-    }
-
     function tanggalPresensi(data) {
       return normalisasiTanggal(
-        data.tanggal ?? data.tanggalPresensi ?? data.waktuPresensi
+        data.tanggal ??
+        data.tanggalPresensi ??
+        data.waktuPresensi
       );
     }
 
     function namaGuru(data) {
-      return String(data.nama ?? data.guruNama ?? data.namaGuru ?? "").trim();
+      return String(
+        data.nama ?? data.guruNama ?? data.namaGuru ?? ""
+      ).trim();
+    }
+
+    function samaHari(a, b) {
+      return String(a || "").trim().toLowerCase() ===
+        String(b || "").trim().toLowerCase();
     }
 
     function tampilkanStatus(pesan, gagal = false) {
@@ -461,23 +468,27 @@
       el("btnMuat").disabled = !aktif;
       el("btnHariIni").disabled = !aktif;
       el("btnCsv").disabled = !aktif;
+      el("cariGuru").disabled = !aktif;
     }
 
     async function periksaKepsek(user) {
-      const profilRef = doc(db, "users", user.uid);
-      const profilSnap = await getDoc(profilRef);
+      const profilSnap = await getDoc(
+        doc(db, "users", user.uid)
+      );
 
       if (!profilSnap.exists()) {
         throw new Error(
-          "Profil pengguna tidak ditemukan pada users/" + user.uid
+          "Profil tidak ditemukan pada users/" + user.uid +
+          ". Pastikan ID dokumen sama dengan UID Authentication."
         );
       }
 
       const profil = profilSnap.data();
+      const role = String(profil.role || "").trim().toLowerCase();
 
-      if (profil.role !== "kepsek" || profil.aktif !== true) {
+      if (role !== "kepsek" || profil.aktif !== true) {
         throw new Error(
-          "Halaman ini hanya untuk akun kepsek aktif."
+          "Akun harus memiliki role kepsek dan aktif bernilai boolean true."
         );
       }
     }
@@ -497,14 +508,12 @@
       tampilkanStatus("Mengambil data guru, jadwal, dan presensi...");
 
       try {
-        // Ambil guru aktif.
         const guruQuery = query(
           collection(db, "users"),
           where("role", "==", "guru"),
           where("aktif", "==", true)
         );
 
-        // Koleksi jadwal dibaca untuk mengenali jadwal pada hari pilihan.
         const [guruSnap, jadwalSnap] = await Promise.all([
           getDocs(guruQuery),
           getDocs(collection(db, "jadwal"))
@@ -520,7 +529,8 @@
           ...d.data()
         })).filter(j => j.aktif === true);
 
-        // Query tanggal terpilih, bukan seluruh riwayat presensi.
+        // Sesuaikan jika field tanggal pada dokumen presensi
+        // Anda ternyata bukan string YYYY-MM-DD.
         const presensiQuery = query(
           collection(db, "presensi"),
           where("tanggal", "==", tanggal)
@@ -540,18 +550,23 @@
         );
 
       } catch (error) {
-        console.error("Kesalahan membaca pemantauan presensi:", error);
+        console.error("[Kepsek] Gagal membaca data:", error);
 
         tampilkanStatus(
-          "Gagal membaca data Firebase: " +
-          (error.code || "") + " " + error.message,
+          "Gagal membaca Firebase: " +
+          (error.code ? error.code + " — " : "") +
+          error.message,
           true
         );
 
         el("tabelGuru").innerHTML = `
-          <tr><td colspan="7" class="kosong">
-            Data tidak dapat dimuat. Periksa Firestore Rules dan Console.
-          </td></tr>`;
+          <tr>
+            <td colspan="7" class="kosong">
+              Data tidak dapat dimuat. Periksa Firestore Rules,
+              nama field, dan Console.
+            </td>
+          </tr>
+        `;
 
       } finally {
         sedangMemuat = false;
@@ -575,26 +590,23 @@
         );
 
         const nama = namaGuru(guru) || guru.email || guru.uid;
-
-        // Data guru dianggap sudah presensi jika ada setidaknya
-        // satu dokumen presensi pada tanggal yang dipilih.
         const sudah = catatan.length > 0;
 
-        const mapelJadwal = [...new Set(
-          jadwalGuru.map(j => j.mataPelajaran).filter(Boolean)
-        )];
+        const mapelJadwal = jadwalGuru
+          .map(j => j.mataPelajaran)
+          .filter(Boolean);
 
-        const kelasJadwal = [...new Set(
-          jadwalGuru.map(j => j.kelas).filter(Boolean)
-        )];
+        const kelasJadwal = jadwalGuru
+          .map(j => j.kelas)
+          .filter(Boolean);
 
-        const mapelCatatan = [...new Set(
-          catatan.map(p => p.mataPelajaran ?? p.mapel).filter(Boolean)
-        )];
+        const mapelCatatan = catatan
+          .map(p => p.mataPelajaran ?? p.mapel)
+          .filter(Boolean);
 
-        const kelasCatatan = [...new Set(
-          catatan.map(p => p.kelas ?? p.namaKelas).filter(Boolean)
-        )];
+        const kelasCatatan = catatan
+          .map(p => p.kelas ?? p.namaKelas)
+          .filter(Boolean);
 
         const mapel = [...new Set([...mapelJadwal, ...mapelCatatan])];
         const kelas = [...new Set([...kelasJadwal, ...kelasCatatan])];
@@ -619,22 +631,24 @@
       dataTampilan = daftar;
 
       el("jumlahGuru").textContent = daftar.length;
-      el("jumlahSudah").textContent = daftar.filter(g => g.sudah).length;
-      el("jumlahBelum").textContent = daftar.filter(g => !g.sudah).length;
+      el("jumlahSudah").textContent =
+        daftar.filter(g => g.sudah).length;
+      el("jumlahBelum").textContent =
+        daftar.filter(g => !g.sudah).length;
 
       el("catatanData").textContent =
-        "Status dihitung berdasarkan adanya dokumen presensi guru " +
-        "pada tanggal pilihan. Jadwal ditampilkan jika tersedia dan " +
-        "memiliki guruUid, hari, kelas, serta mataPelajaran yang sesuai.";
+        "Status dihitung dari adanya dokumen presensi pada tanggal " +
+        "yang dipilih. Guru tanpa jadwal pada hari tersebut tetap " +
+        "ditampilkan dalam daftar guru aktif.";
 
       renderTabel();
     }
 
-    function renderTabel() {
+    function dataTerfilter() {
       const filter = el("filterStatus").value;
       const cari = el("cariGuru").value.trim().toLowerCase();
 
-      const hasil = dataTampilan.filter(g => {
+      return dataTampilan.filter(g => {
         const sesuaiStatus =
           filter === "semua" ||
           (filter === "sudah" && g.sudah) ||
@@ -646,12 +660,19 @@
 
         return sesuaiStatus && teks.includes(cari);
       });
+    }
+
+    function renderTabel() {
+      const hasil = dataTerfilter();
 
       if (hasil.length === 0) {
         el("tabelGuru").innerHTML = `
-          <tr><td colspan="7" class="kosong">
-            Tidak ada guru yang cocok dengan filter.
-          </td></tr>`;
+          <tr>
+            <td colspan="7" class="kosong">
+              Tidak ada guru yang cocok dengan filter.
+            </td>
+          </tr>
+        `;
         return;
       }
 
@@ -660,7 +681,9 @@
           <td>${i + 1}</td>
           <td>
             <strong>${escapeHTML(g.nama)}</strong>
-            ${g.email ? `<br><small>${escapeHTML(g.email)}</small>` : ""}
+            ${g.email
+              ? `<br><small>${escapeHTML(g.email)}</small>`
+              : ""}
           </td>
           <td>${escapeHTML(g.mapel.join(", ") || "—")}</td>
           <td>${escapeHTML(g.kelas.join(", ") || "—")}</td>
@@ -680,22 +703,9 @@
     }
 
     function unduhCSV() {
-      const filter = el("filterStatus").value;
-      const cari = el("cariGuru").value.trim().toLowerCase();
+      if (!penggunaSiap) return;
 
-      const hasil = dataTampilan.filter(g => {
-        const sesuaiStatus =
-          filter === "semua" ||
-          (filter === "sudah" && g.sudah) ||
-          (filter === "belum" && !g.sudah);
-
-        const teks = [
-          g.nama, g.email, ...g.mapel, ...g.kelas
-        ].join(" ").toLowerCase();
-
-        return sesuaiStatus && teks.includes(cari);
-      });
-
+      const hasil = dataTerfilter();
       const kolom = [
         "Tanggal", "Nama Guru", "Email", "Mata Pelajaran",
         "Kelas", "Jumlah Jadwal", "Status", "Jumlah Catatan"
@@ -725,8 +735,12 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `pemantauan-guru-${el("tanggalPantau").value}.csv`;
+      a.download =
+        `pemantauan-guru-${el("tanggalPantau").value}.csv`;
+
+      document.body.appendChild(a);
       a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     }
 
@@ -742,76 +756,91 @@
     el("btnCsv").addEventListener("click", unduhCSV);
 
     el("btnKeluar").addEventListener("click", async () => {
+      if (sedangKeluar) return;
+      sedangKeluar = true;
+      el("btnKeluar").disabled = true;
+
       try {
         await signOut(auth);
         window.location.replace("./login.html");
       } catch (error) {
-        tampilkanStatus("Gagal keluar: " + error.message, true);
+        sedangKeluar = false;
+        el("btnKeluar").disabled = false;
+
+        tampilkanStatus(
+          "Gagal keluar: " + error.message,
+          true
+        );
       }
     });
 
     el("tanggalPantau").value = tanggalLokal();
 
-    
+    // Tunggu pengaturan persistensi sebelum mendengarkan sesi.
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+    } catch (error) {
+      console.error("[Kepsek] Gagal mengatur persistensi:", error);
+      tampilkanStatus(
+        "Tidak dapat mengatur sesi Firebase: " + error.message,
+        true
+      );
+    }
 
-onAuthStateChanged(auth, async (user) => {
-  // Firebase sudah selesai memeriksa status autentikasi.
-  if (!user) {
-    penggunaSiap = false;
-    aktifkanTombol(false);
+    onAuthStateChanged(auth, async (user) => {
+      console.log(
+        "[Kepsek] Status autentikasi:",
+        user ? "LOGIN" : "TIDAK ADA SESI",
+        user ? user.uid : ""
+      );
 
-    tampilkanStatus(
-      "Sesi login tidak ditemukan. Silakan login kembali.",
-      true
-    );
+      if (!user) {
+        penggunaSiap = false;
+        aktifkanTombol(false);
 
-    el("tabelGuru").innerHTML = `
-      <tr>
-        <td colspan="7" class="kosong">
-          Anda belum login. Silakan kembali ke halaman login.
-          <br><br>
-          <a href="./login.html">Kembali ke Login</a>
-        </td>
-      </tr>
-    `;
+        tampilkanStatus(
+          "Sesi login tidak ditemukan. Silakan login kembali.",
+          true
+        );
 
-    return;
-  }
+        el("tabelGuru").innerHTML = `
+          <tr>
+            <td colspan="7" class="kosong">
+              Sesi login tidak ditemukan.
+              <br><br>
+              <a href="./login.html">Kembali ke halaman login</a>
+            </td>
+          </tr>
+        `;
+        return;
+      }
 
-  try {
-    // Periksa profil pengguna yang sedang login.
-    await periksaKepsek(user);
+      try {
+        await periksaKepsek(user);
 
-    penggunaSiap = true;
-    aktifkanTombol(true);
+        penggunaSiap = true;
+        aktifkanTombol(true);
 
-    tampilkanStatus(
-      "Login berhasil. Memuat pemantauan presensi guru..."
-    );
+        tampilkanStatus(
+          "Login terverifikasi. Memuat data pemantauan..."
+        );
 
-    // Gunakan fungsi yang benar-benar tersedia di file ini.
-    await muatData();
+        await muatData();
 
-  } catch (error) {
-    console.error(
-      "Pemeriksaan akun atau pemuatan dashboard gagal:",
-      error
-    );
+      } catch (error) {
+        console.error("[Kepsek] Pemeriksaan gagal:", error);
 
-    penggunaSiap = false;
-    aktifkanTombol(false);
+        penggunaSiap = false;
+        aktifkanTombol(false);
 
-    tampilkanStatus(
-      "Gagal membuka dashboard: " +
-      (error.code ? error.code + " — " : "") +
-      error.message,
-      true
-    );
-  }
-});
-
-
-    
+        tampilkanStatus(
+          "Gagal membuka dashboard: " +
+          (error.code ? error.code + " — " : "") +
+          error.message,
+          true
+        );
+      }
+    });
   </script>
 </body>
 </html>
