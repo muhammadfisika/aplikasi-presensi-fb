@@ -377,6 +377,168 @@ async function muatJadwalGuru() {
 }
 
 
+/* =====================================================
+   INPUT JADWAL OLEH GURU
+   Menyimpan ke collection "jadwal" yang sudah ada.
+===================================================== */
+
+const btnBukaFormJadwal =
+  document.getElementById("btnBukaFormJadwal");
+
+const panelInputJadwal =
+  document.getElementById("panelInputJadwal");
+
+const inputHari = document.getElementById("inputHari");
+const inputKelas = document.getElementById("inputKelas");
+const inputMapel = document.getElementById("inputMapel");
+const inputJamMulai = document.getElementById("inputJamMulai");
+const inputJamSelesai = document.getElementById("inputJamSelesai");
+
+const btnSimpanJadwal =
+  document.getElementById("btnSimpanJadwal");
+
+const btnBatalJadwal =
+  document.getElementById("btnBatalJadwal");
+
+const pesanInputJadwal =
+  document.getElementById("pesanInputJadwal");
+
+function pesanFormJadwal(teks, error = false) {
+  if (!pesanInputJadwal) return;
+
+  pesanInputJadwal.textContent = teks;
+  pesanInputJadwal.style.color = error ? "#b91c1c" : "#166534";
+}
+
+function bukaFormJadwal() {
+  if (!guruAktif) {
+    tampilkanPesan("Profil guru belum siap. Silakan tunggu.", true);
+    return;
+  }
+
+  if (panelInputJadwal) {
+    panelInputJadwal.hidden = false;
+  }
+
+  pesanFormJadwal("");
+}
+
+function tutupFormJadwal() {
+  if (panelInputJadwal) {
+    panelInputJadwal.hidden = true;
+  }
+
+  if (inputHari) inputHari.value = "";
+  if (inputKelas) inputKelas.value = "";
+  if (inputMapel) inputMapel.value = "";
+  if (inputJamMulai) inputJamMulai.value = "";
+  if (inputJamSelesai) inputJamSelesai.value = "";
+
+  pesanFormJadwal("");
+}
+
+async function simpanJadwalGuru() {
+  if (!auth.currentUser || !guruAktif) {
+    pesanFormJadwal("Sesi login tidak ditemukan.", true);
+    return;
+  }
+
+  // Pastikan pengguna yang mengirim masih sama dengan
+  // guru yang telah diverifikasi ketika login.
+  if (auth.currentUser.uid !== guruAktif.uid) {
+    pesanFormJadwal("Sesi akun berubah. Silakan login kembali.", true);
+    return;
+  }
+
+  const hari = inputHari?.value.trim();
+  const kelas = inputKelas?.value.trim();
+  const mataPelajaran = inputMapel?.value.trim();
+  const jamMulai = inputJamMulai?.value;
+  const jamSelesai = inputJamSelesai?.value;
+
+  if (!hari || !kelas || !mataPelajaran ||
+      !jamMulai || !jamSelesai) {
+    pesanFormJadwal("Semua kolom wajib diisi.", true);
+    return;
+  }
+
+  if (jamMulai >= jamSelesai) {
+    pesanFormJadwal(
+      "Jam selesai harus lebih besar daripada jam mulai.",
+      true
+    );
+    return;
+  }
+
+  if (kelas.length > 30 || mataPelajaran.length > 100) {
+    pesanFormJadwal("Kelas atau mata pelajaran terlalu panjang.", true);
+    return;
+  }
+
+  btnSimpanJadwal.disabled = true;
+  btnSimpanJadwal.textContent = "Menyimpan...";
+
+  try {
+    // Format jam disimpan sebagai string HH:mm.
+    // Ini sesuai dengan input type="time".
+    const dataJadwal = {
+      guruUid: guruAktif.uid,
+      guruNama: guruAktif.nama,
+      hari,
+      kelas,
+      mataPelajaran,
+      jamMulai,
+      jamSelesai,
+      aktif: true,
+      diperbaruiPada: serverTimestamp()
+    };
+
+    // Auto-ID agar jadwal yang berbeda tidak saling menimpa.
+    const refJadwalBaru = doc(collection(db, "jadwal"));
+
+    await setDoc(refJadwalBaru, {
+      ...dataJadwal,
+      dibuatPada: serverTimestamp()
+    });
+
+    pesanFormJadwal(
+      `Jadwal ${hari}, kelas ${kelas}, ${mataPelajaran} berhasil disimpan.`
+    );
+
+    // Jika jadwal sesuai tanggal yang dipilih,
+    // perbarui daftar jadwal pada dropdown.
+    await muatJadwalGuru();
+
+    // Bersihkan formulir setelah berhasil.
+    if (inputKelas) inputKelas.value = "";
+    if (inputMapel) inputMapel.value = "";
+    if (inputJamMulai) inputJamMulai.value = "";
+    if (inputJamSelesai) inputJamSelesai.value = "";
+    if (inputKelas) inputKelas.focus();
+
+  } catch (error) {
+    console.error("Gagal menyimpan jadwal:", error);
+
+    pesanFormJadwal(
+      error.code === "permission-denied"
+        ? "Penyimpanan ditolak oleh Firestore Rules. Aturan collection jadwal perlu mengizinkan guru membuat jadwal miliknya."
+        : `Gagal menyimpan jadwal: ${error.message}`,
+      true
+    );
+  } finally {
+    btnSimpanJadwal.disabled = false;
+    btnSimpanJadwal.textContent = "Simpan Jadwal";
+  }
+}
+
+btnBukaFormJadwal?.addEventListener("click", bukaFormJadwal);
+btnBatalJadwal?.addEventListener("click", tutupFormJadwal);
+btnSimpanJadwal?.addEventListener("click", simpanJadwalGuru);
+
+
+
+
+
 // =====================================================
 // MEMUAT DATA SISWA DALAM KELAS TERPILIH
 // =====================================================
