@@ -753,35 +753,55 @@
     el("tanggalPantau").value = tanggalLokal();
 
     
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    tampilkanStatus(
-      "Sesi login belum tersedia. Silakan login kembali.",
-      true
-    );
+let pemeriksaanSesiSelesai = false;
 
-    // Jangan langsung redirect ke login.html di sini.
-    // Biarkan Firebase menyelesaikan pemeriksaan sesi.
+onAuthStateChanged(auth, async (user) => {
+  if (pemeriksaanSesiSelesai) return;
+  pemeriksaanSesiSelesai = true;
+
+  if (!user) {
+    document.body.innerHTML = `
+      <main style="padding:24px;font-family:Arial,sans-serif">
+        <h2>Sesi login belum tersedia</h2>
+        <p>Silakan login kembali untuk membuka halaman kepala sekolah.</p>
+        <a href="./login.html">Kembali ke halaman login</a>
+      </main>
+    `;
     return;
   }
 
-  penggunaSiap = false;
-  aktifkanTombol(false);
-
   try {
-    await periksaKepsek(user);
+    const profilRef = doc(db, "users", user.uid);
+    const profilSnap = await getDoc(profilRef);
 
-    penggunaSiap = true;
-    aktifkanTombol(true);
+    if (!profilSnap.exists()) {
+      throw new Error(
+        "Profil pengguna tidak ditemukan pada users/" + user.uid
+      );
+    }
 
-    await muatData();
+    const profil = profilSnap.data();
+
+    if (profil.role !== "kepsek" || profil.aktif !== true) {
+      throw new Error(
+        "Akun harus memiliki role kepsek dan aktif bernilai true."
+      );
+    }
+
+    // Lanjutkan pemuatan dashboard kepsek di sini.
+    // Panggil fungsi pemuatan dashboard yang sudah ada.
+    await muatDashboardKepsek();
+
   } catch (error) {
-    console.error("Pemeriksaan akun kepsek gagal:", error);
+    console.error("Pemeriksaan sesi kepsek gagal:", error);
 
-    tampilkanStatus(
-      "Akun kepsek tidak dapat diverifikasi: " + error.message,
-      true
-    );
+    document.body.innerHTML = `
+      <main style="padding:24px;font-family:Arial,sans-serif">
+        <h2>Gagal membuka dashboard</h2>
+        <p>${error.message}</p>
+        <a href="./login.html">Kembali ke halaman login</a>
+      </main>
+    `;
   }
 });
 
