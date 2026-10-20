@@ -10,10 +10,8 @@
 
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./icon-192.png">
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <link rel="stylesheet" href="./css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
@@ -38,13 +36,8 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    button, input, select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
 
     .topbar {
       background: var(--navy);
@@ -57,22 +50,9 @@
       flex-wrap: wrap;
     }
 
-    .school-title {
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .school-subtitle {
-      font-size: 13px;
-      opacity: .9;
-      margin-top: 5px;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .school-title { font-size: 20px; font-weight: 800; }
+    .school-subtitle { font-size: 13px; opacity: .9; margin-top: 5px; }
+    .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
     .btn {
       border: 0;
@@ -83,37 +63,14 @@
       color: var(--navy);
     }
 
-    .btn-primary {
-      background: var(--blue);
-      color: white;
-    }
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-outline { background: transparent; color: white; border: 1px solid #ffffff80; }
+    .btn:disabled { opacity: .6; cursor: wait; }
 
-    .btn-outline {
-      background: transparent;
-      color: white;
-      border: 1px solid #ffffff80;
-    }
-
-    .container {
-      width: min(1250px, 100%);
-      margin: auto;
-      padding: 22px;
-    }
-
-    .welcome {
-      margin-bottom: 20px;
-    }
-
-    .welcome h1 {
-      font-size: 25px;
-      margin: 0 0 7px;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
+    .container { width: min(1250px, 100%); margin: auto; padding: 22px; }
+    .welcome { margin-bottom: 20px; }
+    .welcome h1 { font-size: 25px; margin: 0 0 7px; }
+    .muted { color: var(--muted); font-size: 13px; line-height: 1.6; }
 
     .panel {
       background: white;
@@ -125,10 +82,7 @@
       min-width: 0;
     }
 
-    .panel h2 {
-      font-size: 17px;
-      margin: 0 0 15px;
-    }
+    .panel h2 { font-size: 17px; margin: 0 0 15px; }
 
     .filters {
       display: grid;
@@ -158,16 +112,11 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      margin-top: 14px;
     }
 
-    .filter-buttons .btn {
-      border: 1px solid var(--border);
-      min-height: 42px;
-    }
-
-    .filter-buttons .btn-primary {
-      border: 0;
-    }
+    .filter-buttons .btn { border: 1px solid var(--border); min-height: 42px; }
+    .filter-buttons .btn-primary { border: 0; }
 
     .status {
       padding: 11px 13px;
@@ -180,15 +129,8 @@
       overflow-wrap: anywhere;
     }
 
-    .status.error {
-      background: #fff0f0;
-      color: #a32020;
-    }
-
-    .status.success {
-      background: #eaf8ef;
-      color: #176b37;
-    }
+    .status.error { background: #fff0f0; color: #a32020; }
+    .status.success { background: #eaf8ef; color: #176b37; }
 
     .cards {
       display: grid;
@@ -205,18 +147,8 @@
       min-width: 0;
     }
 
-    .stat-label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .stat-number {
-      font-size: 29px;
-      font-weight: 800;
-      margin-top: 9px;
-      overflow-wrap: anywhere;
-    }
+    .stat-label { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .stat-number { font-size: 29px; font-weight: 800; margin-top: 9px; overflow-wrap: anywhere; }
 
     .stat-card.hadir { border-top: 4px solid var(--green); }
     .stat-card.sakit { border-top: 4px solid var(--yellow); }
@@ -231,39 +163,12 @@
       align-items: stretch;
     }
 
-    .chart-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 390px;
-      height: 290px;
-      margin: auto;
-    }
+    .chart-wrap { position: relative; width: 100%; max-width: 390px; height: 290px; margin: auto; }
+    .table-wrap { width: 100%; overflow-x: auto; }
 
-    .table-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      min-width: 590px;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 12px 10px;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-
-    th {
-      background: #f6f8fc;
-      font-size: 12px;
-      color: #43536a;
-    }
-
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 550px; }
+    th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    th { background: #f6f8fc; font-size: 12px; color: #43536a; }
     .num { text-align: center; }
 
     .badge {
@@ -283,18 +188,8 @@
       flex-wrap: wrap;
     }
 
-    .footer {
-      text-align: center;
-      padding: 20px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 24px 10px;
-    }
+    .footer { text-align: center; padding: 20px; color: var(--muted); font-size: 12px; }
+    .empty { text-align: center; color: var(--muted); padding: 24px 10px; }
 
     @media (max-width: 950px) {
       .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -316,805 +211,754 @@
 </head>
 
 <body>
-  <header class="topbar">
-    <div>
-      <div class="school-title">SMAN 2 RANGKASBITUNG</div>
-      <div class="school-subtitle">Dashboard Presensi Siswa</div>
+<header class="topbar">
+  <div>
+    <div class="school-title">SMAN 2 RANGKASBITUNG</div>
+    <div class="school-subtitle">Dashboard Presensi Siswa</div>
+  </div>
+
+  <div class="top-actions">
+    <button class="btn btn-outline" id="btnRefresh" type="button">↻ Muat Ulang</button>
+    <button class="btn btn-primary" id="btnLogin" type="button">Login Pengguna</button>
+    <button class="btn btn-outline" id="btnKeluar" type="button" hidden>Keluar</button>
+  </div>
+</header>
+
+<main class="container">
+  <section class="welcome">
+    <h1>Rekapitulasi Presensi Siswa</h1>
+    <div class="muted">
+      Rekap berdasarkan catatan presensi yang tersimpan di Firebase.
+      Halaman ini menampilkan jumlah agregat, bukan identitas siswa.
+    </div>
+  </section>
+
+  <div id="pesan" class="status" role="status" aria-live="polite">
+    Memeriksa sesi dan menghubungkan ke Firebase...
+  </div>
+
+  <section class="panel">
+    <h2>Filter Presensi</h2>
+
+    <div class="filters">
+      <div class="field">
+        <label for="tanggal">Tanggal rekap</label>
+        <input type="date" id="tanggal">
+      </div>
+
+      <div class="field">
+        <label for="kelas">Kelas</label>
+        <select id="kelas">
+          <option value="">Semua kelas</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="dariTanggal">Riwayat dari tanggal</label>
+        <input type="date" id="dariTanggal">
+      </div>
+
+      <div class="field">
+        <label for="sampaiTanggal">Riwayat sampai tanggal</label>
+        <input type="date" id="sampaiTanggal">
+      </div>
     </div>
 
-    <div class="top-actions">
-      <button class="btn btn-outline" id="btnRefresh" type="button">
-        ↻ Muat Ulang
-      </button>
-      <button class="btn btn-primary" id="btnLogin" type="button">
-        Login Pengguna
-      </button>
+    <div class="filter-buttons">
+      <button class="btn btn-primary" id="btnTerapkan" type="button">Tampilkan Rekap</button>
+      <button class="btn" id="btnRiwayat" type="button">Tampilkan Riwayat</button>
+      <button class="btn" id="btnCSV" type="button">Unduh CSV</button>
     </div>
-  </header>
+  </section>
 
-  <main class="container">
-    <section class="welcome">
-      <h1>Rekapitulasi Presensi Siswa</h1>
-      <div class="muted">
-        Data ditampilkan langsung dari catatan presensi guru di Firebase.
-      </div>
-    </section>
-
-    <div id="pesan" class="status" role="status" aria-live="polite">
-      Menghubungkan ke Firebase...
+  <section class="cards">
+    <div class="stat-card total">
+      <div class="stat-label">Total Catatan Presensi</div>
+      <div class="stat-number" id="total">0</div>
     </div>
+    <div class="stat-card hadir">
+      <div class="stat-label">Hadir</div>
+      <div class="stat-number" id="hadir">0</div>
+    </div>
+    <div class="stat-card sakit">
+      <div class="stat-label">Sakit</div>
+      <div class="stat-number" id="sakit">0</div>
+    </div>
+    <div class="stat-card izin">
+      <div class="stat-label">Izin</div>
+      <div class="stat-number" id="izin">0</div>
+    </div>
+    <div class="stat-card alpa">
+      <div class="stat-label">Alpa</div>
+      <div class="stat-number" id="alpa">0</div>
+    </div>
+  </section>
 
-    <section class="panel">
-      <h2>Filter Presensi</h2>
-
-      <div class="filters">
-        <div class="field">
-          <label for="tanggal">Tanggal rekap</label>
-          <input type="date" id="tanggal">
-        </div>
-
-        <div class="field">
-          <label for="kelas">Kelas</label>
-          <select id="kelas">
-            <option value="">Semua kelas</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="dariTanggal">Riwayat dari tanggal</label>
-          <input type="date" id="dariTanggal">
-        </div>
-
-        <div class="field">
-          <label for="sampaiTanggal">Riwayat sampai tanggal</label>
-          <input type="date" id="sampaiTanggal">
-        </div>
+  <section class="two-columns">
+    <div class="panel">
+      <h2>Komposisi Presensi</h2>
+      <div class="chart-wrap">
+        <canvas id="grafikPresensi"></canvas>
       </div>
-
-      <div class="filter-buttons" style="margin-top:14px">
-        <button class="btn btn-primary" id="btnTerapkan" type="button">
-          Tampilkan Rekap
-        </button>
-        <button class="btn" id="btnRiwayat" type="button">
-          Tampilkan Riwayat
-        </button>
-        <button class="btn" id="btnCSV" type="button">
-          Unduh CSV
-        </button>
-      </div>
-    </section>
-
-    <section class="cards">
-      <div class="stat-card total">
-        <div class="stat-label">Total Catatan Siswa</div>
-        <div class="stat-number" id="total">0</div>
-      </div>
-      <div class="stat-card hadir">
-        <div class="stat-label">Hadir</div>
-        <div class="stat-number" id="hadir">0</div>
-      </div>
-      <div class="stat-card sakit">
-        <div class="stat-label">Sakit</div>
-        <div class="stat-number" id="sakit">0</div>
-      </div>
-      <div class="stat-card izin">
-        <div class="stat-label">Izin</div>
-        <div class="stat-number" id="izin">0</div>
-      </div>
-      <div class="stat-card alpa">
-        <div class="stat-label">Alpa</div>
-        <div class="stat-number" id="alpa">0</div>
-      </div>
-    </section>
-
-    <section class="two-columns">
-      <div class="panel">
-        <h2>Komposisi Presensi</h2>
-        <div class="chart-wrap">
-          <canvas id="grafikPresensi"></canvas>
-        </div>
-        <p class="muted" id="persentase" style="text-align:center">
-          Belum ada data presensi.
-        </p>
-      </div>
-
-      <div class="panel">
-        <h2>Rekap Per Kelas</h2>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Kelas</th>
-                <th class="num">Hadir</th>
-                <th class="num">Sakit</th>
-                <th class="num">Izin</th>
-                <th class="num">Alpa</th>
-                <th class="num">Total</th>
-              </tr>
-            </thead>
-            <tbody id="rekapKelas">
-              <tr><td colspan="6" class="empty">Memuat data...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="history-heading">
-        <h2>Riwayat Presensi</h2>
-        <span class="badge" id="jumlahRiwayat">0 catatan</span>
-      </div>
-
-      <p class="muted">
-        Riwayat menampilkan catatan presensi yang sesuai dengan rentang tanggal
-        dan filter kelas yang dipilih.
+      <p class="muted" id="persentase" style="text-align:center">
+        Belum ada data presensi.
       </p>
+    </div>
 
+    <div class="panel">
+      <h2>Rekap Per Kelas</h2>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Tanggal</th>
               <th>Kelas</th>
-              <th>Nama Siswa</th>
-              <th>NISN</th>
-              <th>Mata Pelajaran</th>
-              <th>Guru</th>
-              <th>Status</th>
+              <th class="num">Hadir</th>
+              <th class="num">Sakit</th>
+              <th class="num">Izin</th>
+              <th class="num">Alpa</th>
+              <th class="num">Total</th>
             </tr>
           </thead>
-          <tbody id="tabelRiwayat">
-            <tr><td colspan="7" class="empty">Memuat data...</td></tr>
+          <tbody id="rekapKelas">
+            <tr><td colspan="6" class="empty">Memuat data...</td></tr>
           </tbody>
         </table>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer class="footer">
-    SMAN 2 Rangkasbitung CERIA — Cerdas, Empati, Religius, Inovatif, Aman dan nyaman.
-  </footer>
+  <section class="panel">
+    <div class="history-heading">
+      <h2>Riwayat Rekap Presensi</h2>
+      <span class="badge" id="jumlahRiwayat">0 rekap</span>
+    </div>
 
-  <script type="module">
-    import { initializeApp } from
-      "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    <p class="muted">
+      Riwayat ini menampilkan tanggal, kelas, dan jumlah status presensi.
+      Nama serta NISN siswa tidak ditampilkan.
+    </p>
 
-    import {
-      getAuth,
-      onAuthStateChanged
-    } from
-      "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Kelas</th>
+            <th class="num">Hadir</th>
+            <th class="num">Sakit</th>
+            <th class="num">Izin</th>
+            <th class="num">Alpa</th>
+            <th class="num">Total</th>
+          </tr>
+        </thead>
+        <tbody id="tabelRiwayat">
+          <tr><td colspan="7" class="empty">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
 
-   import {
-  getFirestore,
-  collection,
-  getDocs,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+<footer class="footer">
+  SMAN 2 Rangkasbitung CERIA — Cerdas, Empati, Religius, Inovatif, Aman dan nyaman.
+</footer>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmNnrCfWWhCI",
-      authDomain: "aplikasi-presensi-fb.firebaseapp.com",
-      projectId: "aplikasi-presensi-fb",
-      storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
-      messagingSenderId: "1018611782868",
-      appId: "1:1018611782868:web:37304037cece90197c9741"
-    };
+<script type="module">
+  import { initializeApp, getApps } from
+    "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-    const $ = id => document.getElementById(id);
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    let semuaPresensi = [];
-    let grafik = null;
-    let dataCSV = [];
+  const firebaseConfig = {
+    apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmNnrCfWWhCI",
+    authDomain: "aplikasi-presensi-fb.firebaseapp.com",
+    projectId: "aplikasi-presensi-fb",
+    storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
+    messagingSenderId: "1018611782868",
+    appId: "1:1018611782868:web:37304037cece90197c9741"
+  };
 
-    const STATUS = ["Hadir", "Sakit", "Izin", "Alpa"];
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const $ = id => document.getElementById(id);
 
-    function tanggalLokal(date = new Date()) {
-      const tahun = date.getFullYear();
-      const bulan = String(date.getMonth() + 1).padStart(2, "0");
-      const hari = String(date.getDate()).padStart(2, "0");
-      return `${tahun}-${bulan}-${hari}`;
-    }
+  const STATUS = ["Hadir", "Sakit", "Izin", "Alpa"];
 
-    function normalisasiTanggal(value) {
-      if (!value) return "";
+  let semuaPresensi = [];
+  let grafik = null;
+  let dataSiap = false;
+  let sedangMemuat = false;
+  let uidTerakhir = null;
 
-      if (typeof value === "string") {
-        const v = value.trim();
+  function tanggalLokal(date = new Date()) {
+    const tahun = date.getFullYear();
+    const bulan = String(date.getMonth() + 1).padStart(2, "0");
+    const hari = String(date.getDate()).padStart(2, "0");
+    return `${tahun}-${bulan}-${hari}`;
+  }
 
-        // Format utama aplikasi: YYYY-MM-DD
-        if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  function pesan(teks, tipe = "") {
+    $("pesan").textContent = teks;
+    $("pesan").className = "status" + (tipe ? " " + tipe : "");
+  }
 
-        // Mendukung ISO timestamp yang diawali YYYY-MM-DD.
-        const iso = v.match(/^(\d{4}-\d{2}-\d{2})T/);
-        if (iso) return iso[1];
+  function normalisasiTanggal(value) {
+    if (!value) return "";
 
-        // Mendukung format DD/MM/YYYY.
-        const indo = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (indo) {
-          return `${indo[3]}-${String(indo[2]).padStart(2, "0")}-${String(indo[1]).padStart(2, "0")}`;
-        }
+    if (typeof value === "string") {
+      const v = value.trim();
 
-        return "";
-      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
 
-      // Mendukung Firestore Timestamp.
-      if (typeof value.toDate === "function") {
-        return tanggalLokal(value.toDate());
-      }
+      const iso = v.match(/^(\d{4}-\d{2}-\d{2})T/);
+      if (iso) return iso[1];
 
-      // Mendukung JavaScript Date.
-      if (value instanceof Date && !isNaN(value.getTime())) {
-        return tanggalLokal(value);
+      const indo = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (indo) {
+        return `${indo[3]}-${String(indo[2]).padStart(2, "0")}-${String(indo[1]).padStart(2, "0")}`;
       }
 
       return "";
     }
 
-    function normalisasiStatus(value) {
-      const v = String(value ?? "").trim().toLowerCase();
-
-      if (v === "hadir") return "Hadir";
-      if (v === "sakit") return "Sakit";
-      if (v === "izin" || v === "ijin") return "Izin";
-      if (v === "alpa" || v === "alpha") return "Alpa";
-
-      return "";
+    if (typeof value.toDate === "function") {
+      return tanggalLokal(value.toDate());
     }
 
-    function ambilNamaSiswa(d) {
-      return String(
-        d.namaSiswa ?? d.nama ?? d.siswaNama ?? ""
-      ).trim();
+    if (value instanceof Date && !isNaN(value.getTime())) {
+      return tanggalLokal(value);
     }
 
-    function ambilNisn(d) {
-      return String(
-        d.nisn ?? d.siswaId ?? d.NISN ?? ""
-      ).trim();
-    }
+    return "";
+  }
 
-    function ambilKelas(d) {
-      return String(
-        d.kelas ?? d.namaKelas ?? ""
-      ).trim();
-    }
+  function normalisasiStatus(value) {
+    const v = String(value ?? "").trim().toLowerCase();
 
-    function ambilTanggal(d) {
-      return normalisasiTanggal(
+    if (v === "hadir") return "Hadir";
+    if (v === "sakit") return "Sakit";
+    if (v === "izin" || v === "ijin") return "Izin";
+    if (v === "alpa" || v === "alpha") return "Alpa";
+
+    return "";
+  }
+
+  function normalisasiDokumen(docSnap) {
+    const d = docSnap.data();
+
+    return {
+      id: docSnap.id,
+      tanggal: normalisasiTanggal(
         d.tanggal ?? d.tanggalPresensi ?? d.waktuPresensi
-      );
+      ),
+      kelas: String(d.kelas ?? d.namaKelas ?? "").trim(),
+      status: normalisasiStatus(d.status)
+    };
+  }
+
+  function aman(value) {
+    return String(value ?? "").replace(/[&<>"']/g, karakter => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[karakter]);
+  }
+
+  function resetTampilan() {
+    semuaPresensi = [];
+    dataSiap = false;
+
+    $("total").textContent = "0";
+    $("hadir").textContent = "0";
+    $("sakit").textContent = "0";
+    $("izin").textContent = "0";
+    $("alpa").textContent = "0";
+
+    $("rekapKelas").innerHTML =
+      '<tr><td colspan="6" class="empty">Data belum tersedia.</td></tr>';
+
+    $("tabelRiwayat").innerHTML =
+      '<tr><td colspan="7" class="empty">Data belum tersedia.</td></tr>';
+
+    $("jumlahRiwayat").textContent = "0 rekap";
+    $("persentase").textContent = "Belum ada data presensi.";
+
+    $("kelas").innerHTML = '<option value="">Semua kelas</option>';
+
+    if (grafik) {
+      grafik.destroy();
+      grafik = null;
+    }
+  }
+
+  async function muatData() {
+    if (!auth.currentUser) {
+      pesan("Silakan login untuk melihat rekap presensi internal sekolah.", "error");
+      return;
     }
 
-    function normalisasiDokumen(raw) {
-      const d = raw.data;
+    if (sedangMemuat) return;
+    sedangMemuat = true;
+    $("btnRefresh").disabled = true;
+    pesan("Mengambil data presensi dari Firebase...");
 
-      return {
-        id: raw.id,
-        tanggal: ambilTanggal(d),
-        kelas: ambilKelas(d),
-        namaSiswa: ambilNamaSiswa(d),
-        nisn: ambilNisn(d),
-        mataPelajaran: String(
-          d.mataPelajaran ?? d.mapel ?? "-"
-        ).trim() || "-",
-        guruNama: String(
-          d.guruNama ?? d.namaGuru ?? "-"
-        ).trim() || "-",
-        status: normalisasiStatus(d.status),
-        jadwalId: String(d.jadwalId ?? ""),
-        guruUid: String(d.guruUid ?? "")
-      };
-    }
+    try {
+      // Membaca koleksi yang sama dengan presensi-guru.js.
+      const snapshot = await getDocs(collection(db, "presensi"));
 
-    function pesan(teks, tipe = "") {
-      $("pesan").textContent = teks;
-      $("pesan").className = "status" + (tipe ? " " + tipe : "");
-    }
+      // Hanya simpan field agregat yang dibutuhkan dashboard.
+      // Nama siswa, NISN, dan identitas guru tidak dipakai pada tampilan.
+      semuaPresensi = snapshot.docs
+        .map(normalisasiDokumen)
+        .filter(d => d.tanggal && d.kelas && d.status);
 
-    async function muatData() {
-      pesan("Mengambil catatan presensi langsung dari Firebase...");
+      perbaruiPilihanKelas();
+      dataSiap = true;
+      tampilkanRekapTanggal();
+      tampilkanRiwayat();
 
-      try {
-        const snapshot = await getDocs(collection(db, "presensi"));
-
-        semuaPresensi = snapshot.docs.map(docSnap =>
-          normalisasiDokumen({
-            id: docSnap.id,
-            data: docSnap.data()
-          })
-        );
-
-        const valid = semuaPresensi.filter(d =>
-          d.tanggal && d.kelas && d.nisn && d.status
-        );
-
-        const tanggal = $("tanggal").value || tanggalLokal();
-        const padaTanggal = valid.filter(d => d.tanggal === tanggal);
-
-        perbaruiPilihanKelas(valid);
-        tampilkanRekapTanggal(tanggal);
-        tampilkanRiwayat();
-
-        const tanpaTanggal = semuaPresensi.filter(d => !d.tanggal).length;
-        const tanpaKelas = semuaPresensi.filter(d => !d.kelas).length;
-        const tanpaIdentitas = semuaPresensi.filter(d => !d.nisn).length;
-        const statusTidakValid = semuaPresensi.filter(d => !d.status).length;
-
-        if (snapshot.empty) {
-          pesan(
-            "Koleksi presensi ditemukan, tetapi belum memiliki dokumen. " +
-            "Pastikan guru sudah menyimpan presensi ke koleksi presensi.",
-            "error"
-          );
-          return;
-        }
-
-        if (valid.length === 0) {
-          pesan(
-            `Ditemukan ${snapshot.size} dokumen, tetapi belum ada yang memenuhi ` +
-            `syarat rekap. Tanggal kosong/tidak terbaca: ${tanpaTanggal}; ` +
-            `kelas kosong: ${tanpaKelas}; identitas siswa kosong: ${tanpaIdentitas}; ` +
-            `status tidak dikenali: ${statusTidakValid}.`,
-            "error"
-          );
-          console.table(semuaPresensi.slice(0, 10));
-          return;
-        }
-
+      if (snapshot.empty) {
         pesan(
-          `Berhasil membaca ${snapshot.size} dokumen. ` +
-          `${valid.length} catatan memenuhi syarat rekap. ` +
-          `${padaTanggal.length} catatan pada tanggal ${tanggal}.`,
-          "success"
-        );
-
-      } catch (error) {
-        console.error("Kesalahan membaca presensi:", error);
-
-        pesan(
-          `Gagal membaca Firebase: ${error.code || ""} ${error.message || error}. ` +
-          `Pastikan pengguna memiliki izin membaca koleksi presensi pada Firestore Rules.`,
+          "Koleksi presensi belum memiliki dokumen. Guru perlu menyimpan presensi terlebih dahulu.",
           "error"
         );
+      } else if (!semuaPresensi.length) {
+        pesan(
+          `Ditemukan ${snapshot.size} dokumen, tetapi tidak ada yang memiliki tanggal, kelas, dan status yang valid. Periksa field tanggal, kelas, dan status di Firestore.`,
+          "error"
+        );
+        console.warn("Dokumen presensi tidak memenuhi syarat rekap.", snapshot.docs.map(d => ({
+          id: d.id,
+          data: d.data()
+        })).slice(0, 5));
+      } else {
+        pesan(
+          `Berhasil membaca ${snapshot.size} dokumen. ${semuaPresensi.length} catatan valid digunakan untuk rekap.`,
+          "success"
+        );
       }
-    }
+    } catch (error) {
+      console.error("Gagal membaca koleksi presensi:", error);
 
-    function perbaruiPilihanKelas(data) {
-      const select = $("kelas");
-      const pilihanLama = select.value;
-
-      const kelasUnik = [...new Set(
-        data.map(d => d.kelas).filter(Boolean)
-      )].sort((a, b) => a.localeCompare(b, "id"));
-
-      select.innerHTML = '<option value="">Semua kelas</option>';
-
-      kelasUnik.forEach(namaKelas => {
-        const option = document.createElement("option");
-        option.value = namaKelas;
-        option.textContent = namaKelas;
-        select.appendChild(option);
-      });
-
-      if (kelasUnik.includes(pilihanLama)) {
-        select.value = pilihanLama;
-      }
-    }
-
-    function filterTanggalKelas(tanggal) {
-      const kelas = $("kelas").value;
-
-      return semuaPresensi.filter(d =>
-        d.tanggal === tanggal &&
-        d.kelas &&
-        d.nisn &&
-        d.status &&
-        (!kelas || d.kelas === kelas)
+      pesan(
+        `Gagal membaca data: ${error.code || ""} ${error.message || error}. Periksa Firestore Rules dan akun login.`,
+        "error"
       );
+    } finally {
+      sedangMemuat = false;
+      $("btnRefresh").disabled = false;
     }
+  }
 
-    function hitungUnikSiswa(data) {
-      // Satu siswa dihitung satu kali per kelas per tanggal.
-      // Jika ada lebih dari satu catatan mapel, status prioritas digunakan.
-      const prioritas = {
-        Hadir: 1,
-        Izin: 2,
-        Sakit: 3,
-        Alpa: 4
-      };
+  function perbaruiPilihanKelas() {
+    const select = $("kelas");
+    const pilihanLama = select.value;
 
-      const unik = new Map();
+    const kelasUnik = [...new Set(
+      semuaPresensi.map(d => d.kelas).filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, "id"));
 
-      data.forEach(d => {
-        const key = `${d.kelas}__${d.nisn}`;
-        const sebelumnya = unik.get(key);
+    select.innerHTML = '<option value="">Semua kelas</option>';
 
-        if (!sebelumnya ||
-            prioritas[d.status] > prioritas[sebelumnya.status]) {
-          unik.set(key, d);
-        }
-      });
+    kelasUnik.forEach(namaKelas => {
+      const option = document.createElement("option");
+      option.value = namaKelas;
+      option.textContent = namaKelas;
+      select.appendChild(option);
+    });
 
-      return [...unik.values()];
+    if (kelasUnik.includes(pilihanLama)) {
+      select.value = pilihanLama;
     }
+  }
 
-    function hitungStatus(data) {
-      const hasil = { Hadir: 0, Sakit: 0, Izin: 0, Alpa: 0 };
+  function filterTanggalKelas(tanggal) {
+    const kelas = $("kelas").value;
 
-      data.forEach(d => {
-        if (Object.hasOwn(hasil, d.status)) {
-          hasil[d.status]++;
-        }
-      });
+    return semuaPresensi.filter(d =>
+      d.tanggal === tanggal &&
+      (!kelas || d.kelas === kelas)
+    );
+  }
 
-      return hasil;
-    }
+  function hitungStatus(data) {
+    const hasil = { Hadir: 0, Sakit: 0, Izin: 0, Alpa: 0 };
 
-    function tampilkanRekapTanggal(tanggal) {
-      const dataMentah = filterTanggalKelas(tanggal);
-      const data = hitungUnikSiswa(dataMentah);
-      const hitung = hitungStatus(data);
-
-      $("total").textContent = data.length;
-      $("hadir").textContent = hitung.Hadir;
-      $("sakit").textContent = hitung.Sakit;
-      $("izin").textContent = hitung.Izin;
-      $("alpa").textContent = hitung.Alpa;
-
-      const total = data.length;
-      const persenHadir = total
-        ? (hitung.Hadir / total * 100).toFixed(1)
-        : "0.0";
-
-      $("persentase").textContent = total
-        ? `Persentase hadir: ${persenHadir}% dari siswa yang tercatat pada tanggal ini.`
-        : "Belum ada catatan presensi valid pada tanggal ini.";
-
-      gambarGrafik(hitung);
-      gambarRekapKelas(data);
-
-      dataCSV = data.map(d => ({
-        tanggal,
-        kelas: d.kelas,
-        namaSiswa: d.namaSiswa,
-        nisn: d.nisn,
-        mataPelajaran: d.mataPelajaran,
-        guruNama: d.guruNama,
-        status: d.status
-      }));
-    }
-
-    function gambarGrafik(hitung) {
-      const canvas = $("grafikPresensi");
-
-      if (grafik) {
-        grafik.destroy();
-        grafik = null;
+    data.forEach(d => {
+      if (Object.prototype.hasOwnProperty.call(hasil, d.status)) {
+        hasil[d.status]++;
       }
+    });
 
-      grafik = new Chart(canvas, {
-        type: "doughnut",
-        data: {
-          labels: STATUS,
-          datasets: [{
-            data: STATUS.map(s => hitung[s]),
-            backgroundColor: [
-              "#16834a",
-              "#d99b00",
-              "#7856b8",
-              "#dc3545"
-            ],
-            borderWidth: 2,
-            borderColor: "#ffffff"
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: "bottom"
-            },
-            tooltip: {
-              callbacks: {
-                label: context => {
-                  const nilai = context.raw || 0;
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const persen = total ? (nilai / total * 100).toFixed(1) : "0.0";
-                  return `${context.label}: ${nilai} (${persen}%)`;
-                }
+    return hasil;
+  }
+
+  function totalStatus(hitung) {
+    return STATUS.reduce((jumlah, status) => jumlah + hitung[status], 0);
+  }
+
+  function tampilkanRekapTanggal() {
+    if (!dataSiap) return;
+
+    const tanggal = $("tanggal").value || tanggalLokal();
+    const data = filterTanggalKelas(tanggal);
+    const hitung = hitungStatus(data);
+    const total = totalStatus(hitung);
+
+    $("total").textContent = total;
+    $("hadir").textContent = hitung.Hadir;
+    $("sakit").textContent = hitung.Sakit;
+    $("izin").textContent = hitung.Izin;
+    $("alpa").textContent = hitung.Alpa;
+
+    const persen = total
+      ? (hitung.Hadir / total * 100).toFixed(1)
+      : "0.0";
+
+    $("persentase").textContent = total
+      ? `Persentase catatan berstatus Hadir: ${persen}%.`
+      : "Belum ada catatan presensi pada tanggal ini.";
+
+    gambarGrafik(hitung);
+    gambarRekapKelas(data);
+  }
+
+  function gambarGrafik(hitung) {
+    if (typeof Chart === "undefined") {
+      pesan(
+        "Data berhasil diproses, tetapi Chart.js tidak dapat dimuat. Periksa koneksi internet.",
+        "error"
+      );
+      return;
+    }
+
+    if (grafik) {
+      grafik.destroy();
+      grafik = null;
+    }
+
+    grafik = new Chart($("grafikPresensi"), {
+      type: "doughnut",
+      data: {
+        labels: STATUS,
+        datasets: [{
+          data: STATUS.map(s => hitung[s]),
+          backgroundColor: ["#16834a", "#d99b00", "#7856b8", "#dc3545"],
+          borderWidth: 2,
+          borderColor: "#ffffff"
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom" },
+          tooltip: {
+            callbacks: {
+              label: context => {
+                const nilai = Number(context.raw || 0);
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const persen = total ? (nilai / total * 100).toFixed(1) : "0.0";
+                return `${context.label}: ${nilai} (${persen}%)`;
               }
             }
           }
         }
-      });
+      }
+    });
+  }
+
+  function gambarRekapKelas(data) {
+    const kelompok = new Map();
+
+    data.forEach(d => {
+      if (!kelompok.has(d.kelas)) kelompok.set(d.kelas, []);
+      kelompok.get(d.kelas).push(d);
+    });
+
+    const daftarKelas = [...kelompok.keys()].sort((a, b) =>
+      a.localeCompare(b, "id")
+    );
+
+    if (!daftarKelas.length) {
+      $("rekapKelas").innerHTML =
+        '<tr><td colspan="6" class="empty">Tidak ada data pada tanggal dan kelas yang dipilih.</td></tr>';
+      return;
     }
 
-    function gambarRekapKelas(data) {
-      const tbody = $("rekapKelas");
-      const kelompok = new Map();
+    $("rekapKelas").innerHTML = daftarKelas.map(kelas => {
+      const hitung = hitungStatus(kelompok.get(kelas));
+      const total = totalStatus(hitung);
 
-      data.forEach(d => {
-        if (!kelompok.has(d.kelas)) {
-          kelompok.set(d.kelas, []);
-        }
-        kelompok.get(d.kelas).push(d);
-      });
-
-      const kelas = [...kelompok.keys()].sort((a, b) =>
-        a.localeCompare(b, "id")
-      );
-
-      if (!kelas.length) {
-        tbody.innerHTML =
-          '<tr><td colspan="6" class="empty">Tidak ada data pada tanggal dan kelas yang dipilih.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = kelas.map(namaKelas => {
-        const hitung = hitungStatus(kelompok.get(namaKelas));
-        const total = Object.values(hitung).reduce((a, b) => a + b, 0);
-
-        return `
-          <tr>
-            <td><strong>${aman(namaKelas)}</strong></td>
-            <td class="num">${hitung.Hadir}</td>
-            <td class="num">${hitung.Sakit}</td>
-            <td class="num">${hitung.Izin}</td>
-            <td class="num">${hitung.Alpa}</td>
-            <td class="num"><strong>${total}</strong></td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    function tampilkanRiwayat() {
-      const dari = $("dariTanggal").value;
-      const sampai = $("sampaiTanggal").value;
-      const kelas = $("kelas").value;
-
-      let data = semuaPresensi.filter(d =>
-        d.tanggal && d.kelas && d.nisn && d.status &&
-        (!kelas || d.kelas === kelas) &&
-        (!dari || d.tanggal >= dari) &&
-        (!sampai || d.tanggal <= sampai)
-      );
-
-      data.sort((a, b) =>
-        b.tanggal.localeCompare(a.tanggal) ||
-        a.kelas.localeCompare(b.kelas, "id") ||
-        a.namaSiswa.localeCompare(b.namaSiswa, "id")
-      );
-
-      $("jumlahRiwayat").textContent = `${data.length} catatan`;
-
-      const tbody = $("tabelRiwayat");
-
-      if (!data.length) {
-        tbody.innerHTML =
-          '<tr><td colspan="7" class="empty">Tidak ada riwayat pada rentang tanggal yang dipilih.</td></tr>';
-        return;
-      }
-
-      // Batasi tampilan tabel agar tetap ringan di ponsel.
-      const tampil = data.slice(0, 1000);
-
-      tbody.innerHTML = tampil.map(d => `
+      return `
         <tr>
-          <td>${aman(d.tanggal)}</td>
-          <td>${aman(d.kelas)}</td>
-          <td>${aman(d.namaSiswa || "-")}</td>
-          <td>${aman(d.nisn)}</td>
-          <td>${aman(d.mataPelajaran)}</td>
-          <td>${aman(d.guruNama)}</td>
-          <td>${labelStatus(d.status)}</td>
+          <td><strong>${aman(kelas)}</strong></td>
+          <td class="num">${hitung.Hadir}</td>
+          <td class="num">${hitung.Sakit}</td>
+          <td class="num">${hitung.Izin}</td>
+          <td class="num">${hitung.Alpa}</td>
+          <td class="num"><strong>${total}</strong></td>
         </tr>
-      `).join("");
+      `;
+    }).join("");
+  }
 
-      if (data.length > tampil.length) {
-        tbody.insertAdjacentHTML(
-          "beforeend",
-          `<tr><td colspan="7" class="empty">Menampilkan 1.000 dari ${data.length} catatan. Unduh CSV untuk seluruh data yang sesuai filter.</td></tr>`
-        );
-      }
+  function tampilkanRiwayat() {
+    if (!dataSiap) return;
+
+    const dari = $("dariTanggal").value;
+    const sampai = $("sampaiTanggal").value;
+    const kelas = $("kelas").value;
+
+    if (dari && sampai && dari > sampai) {
+      pesan("Tanggal awal riwayat tidak boleh melebihi tanggal akhir.", "error");
+      return;
     }
 
-    function labelStatus(status) {
-      const warna = {
-        Hadir: "#e7f7ed",
-        Sakit: "#fff4d6",
-        Izin: "#f0eaff",
-        Alpa: "#ffe8e8"
-      };
+    const data = semuaPresensi.filter(d =>
+      (!kelas || d.kelas === kelas) &&
+      (!dari || d.tanggal >= dari) &&
+      (!sampai || d.tanggal <= sampai)
+    );
 
-      const warnaTeks = {
-        Hadir: "#176b37",
-        Sakit: "#8a6100",
-        Izin: "#59379b",
-        Alpa: "#a32020"
-      };
+    // Kelompokkan berdasarkan tanggal dan kelas.
+    const kelompok = new Map();
 
-      return `<span class="badge" style="background:${warna[status] || "#eee"};color:${warnaTeks[status] || "#333"}">${aman(status)}</span>`;
-    }
+    data.forEach(d => {
+      const key = `${d.tanggal}__${d.kelas}`;
 
-    function aman(value) {
-      return String(value ?? "").replace(/[&<>"']/g, karakter => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      })[karakter]);
-    }
-
-    function unduhCSV() {
-      const dari = $("dariTanggal").value;
-      const sampai = $("sampaiTanggal").value;
-      const kelas = $("kelas").value;
-
-      let data;
-
-      if (dari || sampai) {
-        data = semuaPresensi.filter(d =>
-          d.tanggal && d.kelas && d.nisn && d.status &&
-          (!kelas || d.kelas === kelas) &&
-          (!dari || d.tanggal >= dari) &&
-          (!sampai || d.tanggal <= sampai)
-        ).map(d => ({
+      if (!kelompok.has(key)) {
+        kelompok.set(key, {
           tanggal: d.tanggal,
           kelas: d.kelas,
-          namaSiswa: d.namaSiswa,
-          nisn: d.nisn,
-          mataPelajaran: d.mataPelajaran,
-          guruNama: d.guruNama,
-          status: d.status
-        }));
-      } else {
-        data = dataCSV;
+          Hadir: 0,
+          Sakit: 0,
+          Izin: 0,
+          Alpa: 0
+        });
       }
 
-      if (!data.length) {
-        pesan("Tidak ada data untuk diunduh. Periksa filter tanggal dan kelas.", "error");
+      kelompok.get(key)[d.status]++;
+    });
+
+    const rekap = [...kelompok.values()].sort((a, b) =>
+      b.tanggal.localeCompare(a.tanggal) ||
+      a.kelas.localeCompare(b.kelas, "id")
+    );
+
+    $("jumlahRiwayat").textContent = `${rekap.length} rekap`;
+    const tbody = $("tabelRiwayat");
+
+    if (!rekap.length) {
+      tbody.innerHTML =
+        '<tr><td colspan="7" class="empty">Tidak ada riwayat untuk filter tersebut.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rekap.slice(0, 1000).map(d => `
+      <tr>
+        <td>${aman(d.tanggal)}</td>
+        <td>${aman(d.kelas)}</td>
+        <td class="num">${d.Hadir}</td>
+        <td class="num">${d.Sakit}</td>
+        <td class="num">${d.Izin}</td>
+        <td class="num">${d.Alpa}</td>
+        <td class="num"><strong>${totalStatus(d)}</strong></td>
+      </tr>
+    `).join("");
+
+    if (rekap.length > 1000) {
+      tbody.insertAdjacentHTML(
+        "beforeend",
+        '<tr><td colspan="7" class="empty">Tampilan dibatasi hingga 1.000 baris.</td></tr>'
+      );
+    }
+  }
+
+  function unduhCSV() {
+    if (!dataSiap) {
+      pesan("Data belum tersedia untuk diunduh.", "error");
+      return;
+    }
+
+    const dari = $("dariTanggal").value;
+    const sampai = $("sampaiTanggal").value;
+    const kelas = $("kelas").value;
+
+    if (dari && sampai && dari > sampai) {
+      pesan("Tanggal awal riwayat tidak boleh melebihi tanggal akhir.", "error");
+      return;
+    }
+
+    const data = semuaPresensi.filter(d =>
+      (!kelas || d.kelas === kelas) &&
+      (!dari || d.tanggal >= dari) &&
+      (!sampai || d.tanggal <= sampai)
+    );
+
+    const kelompok = new Map();
+
+    data.forEach(d => {
+      const key = `${d.tanggal}__${d.kelas}`;
+
+      if (!kelompok.has(key)) {
+        kelompok.set(key, {
+          tanggal: d.tanggal,
+          kelas: d.kelas,
+          Hadir: 0,
+          Sakit: 0,
+          Izin: 0,
+          Alpa: 0
+        });
+      }
+
+      kelompok.get(key)[d.status]++;
+    });
+
+    const rekap = [...kelompok.values()].sort((a, b) =>
+      b.tanggal.localeCompare(a.tanggal) ||
+      a.kelas.localeCompare(b.kelas, "id")
+    );
+
+    if (!rekap.length) {
+      pesan("Tidak ada data rekap untuk diunduh.", "error");
+      return;
+    }
+
+    const kolom = [
+      ["Tanggal", "tanggal"],
+      ["Kelas", "kelas"],
+      ["Hadir", "Hadir"],
+      ["Sakit", "Sakit"],
+      ["Izin", "Izin"],
+      ["Alpa", "Alpa"],
+      ["Total", "total"]
+    ];
+
+    const kutip = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
+
+    const isi = [
+      kolom.map(k => kutip(k[0])).join(","),
+      ...rekap.map(d => {
+        d.total = totalStatus(d);
+        return kolom.map(k => kutip(d[k[1]])).join(",");
+      })
+    ].join("\r\n");
+
+    const blob = new Blob(["\uFEFF" + isi], {
+      type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `rekap-presensi-${tanggalLokal()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    pesan(`Berhasil menyiapkan ${rekap.length} baris rekap agregat.`, "success");
+  }
+
+  async function periksaAkun(user) {
+    if (!user) {
+      uidTerakhir = null;
+      resetTampilan();
+      $("btnLogin").hidden = false;
+      $("btnKeluar").hidden = true;
+      pesan("Silakan login untuk melihat rekap presensi internal sekolah.", "error");
+      return;
+    }
+
+    if (uidTerakhir === user.uid && dataSiap) return;
+    uidTerakhir = user.uid;
+
+    resetTampilan();
+    pesan("Memeriksa hak akses akun...");
+
+    try {
+      const profilSnap = await getDoc(doc(db, "users", user.uid));
+
+      if (!profilSnap.exists()) {
+        await signOut(auth);
+        pesan("Profil pengguna tidak ditemukan. Hubungi administrator.", "error");
         return;
       }
 
-      const kolom = [
-        ["Tanggal", "tanggal"],
-        ["Kelas", "kelas"],
-        ["Nama Siswa", "namaSiswa"],
-        ["NISN", "nisn"],
-        ["Mata Pelajaran", "mataPelajaran"],
-        ["Guru", "guruNama"],
-        ["Status", "status"]
-      ];
+      const profil = profilSnap.data();
+      const role = String(profil.role || "").toLowerCase();
 
-      const escapeCSV = value =>
-        `"${String(value ?? "").replace(/"/g, '""')}"`;
+      if (profil.aktif !== true ||
+          !["admin", "guru", "kepsek"].includes(role)) {
+        await signOut(auth);
+        pesan("Akun tidak aktif atau tidak memiliki peran yang diizinkan.", "error");
+        return;
+      }
 
-      const isi = [
-        kolom.map(k => escapeCSV(k[0])).join(","),
-        ...data.map(row =>
-          kolom.map(k => escapeCSV(row[k[1]])).join(",")
-        )
-      ].join("\r\n");
+      $("btnLogin").hidden = true;
+      $("btnKeluar").hidden = false;
 
-      const blob = new Blob(["\uFEFF" + isi], {
-        type: "text/csv;charset=utf-8;"
-      });
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `rekap-presensi-${tanggalLokal()}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-
-      pesan(`Berhasil menyiapkan ${data.length} catatan untuk diunduh.`, "success");
+      await muatData();
+    } catch (error) {
+      console.error("Pemeriksaan akun gagal:", error);
+      pesan(
+        `Gagal memeriksa akun: ${error.code || ""} ${error.message || error}`,
+        "error"
+      );
     }
+  }
 
-    $("btnRefresh").addEventListener("click", muatData);
+  $("btnRefresh").addEventListener("click", muatData);
 
-    $("btnTerapkan").addEventListener("click", () => {
-      tampilkanRekapTanggal($("tanggal").value);
-      tampilkanRiwayat();
-    });
+  $("btnLogin").addEventListener("click", () => {
+    window.location.href = "./login.html";
+  });
 
-    $("btnRiwayat").addEventListener("click", tampilkanRiwayat);
-
-    $("btnCSV").addEventListener("click", unduhCSV);
-
-    $("kelas").addEventListener("change", () => {
-      tampilkanRekapTanggal($("tanggal").value);
-      tampilkanRiwayat();
-    });
-
-    $("tanggal").addEventListener("change", () => {
-      tampilkanRekapTanggal($("tanggal").value);
-    });
-
-    $("dariTanggal").addEventListener("change", tampilkanRiwayat);
-    $("sampaiTanggal").addEventListener("change", tampilkanRiwayat);
-
-    $("btnLogin").addEventListener("click", () => {
+  $("btnKeluar").addEventListener("click", async () => {
+    try {
+      await signOut(auth);
       window.location.href = "./login.html";
-    });
-
-    ///----Perubahan
-  let pemeriksaanLoginSelesai = false;
-
-onAuthStateChanged(auth, async (user) => {
-  const pesanStatus = document.getElementById("statusDashboard");
-
-  if (!user) {
-    // Jangan langsung menganggap pengguna belum login
-    // sebelum pemeriksaan sesi pertama selesai.
-    if (!pemeriksaanLoginSelesai) {
-      pemeriksaanLoginSelesai = true;
+    } catch (error) {
+      console.error(error);
+      pesan("Gagal keluar: " + (error.message || error), "error");
     }
+  });
 
-    if (pesanStatus) {
-      pesanStatus.textContent =
-        "Sesi login tidak terdeteksi. Silakan login kembali melalui halaman login.";
-    }
+  $("btnTerapkan").addEventListener("click", tampilkanRekapTanggal);
+  $("btnRiwayat").addEventListener("click", tampilkanRiwayat);
+  $("btnCSV").addEventListener("click", unduhCSV);
 
-    return;
-  }
+  $("kelas").addEventListener("change", () => {
+    tampilkanRekapTanggal();
+    tampilkanRiwayat();
+  });
 
-  pemeriksaanLoginSelesai = true;
+  $("tanggal").addEventListener("change", tampilkanRekapTanggal);
+  $("dariTanggal").addEventListener("change", tampilkanRiwayat);
+  $("sampaiTanggal").addEventListener("change", tampilkanRiwayat);
 
-  try {
-    const profilRef = doc(db, "users", user.uid);
-    const profilSnap = await getDoc(profilRef);
+  const hariIni = tanggalLokal();
+  $("tanggal").value = hariIni;
+  $("dariTanggal").value = `${hariIni.slice(0, 7)}-01`;
+  $("sampaiTanggal").value = hariIni;
 
-    if (!profilSnap.exists()) {
-      if (pesanStatus) {
-        pesanStatus.textContent =
-          "Profil pengguna tidak ditemukan di Firestore.";
-      }
-      return;
-    }
-
-    const profil = profilSnap.data();
-
-    if (profil.aktif !== true) {
-      if (pesanStatus) {
-        pesanStatus.textContent =
-          "Akun tidak aktif. Hubungi administrator.";
-      }
-      return;
-    }
-
-    if (!["admin", "guru", "kepsek"].includes(profil.role)) {
-      if (pesanStatus) {
-        pesanStatus.textContent =
-          "Peran pengguna tidak dikenali.";
-      }
-      return;
-    }
-
-    if (pesanStatus) {
-      pesanStatus.textContent = "Login berhasil. Memuat rekap presensi...";
-    }
-
-    await muatData();
-
-  } catch (error) {
-    console.error("Pemeriksaan sesi dashboard gagal:", error);
-
-    if (pesanStatus) {
-      pesanStatus.textContent =
-        "Gagal memeriksa profil atau memuat dashboard: " + error.message;
-    }
-  }
-});
-    ////=====
-  </script>
+  onAuthStateChanged(auth, periksaAkun);
+</script>
 </body>
 </html>
