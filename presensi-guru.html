@@ -268,5 +268,42 @@
   </main>
 
   <script type="module" src="./presensi-guru.js"></script>
+  <section id="formInputJadwal" hidden>
+  <h3>Input Jadwal Mengajar</h3>
+
+  <label for="jadwalHari">Hari</label>
+  <select id="jadwalHari" required>
+    <option value="">Pilih hari</option>
+    <option>Senin</option>
+    <option>Selasa</option>
+    <option>Rabu</option>
+    <option>Kamis</option>
+    <option>Jumat</option>
+    <option>Sabtu</option>
+    <option>Minggu</option>
+  </select>
+
+  <label for="jadwalKelas">Kelas</label>
+  <input id="jadwalKelas" required placeholder="Contoh: XII-1">
+
+  <label for="jadwalMapel">Mata Pelajaran</label>
+  <input id="jadwalMapel" required placeholder="Contoh: Fisika">
+
+  <label for="jadwalMulai">Jam Mulai</label>
+  <input id="jadwalMulai" type="time" required>
+
+  <label for="jadwalSelesai">Jam Selesai</label>
+  <input id="jadwalSelesai" type="time" required>
+
+  <button type="button" id="btnSimpanJadwal">
+    Simpan Jadwal
+  </button>
+
+  <button type="button" id="btnBatalJadwal">
+    Batal
+  </button>
+
+  <p id="pesanJadwal" role="status"></p>
+</section>
 </body>
 </html>
