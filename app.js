@@ -6,7 +6,8 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 import {
@@ -36,34 +37,32 @@ let sedangMengalihkan = false;
 
 function tampilkanPesan(teks, berhasil = false) {
   if (!pesan) return;
-
   pesan.textContent = teks;
   pesan.style.color = berhasil ? "#166534" : "#b91c1c";
 }
 
 async function periksaPeran(user) {
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
+  const profilRef = doc(db, "users", user.uid);
+  const profilSnap = await getDoc(profilRef);
 
-  if (!userSnap.exists()) {
+  if (!profilSnap.exists()) {
     throw new Error(
-      "Profil tidak ditemukan pada users/" + user.uid
+      "Profil tidak ditemukan. Pastikan ID dokumen users sama dengan UID Authentication: " +
+      user.uid
     );
   }
 
-  const data = userSnap.data();
+  const data = profilSnap.data();
   const role = String(data.role || "").trim().toLowerCase();
 
   if (data.aktif !== true) {
     throw new Error(
-      "Akun tidak aktif. Pastikan field aktif bernilai boolean true."
+      "Akun belum aktif. Field aktif harus berupa boolean true."
     );
   }
 
   if (!["admin", "guru", "kepsek"].includes(role)) {
-    throw new Error(
-      'Peran tidak dikenali. Nilai role saat ini: "' + role + '".'
-    );
+    throw new Error("Role akun tidak valid: " + role);
   }
 
   return { ...data, role };
@@ -76,7 +75,7 @@ function alamatHalaman(role) {
     kepsek: "./kepsek.html"
   };
 
-  return halaman[role];
+  return halaman[role] || null;
 }
 
 if (formLogin) {
@@ -87,23 +86,33 @@ if (formLogin) {
 
     if (tombolLogin) tombolLogin.disabled = true;
 
-    tampilkanPesan("Memeriksa email dan kata sandi...");
+    const emailEl = document.getElementById("email");
+    const passwordEl = document.getElementById("password");
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    if (!emailEl || !passwordEl) {
+      tampilkanPesan("Input email atau password tidak ditemukan.");
+      if (tombolLogin) tombolLogin.disabled = false;
+      return;
+    }
 
-    let loginBerhasil = false;
+    const email = emailEl.value.trim();
+    const password = passwordEl.value;
+
+    tampilkanPesan("Menghubungkan ke Firebase Authentication...");
 
     try {
+      // Simpan sesi secara lokal sebelum melakukan login.
+      await setPersistence(auth, browserLocalPersistence);
+
       const hasil = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      loginBerhasil = true;
-
-      tampilkanPesan("Login berhasil. Memeriksa hak akses...");
+      tampilkanPesan(
+        "Login berhasil. Memeriksa profil pengguna..."
+      );
 
       const profil = await periksaPeran(hasil.user);
       const tujuan = alamatHalaman(profil.role);
@@ -112,46 +121,53 @@ if (formLogin) {
         throw new Error("Halaman tujuan tidak ditemukan.");
       }
 
-      sedangMengalihkan = true;
-
       tampilkanPesan(
-        "Login berhasil sebagai " + profil.role +
-        ". Membuka dashboard...",
+        "Login berhasil sebagai " + profil.role + ". Membuka dashboard...",
         true
       );
 
-      // Jangan signOut setelah autentikasi berhasil.
+      sedangMengalihkan = true;
+
+      // Jangan signOut di sini. Sesi harus tersedia di halaman tujuan.
       window.location.replace(tujuan);
 
     } catch (error) {
-      console.error("Proses login:", error);
+      console.error("Kesalahan login:", error);
 
       sedangMengalihkan = false;
 
-      if (loginBerhasil && auth.currentUser) {
-        // Logout hanya jika profil tidak dapat diverifikasi.
-        await signOut(auth).catch(err => {
-          console.error("Gagal membersihkan sesi:", err);
-        });
-      }
-
       const kode = error.code || "";
 
-      if (kode === "auth/invalid-credential") {
+      if (kode === "auth/api-key-not-valid") {
+        tampilkanPesan(
+          "API Key Firebase tidak valid. Salin ulang firebaseConfig dari Firebase Console."
+        );
+      } else if (
+        kode === "auth/invalid-credential" ||
+        kode === "auth/wrong-password" ||
+        kode === "auth/user-not-found"
+      ) {
         tampilkanPesan("Email atau kata sandi salah.");
       } else if (kode === "auth/too-many-requests") {
         tampilkanPesan(
           "Terlalu banyak percobaan login. Coba lagi nanti."
         );
-      } else if (kode === "permission-denied" ||
-                 kode === "firestore/permission-denied") {
+      } else if (
+        kode === "permission-denied" ||
+        kode === "firestore/permission-denied"
+      ) {
         tampilkanPesan(
-          "Akses profil ditolak oleh Firestore Rules. " +
-          "Periksa izin membaca dokumen users milik sendiri."
+          "Tidak dapat membaca profil pengguna. Periksa Firestore Rules untuk dokumen users milik sendiri."
         );
       } else {
-        tampilkanPesan(error.message || "Login gagal.");
+        tampilkanPesan(
+          (kode ? kode + ": " : "") +
+          (error.message || "Login gagal.")
+        );
       }
+
+      // Sengaja tidak melakukan signOut otomatis.
+      // Sesi tidak dihapus agar penyebab masalah mudah diperiksa.
 
     } finally {
       if (tombolLogin && !sedangMengalihkan) {
@@ -161,12 +177,12 @@ if (formLogin) {
   });
 }
 
-// Jangan melakukan logout atau pengalihan otomatis dari listener ini.
-// Listener hanya memberi informasi jika ada sesi aktif.
+// Listener ini hanya menampilkan informasi.
+// Tidak melakukan logout atau mengalihkan halaman.
 onAuthStateChanged(auth, (user) => {
   if (user && formLogin && !sedangMengalihkan) {
     tampilkanPesan(
-      "Sesi Firebase terdeteksi. Silakan lanjutkan login jika diperlukan.",
+      "Sesi Firebase ditemukan. Silakan lanjutkan login.",
       true
     );
   }
