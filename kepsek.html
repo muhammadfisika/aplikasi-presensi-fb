@@ -752,26 +752,39 @@
 
     el("tanggalPantau").value = tanggalLokal();
 
-    onAuthStateChanged(auth, async user => {
-      penggunaSiap = false;
-      aktifkanTombol(false);
+    
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    tampilkanStatus(
+      "Sesi login belum tersedia. Silakan login kembali.",
+      true
+    );
 
-      if (!user) {
-        tampilkanStatus("Sesi login tidak ditemukan. Mengalihkan ke login...");
-        window.location.replace("./login.html");
-        return;
-      }
+    // Jangan langsung redirect ke login.html di sini.
+    // Biarkan Firebase menyelesaikan pemeriksaan sesi.
+    return;
+  }
 
-      try {
-        await periksaKepsek(user);
-        penggunaSiap = true;
-        aktifkanTombol(true);
-        await muatData();
-      } catch (error) {
-        console.error("Pemeriksaan akun kepsek gagal:", error);
-        tampilkanStatus(error.message, true);
-      }
-    });
+  penggunaSiap = false;
+  aktifkanTombol(false);
+
+  try {
+    await periksaKepsek(user);
+
+    penggunaSiap = true;
+    aktifkanTombol(true);
+
+    await muatData();
+  } catch (error) {
+    console.error("Pemeriksaan akun kepsek gagal:", error);
+
+    tampilkanStatus(
+      "Akun kepsek tidak dapat diverifikasi: " + error.message,
+      true
+    );
+  }
+});
+
   </script>
 </body>
 </html>
