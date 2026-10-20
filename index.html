@@ -486,12 +486,13 @@
     } from
       "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-    import {
-      getFirestore,
-      collection,
-      getDocs
-    } from
-      "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+   import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmNnrCfWWhCI",
@@ -1045,19 +1046,90 @@
       window.location.href = "./login.html";
     });
 
-    onAuthStateChanged(auth, user => {
-      $("btnLogin").textContent = user ? "Buka Aplikasi" : "Login Pengguna";
-      $("btnLogin").onclick = () => {
-        window.location.href = user ? "./dashboard.html" : "./login.html";
-      };
-    });
+    ///----Perubahan
+    onAuthStateChanged(auth, async user => {
+  $("btnLogin").textContent = user
+    ? "Buka Aplikasi"
+    : "Login Pengguna";
 
-    const hariIni = tanggalLokal();
-    $("tanggal").value = hariIni;
-    $("dariTanggal").value = hariIni;
-    $("sampaiTanggal").value = hariIni;
+  $("btnLogin").onclick = () => {
+    window.location.href = user
+      ? "./dashboard.html"
+      : "./login.html";
+  };
 
-    muatData();
+  if (!user) {
+    pesan(
+      "Silakan login menggunakan akun guru, admin, atau kepala sekolah untuk melihat rekap presensi.",
+      "error"
+    );
+
+    $("total").textContent = "—";
+    $("hadir").textContent = "—";
+    $("sakit").textContent = "—";
+    $("izin").textContent = "—";
+    $("alpa").textContent = "—";
+
+    $("rekapKelas").innerHTML =
+      '<tr><td colspan="6" class="empty">Login diperlukan.</td></tr>';
+
+    $("tabelRiwayat").innerHTML =
+      '<tr><td colspan="7" class="empty">Login diperlukan.</td></tr>';
+
+    return;
+  }
+
+  try {
+    pesan("Memeriksa akun pengguna...");
+
+    const profilRef = doc(db, "users", user.uid);
+    const profilSnap = await getDoc(profilRef);
+
+    if (!profilSnap.exists()) {
+      pesan(
+        "Profil pengguna tidak ditemukan pada koleksi users. Hubungi admin.",
+        "error"
+      );
+      return;
+    }
+
+    const profil = profilSnap.data();
+    const role = String(profil.role || "").toLowerCase();
+
+    if (
+      profil.aktif !== true ||
+      !["admin", "guru", "kepsek"].includes(role)
+    ) {
+      pesan(
+        "Akun tidak aktif atau perannya tidak diizinkan melihat rekap.",
+        "error"
+      );
+      return;
+    }
+
+    // Pengguna sudah login dan profilnya valid.
+    await muatData();
+
+  } catch (error) {
+    console.error("Pemeriksaan akun gagal:", error);
+
+    pesan(
+      `Gagal memeriksa profil pengguna: ${error.code || ""} ${error.message || error}`,
+      "error"
+    );
+  }
+});
+
+const hariIni = tanggalLokal();
+
+$("tanggal").value = hariIni;
+$("dariTanggal").value = hariIni;
+$("sampaiTanggal").value = hariIni;
+
+// Jangan memanggil muatData() di luar onAuthStateChanged.
+
+
+    ////=====
   </script>
 </body>
 </html>
