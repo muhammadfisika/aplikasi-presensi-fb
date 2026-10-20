@@ -1,0 +1,777 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b2c">
+  <title>Pemantauan Presensi Guru</title>
+
+  <link rel="stylesheet" href="./css/style.css">
+
+  <style>
+    :root {
+      --hijau: #176b48;
+      --gelap: #123b2c;
+      --merah: #b42318;
+      --kuning: #946200;
+      --latar: #f3f6f4;
+      --garis: #dce5df;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--latar);
+      color: #1e2b23;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background: var(--gelap);
+      color: white;
+      padding: 22px 18px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 23px;
+    }
+
+    header p {
+      margin: 0;
+      opacity: .9;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1200px;
+      padding: 18px;
+      margin: auto;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--garis);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px #00000008;
+    }
+
+    .kontrol {
+      display: flex;
+      gap: 12px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      flex: 1;
+      min-width: 190px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5ce;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-utama {
+      background: var(--hijau);
+      color: white;
+      border-color: var(--hijau);
+    }
+
+    .btn-netral {
+      background: white;
+      color: var(--gelap);
+    }
+
+    .ringkasan {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .angka {
+      background: white;
+      border: 1px solid var(--garis);
+      border-radius: 12px;
+      padding: 17px;
+    }
+
+    .angka .label {
+      font-size: 13px;
+      color: #5c6b61;
+      margin-bottom: 9px;
+    }
+
+    .angka .nilai {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .sudah { color: var(--hijau); }
+    .belum { color: var(--merah); }
+    .total { color: var(--gelap); }
+
+    .filter {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .filter select { min-width: 190px; }
+
+    .tabel-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 720px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #e5ebe6;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0f5f1;
+      color: #243c2e;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .badge-sudah {
+      background: #d9f4e3;
+      color: #176b48;
+    }
+
+    .badge-belum {
+      background: #fde5e3;
+      color: #a32018;
+    }
+
+    .badge-jadwal {
+      background: #fff1c9;
+      color: #795600;
+    }
+
+    .pesan {
+      padding: 12px;
+      border-radius: 8px;
+      background: #eef4ef;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .error {
+      color: #a32018;
+      background: #fff0ee;
+    }
+
+    .catatan {
+      font-size: 12px;
+      color: #637066;
+      line-height: 1.6;
+    }
+
+    .kosong {
+      padding: 24px;
+      text-align: center;
+      color: #647067;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #657067;
+    }
+
+    @media (max-width: 600px) {
+      main { padding: 12px; }
+      header h1 { font-size: 20px; }
+      .ringkasan { grid-template-columns: 1fr; }
+      .angka .nilai { font-size: 26px; }
+      .panel { padding: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Pemantauan Presensi Guru</h1>
+    <p>SMAN 2 Rangkasbitung · Dashboard Kepala Sekolah</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="kontrol">
+        <div class="field">
+          <label for="tanggalPantau">Tanggal pemantauan</label>
+          <input type="date" id="tanggalPantau">
+        </div>
+
+        <button class="btn-utama" id="btnMuat">
+          Tampilkan Data
+        </button>
+
+        <button class="btn-netral" id="btnHariIni">
+          Hari Ini
+        </button>
+
+        <button class="btn-netral" id="btnKeluar">
+          Keluar
+        </button>
+      </div>
+    </section>
+
+    <div id="statusDashboard" class="pesan" role="status">
+      Menghubungkan ke Firebase...
+    </div>
+
+    <section class="ringkasan" style="margin-top:18px">
+      <div class="angka">
+        <div class="label">Total Guru Aktif</div>
+        <div class="nilai total" id="jumlahGuru">—</div>
+      </div>
+
+      <div class="angka">
+        <div class="label">Sudah Melakukan Presensi</div>
+        <div class="nilai sudah" id="jumlahSudah">—</div>
+      </div>
+
+      <div class="angka">
+        <div class="label">Belum Melakukan Presensi</div>
+        <div class="nilai belum" id="jumlahBelum">—</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 style="font-size:18px;margin-top:0">
+        Daftar Pemantauan Guru
+      </h2>
+
+      <div class="filter">
+        <div class="field">
+          <label for="filterStatus">Status presensi</label>
+          <select id="filterStatus">
+            <option value="semua">Semua Guru</option>
+            <option value="sudah">Sudah Presensi</option>
+            <option value="belum">Belum Presensi</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="cariGuru">Cari nama atau mata pelajaran</label>
+          <input id="cariGuru" type="search"
+            placeholder="Ketik nama guru...">
+        </div>
+
+        <button class="btn-netral" id="btnCsv">
+          Unduh CSV
+        </button>
+      </div>
+
+      <div class="tabel-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Nama Guru</th>
+              <th>Mata Pelajaran</th>
+              <th>Kelas</th>
+              <th>Jadwal</th>
+              <th>Status</th>
+              <th>Jumlah Catatan</th>
+            </tr>
+          </thead>
+          <tbody id="tabelGuru">
+            <tr>
+              <td colspan="7" class="kosong">
+                Menunggu data Firebase...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="catatan" id="catatanData"></p>
+    </section>
+  </main>
+
+  <footer>
+    SMAN 2 Rangkasbitung CERIA
+    (Cerdas, Empati, Religius, Inovatif, Aman dan nyaman).
+  </footer>
+
+  <script type="module">
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      doc,
+      getDoc,
+      query,
+      where
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmNnrCfWWhCI",
+      authDomain: "aplikasi-presensi-fb.firebaseapp.com",
+      projectId: "aplikasi-presensi-fb",
+      storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
+      messagingSenderId: "1018611782868",
+      appId: "1:1018611782868:web:37304037cece90197c9741"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const el = id => document.getElementById(id);
+
+    let penggunaSiap = false;
+    let dataTampilan = [];
+    let dataGuru = [];
+    let dataJadwal = [];
+    let dataPresensi = [];
+    let sedangMemuat = false;
+
+    function tanggalLokal(date = new Date()) {
+      const tahun = date.getFullYear();
+      const bulan = String(date.getMonth() + 1).padStart(2, "0");
+      const hari = String(date.getDate()).padStart(2, "0");
+      return `${tahun}-${bulan}-${hari}`;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[c]);
+    }
+
+    function normalisasiTanggal(value) {
+      if (!value) return "";
+
+      if (typeof value === "string") {
+        const s = value.trim();
+
+        if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+        const iso = s.match(/^(\d{4}-\d{2}-\d{2})T/);
+        if (iso) return iso[1];
+
+        const indonesia = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (indonesia) {
+          return `${indonesia[3]}-${indonesia[2]}-${indonesia[1]}`;
+        }
+
+        return "";
+      }
+
+      if (typeof value.toDate === "function") {
+        return tanggalLokal(value.toDate());
+      }
+
+      return "";
+    }
+
+    function hariIndonesia(dateString) {
+      const [y, m, d] = dateString.split("-").map(Number);
+      const date = new Date(y, m - 1, d);
+      return [
+        "Minggu", "Senin", "Selasa", "Rabu",
+        "Kamis", "Jumat", "Sabtu"
+      ][date.getDay()];
+    }
+
+    function samaHari(a, b) {
+      return String(a || "").trim().toLowerCase()
+        === String(b || "").trim().toLowerCase();
+    }
+
+    function tanggalPresensi(data) {
+      return normalisasiTanggal(
+        data.tanggal ?? data.tanggalPresensi ?? data.waktuPresensi
+      );
+    }
+
+    function namaGuru(data) {
+      return String(data.nama ?? data.guruNama ?? data.namaGuru ?? "").trim();
+    }
+
+    function tampilkanStatus(pesan, gagal = false) {
+      const box = el("statusDashboard");
+      box.textContent = pesan;
+      box.className = gagal ? "pesan error" : "pesan";
+    }
+
+    function aktifkanTombol(aktif) {
+      el("btnMuat").disabled = !aktif;
+      el("btnHariIni").disabled = !aktif;
+      el("btnCsv").disabled = !aktif;
+    }
+
+    async function periksaKepsek(user) {
+      const profilRef = doc(db, "users", user.uid);
+      const profilSnap = await getDoc(profilRef);
+
+      if (!profilSnap.exists()) {
+        throw new Error(
+          "Profil pengguna tidak ditemukan pada users/" + user.uid
+        );
+      }
+
+      const profil = profilSnap.data();
+
+      if (profil.role !== "kepsek" || profil.aktif !== true) {
+        throw new Error(
+          "Halaman ini hanya untuk akun kepsek aktif."
+        );
+      }
+    }
+
+    async function muatData() {
+      if (!penggunaSiap || sedangMemuat) return;
+
+      const tanggal = el("tanggalPantau").value;
+
+      if (!tanggal) {
+        tampilkanStatus("Silakan pilih tanggal pemantauan.", true);
+        return;
+      }
+
+      sedangMemuat = true;
+      aktifkanTombol(false);
+      tampilkanStatus("Mengambil data guru, jadwal, dan presensi...");
+
+      try {
+        // Ambil guru aktif.
+        const guruQuery = query(
+          collection(db, "users"),
+          where("role", "==", "guru"),
+          where("aktif", "==", true)
+        );
+
+        // Koleksi jadwal dibaca untuk mengenali jadwal pada hari pilihan.
+        const [guruSnap, jadwalSnap] = await Promise.all([
+          getDocs(guruQuery),
+          getDocs(collection(db, "jadwal"))
+        ]);
+
+        dataGuru = guruSnap.docs.map(d => ({
+          uid: d.id,
+          ...d.data()
+        }));
+
+        dataJadwal = jadwalSnap.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        })).filter(j => j.aktif === true);
+
+        // Query tanggal terpilih, bukan seluruh riwayat presensi.
+        const presensiQuery = query(
+          collection(db, "presensi"),
+          where("tanggal", "==", tanggal)
+        );
+
+        const presensiSnap = await getDocs(presensiQuery);
+
+        dataPresensi = presensiSnap.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        }));
+
+        susunTampilan(tanggal);
+
+        tampilkanStatus(
+          `Data berhasil dimuat untuk ${hariIndonesia(tanggal)}, ${tanggal}.`
+        );
+
+      } catch (error) {
+        console.error("Kesalahan membaca pemantauan presensi:", error);
+
+        tampilkanStatus(
+          "Gagal membaca data Firebase: " +
+          (error.code || "") + " " + error.message,
+          true
+        );
+
+        el("tabelGuru").innerHTML = `
+          <tr><td colspan="7" class="kosong">
+            Data tidak dapat dimuat. Periksa Firestore Rules dan Console.
+          </td></tr>`;
+
+      } finally {
+        sedangMemuat = false;
+        aktifkanTombol(penggunaSiap);
+      }
+    }
+
+    function susunTampilan(tanggal) {
+      const hari = hariIndonesia(tanggal);
+      const daftar = [];
+
+      for (const guru of dataGuru) {
+        const jadwalGuru = dataJadwal.filter(j =>
+          j.guruUid === guru.uid &&
+          samaHari(j.hari, hari)
+        );
+
+        const catatan = dataPresensi.filter(p =>
+          p.guruUid === guru.uid &&
+          tanggalPresensi(p) === tanggal
+        );
+
+        const nama = namaGuru(guru) || guru.email || guru.uid;
+
+        // Data guru dianggap sudah presensi jika ada setidaknya
+        // satu dokumen presensi pada tanggal yang dipilih.
+        const sudah = catatan.length > 0;
+
+        const mapelJadwal = [...new Set(
+          jadwalGuru.map(j => j.mataPelajaran).filter(Boolean)
+        )];
+
+        const kelasJadwal = [...new Set(
+          jadwalGuru.map(j => j.kelas).filter(Boolean)
+        )];
+
+        const mapelCatatan = [...new Set(
+          catatan.map(p => p.mataPelajaran ?? p.mapel).filter(Boolean)
+        )];
+
+        const kelasCatatan = [...new Set(
+          catatan.map(p => p.kelas ?? p.namaKelas).filter(Boolean)
+        )];
+
+        const mapel = [...new Set([...mapelJadwal, ...mapelCatatan])];
+        const kelas = [...new Set([...kelasJadwal, ...kelasCatatan])];
+
+        daftar.push({
+          uid: guru.uid,
+          nama,
+          email: guru.email || "",
+          mapel,
+          kelas,
+          jumlahJadwal: jadwalGuru.length,
+          sudah,
+          jumlahCatatan: catatan.length
+        });
+      }
+
+      daftar.sort((a, b) => {
+        if (a.sudah !== b.sudah) return a.sudah ? -1 : 1;
+        return a.nama.localeCompare(b.nama, "id");
+      });
+
+      dataTampilan = daftar;
+
+      el("jumlahGuru").textContent = daftar.length;
+      el("jumlahSudah").textContent = daftar.filter(g => g.sudah).length;
+      el("jumlahBelum").textContent = daftar.filter(g => !g.sudah).length;
+
+      el("catatanData").textContent =
+        "Status dihitung berdasarkan adanya dokumen presensi guru " +
+        "pada tanggal pilihan. Jadwal ditampilkan jika tersedia dan " +
+        "memiliki guruUid, hari, kelas, serta mataPelajaran yang sesuai.";
+
+      renderTabel();
+    }
+
+    function renderTabel() {
+      const filter = el("filterStatus").value;
+      const cari = el("cariGuru").value.trim().toLowerCase();
+
+      const hasil = dataTampilan.filter(g => {
+        const sesuaiStatus =
+          filter === "semua" ||
+          (filter === "sudah" && g.sudah) ||
+          (filter === "belum" && !g.sudah);
+
+        const teks = [
+          g.nama, g.email, ...g.mapel, ...g.kelas
+        ].join(" ").toLowerCase();
+
+        return sesuaiStatus && teks.includes(cari);
+      });
+
+      if (hasil.length === 0) {
+        el("tabelGuru").innerHTML = `
+          <tr><td colspan="7" class="kosong">
+            Tidak ada guru yang cocok dengan filter.
+          </td></tr>`;
+        return;
+      }
+
+      el("tabelGuru").innerHTML = hasil.map((g, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>
+            <strong>${escapeHTML(g.nama)}</strong>
+            ${g.email ? `<br><small>${escapeHTML(g.email)}</small>` : ""}
+          </td>
+          <td>${escapeHTML(g.mapel.join(", ") || "—")}</td>
+          <td>${escapeHTML(g.kelas.join(", ") || "—")}</td>
+          <td>
+            ${g.jumlahJadwal > 0
+              ? `<span class="badge badge-jadwal">${g.jumlahJadwal} jadwal</span>`
+              : "Tidak ada jadwal tercatat"}
+          </td>
+          <td>
+            ${g.sudah
+              ? '<span class="badge badge-sudah">Sudah presensi</span>'
+              : '<span class="badge badge-belum">Belum presensi</span>'}
+          </td>
+          <td>${g.jumlahCatatan}</td>
+        </tr>
+      `).join("");
+    }
+
+    function unduhCSV() {
+      const filter = el("filterStatus").value;
+      const cari = el("cariGuru").value.trim().toLowerCase();
+
+      const hasil = dataTampilan.filter(g => {
+        const sesuaiStatus =
+          filter === "semua" ||
+          (filter === "sudah" && g.sudah) ||
+          (filter === "belum" && !g.sudah);
+
+        const teks = [
+          g.nama, g.email, ...g.mapel, ...g.kelas
+        ].join(" ").toLowerCase();
+
+        return sesuaiStatus && teks.includes(cari);
+      });
+
+      const kolom = [
+        "Tanggal", "Nama Guru", "Email", "Mata Pelajaran",
+        "Kelas", "Jumlah Jadwal", "Status", "Jumlah Catatan"
+      ];
+
+      const baris = hasil.map(g => [
+        el("tanggalPantau").value,
+        g.nama,
+        g.email,
+        g.mapel.join(", "),
+        g.kelas.join(", "),
+        g.jumlahJadwal,
+        g.sudah ? "Sudah presensi" : "Belum presensi",
+        g.jumlahCatatan
+      ]);
+
+      const csv = [kolom, ...baris]
+        .map(row => row.map(v =>
+          '"' + String(v ?? "").replace(/"/g, '""') + '"'
+        ).join(","))
+        .join("\r\n");
+
+      const blob = new Blob(["\uFEFF" + csv], {
+        type: "text/csv;charset=utf-8;"
+      });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pemantauan-guru-${el("tanggalPantau").value}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    el("btnMuat").addEventListener("click", muatData);
+
+    el("btnHariIni").addEventListener("click", () => {
+      el("tanggalPantau").value = tanggalLokal();
+      muatData();
+    });
+
+    el("filterStatus").addEventListener("change", renderTabel);
+    el("cariGuru").addEventListener("input", renderTabel);
+    el("btnCsv").addEventListener("click", unduhCSV);
+
+    el("btnKeluar").addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.replace("./login.html");
+      } catch (error) {
+        tampilkanStatus("Gagal keluar: " + error.message, true);
+      }
+    });
+
+    el("tanggalPantau").value = tanggalLokal();
+
+    onAuthStateChanged(auth, async user => {
+      penggunaSiap = false;
+      aktifkanTombol(false);
+
+      if (!user) {
+        tampilkanStatus("Sesi login tidak ditemukan. Mengalihkan ke login...");
+        window.location.replace("./login.html");
+        return;
+      }
+
+      try {
+        await periksaKepsek(user);
+        penggunaSiap = true;
+        aktifkanTombol(true);
+        await muatData();
+      } catch (error) {
+        console.error("Pemeriksaan akun kepsek gagal:", error);
+        tampilkanStatus(error.message, true);
+      }
+    });
+  </script>
+</body>
+</html>
