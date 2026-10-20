@@ -753,58 +753,65 @@
     el("tanggalPantau").value = tanggalLokal();
 
     
-let pemeriksaanSesiSelesai = false;
 
 onAuthStateChanged(auth, async (user) => {
-  if (pemeriksaanSesiSelesai) return;
-  pemeriksaanSesiSelesai = true;
-
+  // Firebase sudah selesai memeriksa status autentikasi.
   if (!user) {
-    document.body.innerHTML = `
-      <main style="padding:24px;font-family:Arial,sans-serif">
-        <h2>Sesi login belum tersedia</h2>
-        <p>Silakan login kembali untuk membuka halaman kepala sekolah.</p>
-        <a href="./login.html">Kembali ke halaman login</a>
-      </main>
+    penggunaSiap = false;
+    aktifkanTombol(false);
+
+    tampilkanStatus(
+      "Sesi login tidak ditemukan. Silakan login kembali.",
+      true
+    );
+
+    el("tabelGuru").innerHTML = `
+      <tr>
+        <td colspan="7" class="kosong">
+          Anda belum login. Silakan kembali ke halaman login.
+          <br><br>
+          <a href="./login.html">Kembali ke Login</a>
+        </td>
+      </tr>
     `;
+
     return;
   }
 
   try {
-    const profilRef = doc(db, "users", user.uid);
-    const profilSnap = await getDoc(profilRef);
+    // Periksa profil pengguna yang sedang login.
+    await periksaKepsek(user);
 
-    if (!profilSnap.exists()) {
-      throw new Error(
-        "Profil pengguna tidak ditemukan pada users/" + user.uid
-      );
-    }
+    penggunaSiap = true;
+    aktifkanTombol(true);
 
-    const profil = profilSnap.data();
+    tampilkanStatus(
+      "Login berhasil. Memuat pemantauan presensi guru..."
+    );
 
-    if (profil.role !== "kepsek" || profil.aktif !== true) {
-      throw new Error(
-        "Akun harus memiliki role kepsek dan aktif bernilai true."
-      );
-    }
-
-    // Lanjutkan pemuatan dashboard kepsek di sini.
-    // Panggil fungsi pemuatan dashboard yang sudah ada.
-    await muatDashboardKepsek();
+    // Gunakan fungsi yang benar-benar tersedia di file ini.
+    await muatData();
 
   } catch (error) {
-    console.error("Pemeriksaan sesi kepsek gagal:", error);
+    console.error(
+      "Pemeriksaan akun atau pemuatan dashboard gagal:",
+      error
+    );
 
-    document.body.innerHTML = `
-      <main style="padding:24px;font-family:Arial,sans-serif">
-        <h2>Gagal membuka dashboard</h2>
-        <p>${error.message}</p>
-        <a href="./login.html">Kembali ke halaman login</a>
-      </main>
-    `;
+    penggunaSiap = false;
+    aktifkanTombol(false);
+
+    tampilkanStatus(
+      "Gagal membuka dashboard: " +
+      (error.code ? error.code + " — " : "") +
+      error.message,
+      true
+    );
   }
 });
 
+
+    
   </script>
 </body>
 </html>
