@@ -16,7 +16,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmNnrCfWWhCI",
+  apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmnNrCfWWhCI",
   authDomain: "aplikasi-presensi-fb.firebaseapp.com",
   projectId: "aplikasi-presensi-fb",
   storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
