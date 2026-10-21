@@ -383,3 +383,218 @@ onAuthStateChanged(auth, async (user) => {
     adminSiap = false;
   }
 });
+
+//Fungsi import data guru
+
+import {
+  collection,
+  doc,
+  writeBatch
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+// Gunakan variabel db dari inisialisasi Firebase yang sudah ada.
+// Fungsi ini menganggap pemeriksaan login admin sudah dilakukan
+// oleh halaman atau modul admin-guru.js yang ada.
+
+function parseCSVGuru(teks) {
+  const baris = teks
+    .replace(/^\uFEFF/, "")
+    .split(/\r?\n/)
+    .filter(b => b.trim() !== "");
+
+  if (baris.length < 2) {
+    throw new Error("File CSV tidak memiliki data.");
+  }
+
+  function parseBaris(teksBaris) {
+    const hasil = [];
+    let nilai = "";
+    let dalamKutip = false;
+
+    for (let i = 0; i < teksBaris.length; i++) {
+      const c = teksBaris[i];
+
+      if (c === '"') {
+        if (dalamKutip && teksBaris[i + 1] === '"') {
+          nilai += '"';
+          i++;
+        } else {
+          dalamKutip = !dalamKutip;
+        }
+      } else if (c === "," && !dalamKutip) {
+        hasil.push(nilai.trim());
+        nilai = "";
+      } else {
+        nilai += c;
+      }
+    }
+
+    if (dalamKutip) {
+      throw new Error("Terdapat tanda kutip CSV yang tidak berpasangan.");
+    }
+
+    hasil.push(nilai.trim());
+    return hasil;
+  }
+
+  const header = parseBaris(baris[0]).map(h =>
+    h.toLowerCase().trim()
+  );
+
+  const wajib = ["uid", "nama", "email", "nip", "role", "aktif"];
+  const kurang = wajib.filter(k => !header.includes(k));
+
+  if (kurang.length) {
+    throw new Error(
+      "Kolom wajib tidak ditemukan: " + kurang.join(", ")
+    );
+  }
+
+  return baris.slice(1).map((barisCSV, indeks) => {
+    const kolom = parseBaris(barisCSV);
+    const data = {};
+
+    header.forEach((namaKolom, i) => {
+      data[namaKolom] = kolom[i] ?? "";
+    });
+
+    const uid = data.uid.trim();
+    const nama = data.nama.trim();
+    const email = data.email.trim();
+    const nip = data.nip.trim();
+    const role = data.role.trim().toLowerCase();
+    const aktifText = data.aktif.trim().toLowerCase();
+
+    if (!uid || !nama || !email) {
+      throw new Error(
+        `Baris ${indeks + 2}: UID, nama, dan email wajib diisi.`
+      );
+    }
+
+    if (!["guru", "kepsek"].includes(role)) {
+      throw new Error(
+        `Baris ${indeks + 2}: role harus guru atau kepsek.`
+      );
+    }
+
+    if (!["true", "false"].includes(aktifText)) {
+      throw new Error(
+        `Baris ${indeks + 2}: aktif harus true atau false.`
+      );
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error(
+        `Baris ${indeks + 2}: format email tidak valid.`
+      );
+    }
+
+    return {
+      uid,
+      data: {
+        nama,
+        email,
+        nip,
+        role,
+        aktif: aktifText === "true"
+      }
+    };
+  });
+}
+
+async function importCSVGuru(file) {
+  if (!file) {
+    throw new Error("Pilih file CSV terlebih dahulu.");
+  }
+
+  const teks = await file.text();
+  const dataGuru = parseCSVGuru(teks);
+
+  // Cegah UID ganda dalam satu file.
+  const uidSet = new Set();
+
+  for (const guru of dataGuru) {
+    if (uidSet.has(guru.uid)) {
+      throw new Error("UID duplikat dalam CSV: " + guru.uid);
+    }
+    uidSet.add(guru.uid);
+  }
+
+  let berhasil = 0;
+
+  // Maksimal 450 dokumen per batch.
+  for (let i = 0; i < dataGuru.length; i += 450) {
+    const bagian = dataGuru.slice(i, i + 450);
+    const batch = writeBatch(db);
+
+    bagian.forEach(guru => {
+      batch.set(
+        doc(db, "users", guru.uid),
+        guru.data,
+        { merge: true }
+      );
+    });
+
+    await batch.commit();
+    berhasil += bagian.length;
+  }
+
+  return berhasil;
+}
+
+
+const inputCSVGuru = document.getElementById("fileImportGuru");
+const tombolImportGuru = document.getElementById("btnImportGuru");
+const tombolTemplateGuru = document.getElementById("btnTemplateGuru");
+const statusImportGuru = document.getElementById("statusImportGuru");
+
+if (tombolImportGuru) {
+  tombolImportGuru.addEventListener("click", async () => {
+    try {
+      tombolImportGuru.disabled = true;
+      statusImportGuru.textContent = "Sedang memproses CSV...";
+
+      const jumlah = await importCSVGuru(
+        inputCSVGuru.files[0]
+      );
+
+      statusImportGuru.textContent =
+        `Import selesai. ${jumlah} profil berhasil disimpan.`;
+
+      // Sesuaikan dengan nama fungsi pemuat tabel yang sudah ada.
+      if (typeof loadGuru === "function") {
+        await loadGuru();
+      }
+    } catch (error) {
+      console.error("Import guru gagal:", error);
+      statusImportGuru.textContent =
+        "Import gagal: " + error.message;
+    } finally {
+      tombolImportGuru.disabled = false;
+    }
+  });
+}
+
+if (tombolTemplateGuru) {
+  tombolTemplateGuru.addEventListener("click", () => {
+    const csv =
+      "uid,nama,email,nip,role,aktif\r\n" +
+      "UID_FIREBASE,nama guru,email@sekolah.sch.id,123456,guru,true\r\n";
+
+    const blob = new Blob(
+      ["\uFEFF" + csv],
+      { type: "text/csv;charset=utf-8;" }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "template-import-guru.csv";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  });
+}
+
+//=======================
