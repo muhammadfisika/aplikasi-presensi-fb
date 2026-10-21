@@ -187,6 +187,26 @@
       </form>
     </section>
 
+    <!--- Panel Import Data Guru--->
+    <section class="admin-panel">
+      <h2>Import Data CSV</h2>
+      <p>Format kolom: <code>kode,nama,email,nip,role,aktif</code></p>
+      <p>
+        <a href="./template-guru.csv" download>
+          Unduh contoh template CSV
+        </a>
+        (tautan ini aktif setelah file template dibuat).
+      </p>
+      <input id="fileCsv" type="file" accept=".csv,text/csv">
+      <div class="admin-actions">
+        <button id="btnImport" type="button">Import CSV</button>
+      </div>
+      <p id="pesanImport" class="status-message" role="status"></p>
+    </section>
+
+
+    <!--- --->
+
     <section class="panel">
       <h2>Daftar Guru dan Kepala Sekolah</h2>
       <input id="pencarian" class="search-input"
