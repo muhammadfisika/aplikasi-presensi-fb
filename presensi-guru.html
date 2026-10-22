@@ -230,16 +230,6 @@
 
 
     
-
-
-#panelDaftarJadwal .scroll,
-#panelInputJadwal {
-  overflow-wrap: anywhere;
-}
-#panelDaftarJadwal td button {
-  margin: 2px 0;
-}
-
   </style>
 </head>
 
@@ -252,39 +242,14 @@
   Rekap Presensi
 </button>
     <button type="button" id="btnBukaFormJadwal" class="secondary">
-  Lihat Jadwal
+  + Input Jadwal
 </button>
     
     <p id="namaGuru" class="muted">Memeriksa akun guru...</p>
     <div id="pesan" role="status" hidden></div>
-<!-- Panel untuk melihat dan mengelola jadwal guru -->
-<section id="panelDaftarJadwal" class="panel" hidden>
-  <h2>Jadwal Mengajar Saya</h2>
-  <p class="muted">Guru dapat menambah, mengedit, atau menonaktifkan jadwal miliknya.</p>
-  <div class="actions">
-    <button type="button" id="btnTambahJadwal" class="primary">+ Tambah Jadwal</button>
-    <button type="button" id="btnTutupDaftarJadwal" class="secondary">Tutup</button>
-  </div>
-  <div class="scroll" style="margin-top:14px">
-    <table>
-      <thead>
-        <tr>
-          <th>Hari</th>
-          <th>Kelas / Mata Pelajaran</th>
-          <th>Jam</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="tabelJadwalGuru">
-        <tr><td colspan="5">Memuat jadwal...</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<section id="panelInputJadwal" class="panel" hidden>
-  <h3 id="judulFormJadwal">Tambah Jadwal Mengajar</h3>
+<!-- form input jadwal guru---->
+<section id="panelInputJadwal" hidden>
+  <h3>Input Jadwal Mengajar</h3>
 
   <label for="inputHari">Hari Mengajar</label>
   <select id="inputHari" required>
@@ -295,6 +260,7 @@
     <option value="Kamis">Kamis</option>
     <option value="Jumat">Jumat</option>
     <option value="Sabtu">Sabtu</option>
+    <option value="Minggu">Minggu</option>
   </select>
 
   <label for="inputKelas">Kelas</label>
@@ -335,20 +301,31 @@
     <option value="XII - 11">XII - 11</option>
     <option value="XII - 12">XII - 12</option>
   </select>
-
+  
   <label for="inputMapel">Mata Pelajaran</label>
-  <input type="text" id="inputMapel" placeholder="Contoh: Fisika" required>
+  <input
+    type="text"
+    id="inputMapel"
+    placeholder="Contoh: Fisika"
+    required
+  >
 
   <label for="inputJamMulai">Jam Mulai</label>
-  <input type="time" id="inputJamMulai" required>
+  <input type="text" id="inputJamMulai" required>
 
   <label for="inputJamSelesai">Jam Selesai</label>
-  <input type="time" id="inputJamSelesai" required>
+  <input type="text" id="inputJamSelesai" required>
 
   <div class="tombol-jadwal">
-    <button type="button" id="btnSimpanJadwal">Simpan Jadwal</button>
-    <button type="button" id="btnBatalJadwal" class="secondary">Batal</button>
+    <button type="button" id="btnSimpanJadwal">
+      Simpan Jadwal
+    </button>
+
+    <button type="button" id="btnBatalJadwal">
+      Batal
+    </button>
   </div>
+
   <p id="pesanInputJadwal" role="status"></p>
 </section>
 
