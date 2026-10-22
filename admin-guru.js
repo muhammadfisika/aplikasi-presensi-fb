@@ -418,7 +418,7 @@ function parseCSVGuru(teks) {
         } else {
           dalamKutip = !dalamKutip;
         }
-      } else if (c === "," && !dalamKutip) {
+      } else if (c === ";" && !dalamKutip) {
         hasil.push(nilai.trim());
         nilai = "";
       } else {
