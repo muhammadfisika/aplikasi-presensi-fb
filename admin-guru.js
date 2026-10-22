@@ -16,6 +16,7 @@ import {
   getDoc,
   collection,
   getDocs,
+   writeBatch,
   setDoc
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
@@ -384,13 +385,9 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-//Fungsi import data guru
 
-import {
-  collection,
-  doc,
-  writeBatch
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+
 
 // Gunakan variabel db dari inisialisasi Firebase yang sudah ada.
 // Fungsi ini menganggap pemeriksaan login admin sudah dilakukan
