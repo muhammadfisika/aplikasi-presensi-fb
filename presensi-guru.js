@@ -23,12 +23,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "GANTI_API_KEY",
-  authDomain: "GANTI_PROJECT_ID.firebaseapp.com",
-  projectId: "GANTI_PROJECT_ID",
-  storageBucket: "GANTI_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "GANTI_SENDER_ID",
-  appId: "GANTI_APP_ID"
+  apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmnNrCfWWhCI",
+  authDomain: "aplikasi-presensi-fb.firebaseapp.com",
+  projectId: "aplikasi-presensi-fb",
+  storageBucket: "aplikasi-presensi-fb.firebasestorage.app",
+  messagingSenderId: "1018611782868",
+  appId: "1:1018611782868:web:37304037cece90197c9741"
 };
 
 const app = getApps().length
