@@ -3,6 +3,7 @@ import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.3.
 import {
   getAuth,
   onAuthStateChanged,
+
   signOut
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
@@ -176,11 +177,20 @@ function pasangCSSRadio() {
 // =====================================================
 
 function tampilkanPesan(teks, error = false) {
-  if (!pesanEl) return;
+  console[error ? "error" : "log"](teks);
 
+  if (!pesanEl) {
+    console.error('Elemen HTML id="pesan" tidak ditemukan.');
+    return;
+  }
+
+  pesanEl.hidden = false;
+  pesanEl.style.display = "block";
   pesanEl.textContent = teks;
   pesanEl.classList.toggle("presensi-pesan-error", error);
+  pesanEl.setAttribute("role", error ? "alert" : "status");
 }
+
 
 function escapeHTML(nilai) {
   return String(nilai ?? "").replace(/[&<>"']/g, karakter => ({
@@ -365,3 +375,135 @@ async function muatJadwalGuru() {
 
     jadwalEl.innerHTML =
       '<option value="">-- Pil
+
+
+// =====================================================
+// MULAI APLIKASI - PEMERIKSAAN AKUN GURU
+// =====================================================
+
+pasangCSSRadio();
+
+if (tanggalEl && !tanggalEl.value) {
+  tanggalEl.value = tanggalHariIni();
+}
+
+if (btnSimpan) {
+  btnSimpan.disabled = true;
+}
+
+if (btnHadirSemua) {
+  btnHadirSemua.disabled = true;
+}
+
+if (namaGuruEl) {
+  namaGuruEl.textContent = "Menghubungkan ke Firebase...";
+}
+
+if (tabelSiswaEl) {
+  tabelSiswaEl.innerHTML =
+    '<tr><td colspan="4">Memeriksa sesi login...</td></tr>';
+}
+
+tampilkanPesan("Memeriksa status login Firebase...");
+
+let pemeriksaanSedangBerjalan = false;
+
+onAuthStateChanged(
+  auth,
+  async (user) => {
+    if (pemeriksaanSedangBerjalan) return;
+
+    if (!user) {
+      guruAktif = null;
+
+      if (namaGuruEl) {
+        namaGuruEl.textContent = "Belum login";
+      }
+
+      tampilkanPesan(
+        "Sesi login tidak ditemukan. Silakan login kembali.",
+        true
+      );
+
+      return;
+    }
+
+    pemeriksaanSedangBerjalan = true;
+
+    if (namaGuruEl) {
+      namaGuruEl.textContent = "Memeriksa profil guru...";
+    }
+
+    tampilkanPesan(
+      "Login Firebase berhasil. Memeriksa profil pengguna..."
+    );
+
+    try {
+      // Pastikan dokumen users menggunakan UID akun yang login.
+      guruAktif = await periksaGuru(user);
+
+      if (namaGuruEl) {
+        namaGuruEl.textContent = `Guru: ${guruAktif.nama}`;
+      }
+
+      tampilkanPesan(
+        `Login berhasil sebagai ${guruAktif.nama}. Memuat jadwal...`
+      );
+
+      await muatJadwalGuru();
+
+    } catch (error) {
+      console.error("Kesalahan pemeriksaan akun guru:", error);
+
+      guruAktif = null;
+
+      if (namaGuruEl) {
+        namaGuruEl.textContent =
+          "Profil guru gagal diperiksa.";
+      }
+
+      let pesanError = error.message || "Kesalahan tidak diketahui.";
+
+      if (error.code === "permission-denied") {
+        pesanError =
+          "Firestore menolak akses ke profil guru. Periksa Rules " +
+          "koleksi users agar pengguna yang login dapat membaca " +
+          "dokumen users/{UID} miliknya.";
+      } else if (error.code === "unavailable") {
+        pesanError =
+          "Firebase sedang tidak tersedia. Periksa koneksi internet " +
+          "dan coba muat ulang halaman.";
+      } else if (
+        error.message &&
+        error.message.includes("Profil pengguna tidak ditemukan")
+      ) {
+        pesanError =
+          "Dokumen users dengan ID yang sama seperti UID akun login " +
+          "tidak ditemukan. Periksa Firebase Authentication dan " +
+          "Firestore Console.";
+      }
+
+      tampilkanPesan(
+        `Gagal memeriksa akun guru: ${pesanError}`,
+        true
+      );
+
+    } finally {
+      pemeriksaanSedangBerjalan = false;
+    }
+  },
+  (error) => {
+    console.error("Firebase Auth gagal:", error);
+
+    if (namaGuruEl) {
+      namaGuruEl.textContent = "Autentikasi gagal.";
+    }
+
+    tampilkanPesan(
+      `Firebase Authentication gagal: ${error.message || error.code}`,
+      true
+    );
+  }
+);
+
+  
