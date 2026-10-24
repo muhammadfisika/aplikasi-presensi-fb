@@ -676,3 +676,201 @@ btnImport.addEventListener("click", async () => {
 
 
 //=======================================
+
+
+
+/* ============================================
+   DOWNLOAD KOLEKSI JADWAL KE EXCEL
+   ============================================ */
+
+const btnDownloadJadwal = document.getElementById(
+  "btnDownloadJadwal"
+);
+
+if (btnDownloadJadwal) {
+  btnDownloadJadwal.addEventListener(
+    "click",
+    downloadDataJadwal
+  );
+}
+
+async function downloadDataJadwal() {
+  if (!auth.currentUser) {
+    alert("Silakan login terlebih dahulu.");
+    return;
+  }
+
+  if (!window.XLSX) {
+    alert("Pustaka Excel belum tersedia. Periksa koneksi internet.");
+    return;
+  }
+
+  btnDownloadJadwal.disabled = true;
+  btnDownloadJadwal.textContent = "Menyiapkan Excel...";
+
+  try {
+    // Verifikasi akun admin aktif
+    const profilRef = doc(db, "users", auth.currentUser.uid);
+    const profilSnap = await getDoc(profilRef);
+
+    if (
+      !profilSnap.exists() ||
+      profilSnap.data().role !== "admin" ||
+      profilSnap.data().aktif !== true
+    ) {
+      throw new Error(
+        "Hanya admin aktif yang boleh mengunduh data jadwal."
+      );
+    }
+
+    // Ambil seluruh dokumen dari koleksi jadwal
+    const snapshot = await getDocs(
+      collection(db, "jadwal")
+    );
+
+    if (snapshot.empty) {
+      alert("Koleksi jadwal belum memiliki data.");
+      return;
+    }
+
+    // Ambil nama guru berdasarkan UID jika tersedia
+    const guruSnapshot = await getDocs(
+      query(
+        collection(db, "users"),
+        where("role", "==", "guru")
+      )
+    );
+
+    const daftarNamaGuru = new Map();
+
+    guruSnapshot.forEach((dok) => {
+      const guru = dok.data();
+      daftarNamaGuru.set(
+        dok.id,
+        guru.nama || guru.email || dok.id
+      );
+    });
+
+    // Susun data Excel dari koleksi jadwal
+    const dataExcel = snapshot.docs.map((dok, index) => {
+      const j = dok.data();
+
+      return {
+        "No": index + 1,
+        "ID Jadwal": dok.id,
+        "Nama Guru": daftarNamaGuru.get(j.guruUid) || "",
+        "Guru UID": j.guruUid || "",
+        "Hari": j.hari || "",
+        "Kelas": j.kelas || "",
+        "Mata Pelajaran": j.mataPelajaran || "",
+        "Jam Mulai": formatJamExcel(j.jamMulai),
+        "Jam Selesai": formatJamExcel(j.jamSelesai),
+        "Status": j.aktif === true
+          ? "Aktif"
+          : j.aktif === false
+            ? "Tidak Aktif"
+            : "",
+      };
+    });
+
+    // Urutkan berdasarkan hari, kelas, dan jam mulai
+    const urutanHari = {
+      Senin: 1,
+      Selasa: 2,
+      Rabu: 3,
+      Kamis: 4,
+      Jumat: 5,
+      Sabtu: 6,
+      Minggu: 7
+    };
+
+    dataExcel.sort((a, b) => {
+      const hariA = urutanHari[a.Hari] || 99;
+      const hariB = urutanHari[b.Hari] || 99;
+
+      if (hariA !== hariB) return hariA - hariB;
+
+      const kelasA = String(a.Kelas);
+      const kelasB = String(b.Kelas);
+
+      if (kelasA !== kelasB) {
+        return kelasA.localeCompare(kelasB, "id");
+      }
+
+      return String(a["Jam Mulai"]).localeCompare(
+        String(b["Jam Mulai"])
+      );
+    });
+
+    // Buat file Excel
+    const worksheet = XLSX.utils.json_to_sheet(dataExcel);
+
+    worksheet["!cols"] = [
+      { wch: 6 },
+      { wch: 24 },
+      { wch: 30 },
+      { wch: 30 },
+      { wch: 12 },
+      { wch: 14 },
+      { wch: 25 },
+      { wch: 14 },
+      { wch: 14 },
+      { wch: 16 }
+    ];
+
+    worksheet["!autofilter"] = {
+      ref: worksheet["!ref"]
+    };
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Data Jadwal"
+    );
+
+    const tanggal = new Date().toLocaleDateString("en-CA", {
+      timeZone: "Asia/Jakarta"
+    });
+
+    XLSX.writeFile(
+      workbook,
+      `Data_Jadwal_SM​AN2_Rangkasbitung_${tanggal}.xlsx`
+    );
+
+    alert(
+      `Berhasil menyiapkan ${dataExcel.length} data jadwal.`
+    );
+
+  } catch (error) {
+    console.error("Gagal mengunduh jadwal:", error);
+
+    alert(
+      error.code === "permission-denied"
+        ? "Akses ditolak Firestore. Periksa Firestore Rules."
+        : error.message || "Gagal mengunduh data jadwal."
+    );
+
+  } finally {
+    btnDownloadJadwal.disabled = false;
+    btnDownloadJadwal.textContent = "Download Excel Jadwal";
+  }
+}
+
+// Mendukung jam dalam bentuk angka desimal atau teks
+function formatJamExcel(jam) {
+  if (jam === null || jam === undefined || jam === "") {
+    return "";
+  }
+
+  if (typeof jam === "number") {
+    const totalMenit = Math.round(jam * 60);
+    const hh = String(Math.floor(totalMenit / 60)).padStart(2, "0");
+    const mm = String(totalMenit % 60).padStart(2, "0");
+
+    return `${hh}:${mm}`;
+  }
+
+  return String(jam);
+}
