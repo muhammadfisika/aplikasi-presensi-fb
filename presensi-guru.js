@@ -50,6 +50,7 @@ const pesanEl = document.getElementById("pesan");
 const tanggalEl = document.getElementById("tanggal");
 const jadwalEl = document.getElementById("jadwal");
 const infoJadwalEl = document.getElementById("infoJadwal");
+const aktivitasPembelajaranEl = document.getElementById("aktivitasPembelajaran");
 
 const btnMuat = document.getElementById("btnMuat");
 const btnHadirSemua = document.getElementById("btnHadirSemua");
@@ -663,6 +664,36 @@ async function simpanPresensi() {
 
   const jadwal = ambilJadwalTerpilih();
   const tanggal = tanggalEl?.value;
+  
+  //memasukan validasi aktivitas
+  const aktivitas = String(
+  aktivitasPembelajaranEl?.value || ""
+).trim();
+
+if (!aktivitas) {
+  tampilkanPesan(
+    "Aktivitas pembelajaran wajib diisi.",
+    true
+  );
+
+  aktivitasPembelajaranEl?.focus();
+  return;
+}
+
+if (aktivitas.length > 2000) {
+  tampilkanPesan(
+    "Aktivitas pembelajaran maksimal 2000 karakter.",
+    true
+  );
+
+  aktivitasPembelajaranEl?.focus();
+  return;
+}
+
+  //=============================
+
+
+  
 
   if (!tanggal || !jadwal) {
     tampilkanPesan("Pilih tanggal dan jadwal terlebih dahulu.", true);
