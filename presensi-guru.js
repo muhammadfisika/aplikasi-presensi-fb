@@ -228,8 +228,20 @@ function namaHariDariTanggal(tanggal) {
 }
 
 
-function formatWaktu(jam) {
-  return String(jam ?? "-");
+// Mengubah jam HH:mm menjadi angka desimal.
+// Contoh: "07:30" menjadi 7.5.
+function waktuKeAngka(jam) {
+  const nilai = String(jam ?? "").trim();
+  const cocok = nilai.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+
+  if (!cocok) {
+    throw new Error(`Format jam tidak valid: "${nilai}". Gunakan HH:mm.`);
+  }
+
+  const jamAngka = Number(cocok[1]);
+  const menitAngka = Number(cocok[2]);
+
+  return jamAngka + menitAngka / 60;
 }
 
 function ambilJadwalTerpilih() {
@@ -737,8 +749,11 @@ if (aktivitas.length > 2000) {
         guruNama: guruAktif.nama,
         kelas: jadwal.kelas,
         mataPelajaran: jadwal.mataPelajaran,
-        jamMulai: Number(jadwal.jamMulai),
-        jamSelesai: Number(jadwal.jamSelesai),
+        
+        jamMulai: waktuKeAngka(jadwal.jamMulai),
+        jamSelesai: waktuKeAngka(jadwal.jamSelesai),
+
+        
         siswaId: nisn,
         nisn,
         namaSiswa,
@@ -758,32 +773,37 @@ if (aktivitas.length > 2000) {
    //memasukan simpan presensi
     
     // ============================================
-    // SIMPAN AKTIVITAS PEMBELAJARAN KE COLLECTION agenda
-    // ============================================
+// SIMPAN AKTIVITAS PEMBELAJARAN KE COLLECTION agenda
+// ============================================
 
-    // ID dokumen dibuat konsisten untuk tanggal dan jadwal
-    // yang sama agar penyimpanan ulang tidak membuat duplikat.
-    const idAgenda = `${tanggal}__${jadwal.id}`;
+const idAgenda = `${tanggal}__${jadwal.id}`;
 
-    const dataAgenda = {
-      tanggal: tanggal,
-      guruUid: guruAktif.uid,
-      hari: jadwal.hari,
-      kelas: jadwal.kelas,
-      jamMulai: jadwal.jamMulai,
-      jamSelesai: jadwal.jamSelesai,
-      aktivitas: aktivitas,
-      diperbaruiPada: serverTimestamp()
-    };
+const dataAgenda = {
+  tanggal: tanggal,
+  guruUid: guruAktif.uid,
+  hari: jadwal.hari,
+  kelas: jadwal.kelas,
+  jamMulai: String(jadwal.jamMulai ?? "").trim(),
+  jamSelesai: String(jadwal.jamSelesai ?? "").trim(),
+  aktivitas: aktivitas,
+  diperbaruiPada: serverTimestamp()
+};
 
-    await setDoc(
-      doc(db, "agenda", idAgenda),
-      dataAgenda,
-      { merge: true }
-    );
+try {
+  await setDoc(
+    doc(db, "agenda", idAgenda),
+    dataAgenda,
+    { merge: true }
+  );
+} catch (error) {
+  console.error("Gagal menyimpan agenda:", error);
 
-
-    //=========================
+  throw new Error(
+    `Presensi siswa telah tersimpan, tetapi agenda gagal disimpan. ` +
+    `Kode: ${error.code || "tidak diketahui"}. ` +
+    `${error.message || ""}`
+  );
+}
 
     // Simpan kembali status lokal setelah berhasil.
     daftarSiswa.forEach(siswa => {
