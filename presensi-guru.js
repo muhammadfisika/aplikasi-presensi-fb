@@ -755,6 +755,36 @@ if (aktivitas.length > 2000) {
       berhasil++;
     }
 
+   //memasukan simpan presensi
+    
+    // ============================================
+    // SIMPAN AKTIVITAS PEMBELAJARAN KE COLLECTION agenda
+    // ============================================
+
+    // ID dokumen dibuat konsisten untuk tanggal dan jadwal
+    // yang sama agar penyimpanan ulang tidak membuat duplikat.
+    const idAgenda = `${tanggal}__${jadwal.id}`;
+
+    const dataAgenda = {
+      tanggal: tanggal,
+      guruUid: guruAktif.uid,
+      hari: jadwal.hari,
+      kelas: jadwal.kelas,
+      jamMulai: jadwal.jamMulai,
+      jamSelesai: jadwal.jamSelesai,
+      aktivitas: aktivitas,
+      diperbaruiPada: serverTimestamp()
+    };
+
+    await setDoc(
+      doc(db, "agenda", idAgenda),
+      dataAgenda,
+      { merge: true }
+    );
+
+
+    //=========================
+
     // Simpan kembali status lokal setelah berhasil.
     daftarSiswa.forEach(siswa => {
       const nisn = String(siswa.nisn || siswa.id || "");
