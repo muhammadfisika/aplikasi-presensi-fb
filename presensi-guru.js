@@ -473,6 +473,7 @@ async function muatSiswa() {
     tampilkanPesan("Silakan pilih jadwal pelajaran.", true);
     return;
   }
+  await muatAktivitasPembelajaran(jadwal, tanggal);
 
   sedangMemuat = true;
 
