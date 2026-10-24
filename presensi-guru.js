@@ -385,6 +385,74 @@ async function muatJadwalGuru() {
   }
 }
 
+// =====================================================
+// MEMUAT DATA AKTIVITAS PEMBELAJARAN DALAM KELAS TERPILIH
+// =====================================================
+
+/**
+ * Memuat kembali aktivitas pembelajaran berdasarkan
+ * tanggal dan jadwal yang dipilih.
+ */
+async function muatAktivitasPembelajaran(jadwal, tanggal) {
+  if (!aktivitasPembelajaranEl) {
+    console.warn(
+      'Elemen dengan ID "aktivitasPembelajaran" tidak ditemukan.'
+    );
+    return;
+  }
+
+  // Kosongkan dahulu agar aktivitas jadwal sebelumnya
+  // tidak tertinggal pada pilihan yang baru.
+  aktivitasPembelajaranEl.value = "";
+
+  if (!jadwal || !tanggal || !guruAktif) {
+    return;
+  }
+
+  const idAgenda = `${tanggal}__${jadwal.id}`;
+
+  try {
+    const refAgenda = doc(db, "agenda", idAgenda);
+    const snapshotAgenda = await getDoc(refAgenda);
+
+    if (snapshotAgenda.exists()) {
+      const dataAgenda = snapshotAgenda.data();
+
+      // Pastikan agenda sesuai dengan guru yang sedang login.
+      if (dataAgenda.guruUid !== guruAktif.uid) {
+        console.warn("Agenda bukan milik guru yang sedang login.");
+        return;
+      }
+
+      aktivitasPembelajaranEl.value =
+        String(dataAgenda.aktivitas || "");
+
+      console.log(
+        "Aktivitas pembelajaran berhasil dimuat:",
+        idAgenda
+      );
+    } else {
+      console.log(
+        "Belum ada aktivitas untuk tanggal dan jadwal ini:",
+        idAgenda
+      );
+    }
+  } catch (error) {
+    console.error(
+      "Gagal memuat aktivitas pembelajaran:",
+      error
+    );
+
+    tampilkanPesan(
+      "Aktivitas pembelajaran gagal dimuat. " +
+      (error.message || ""),
+      true
+    );
+  }
+}
+
+
+//========================================================
 
 // =====================================================
 // MEMUAT DATA SISWA DALAM KELAS TERPILIH
