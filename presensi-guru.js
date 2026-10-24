@@ -1,8 +1,5 @@
 
-import {
-  initializeApp,
-  getApps
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
 import {
   getAuth,
@@ -22,6 +19,12 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
+// =====================================================
+// KONFIGURASI FIREBASE
+// Gunakan konfigurasi yang SAMA dengan aplikasi Anda.
+// Ganti semua nilai GANTI_... dengan konfigurasi Firebase.
+// =====================================================
+
 const firebaseConfig = {
   apiKey: "AIzaSyBI6VWDbIJ7A-PxNtdQWDDhmnNrCfWWhCI",
   authDomain: "aplikasi-presensi-fb.firebaseapp.com",
@@ -37,270 +40,533 @@ const app = getApps().length
 
 const auth = getAuth(app);
 const db = getFirestore(app);
-const $ = id => document.getElementById(id);
 
-const STATUS = ["Hadir", "Sakit", "Izin", "Alpa"];
+// =====================================================
+// ELEMEN HTML
+// =====================================================
+
+const namaGuruEl = document.getElementById("namaGuru");
+const pesanEl = document.getElementById("pesan");
+const tanggalEl = document.getElementById("tanggal");
+const jadwalEl = document.getElementById("jadwal");
+const infoJadwalEl = document.getElementById("infoJadwal");
+
+const btnMuat = document.getElementById("btnMuat");
+const btnHadirSemua = document.getElementById("btnHadirSemua");
+const btnSimpan = document.getElementById("btnSimpan");
+const btnKeluar = document.getElementById("btnKeluar");
+
+const totalSiswaEl = document.getElementById("totalSiswa");
+const totalHadirEl = document.getElementById("totalHadir");
+const totalSakitEl = document.getElementById("totalSakit");
+const totalIzinEl = document.getElementById("totalIzin");
+const totalAlpaEl = document.getElementById("totalAlpa");
+
+const tabelSiswaEl = document.getElementById("tabelSiswa");
+
+// =====================================================
+// VARIABEL APLIKASI
+// =====================================================
 
 let guruAktif = null;
 let daftarJadwal = [];
-let jadwalTerpilih = null;
 let daftarSiswa = [];
-let statusSiswa = new Map();
-let siapSimpan = false;
+let presensiTersimpan = {};
+let sedangMemuat = false;
 let sedangMenyimpan = false;
 
-function tanggalLokal() {
+const PILIHAN_STATUS = ["Hadir", "Sakit", "Izin", "Alpa"];
+
+// =====================================================
+// CSS RADIO BUTTON
+// CSS dibuat melalui JavaScript agar tidak perlu
+// mengedit file HTML untuk tampilan radio button.
+// =====================================================
+
+function pasangCSSRadio() {
+  if (document.getElementById("cssRadioPresensi")) return;
+
+  const style = document.createElement("style");
+  style.id = "cssRadioPresensi";
+
+  style.textContent = `
+    .presensi-status-radio {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+      width: 100%;
+      min-width: 245px;
+    }
+
+    .presensi-status-radio label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 2px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #374151;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      box-sizing: border-box;
+      transition: background .15s, border-color .15s;
+    }
+
+    .presensi-status-radio label:has(input:checked) {
+      border-color: #16803d;
+      background: #ecfdf3;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .presensi-status-radio input[type="radio"] {
+      width: 17px;
+      height: 17px;
+      margin: 0;
+      accent-color: #16803d;
+      cursor: pointer;
+    }
+
+    .presensi-status-radio label:focus-within {
+      outline: 2px solid #86efac;
+      outline-offset: 1px;
+    }
+
+    #tabelSiswa td {
+      vertical-align: middle;
+    }
+
+    .presensi-nama-siswa {
+      min-width: 150px;
+    }
+
+    .presensi-nisn {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .presensi-pesan-error {
+      color: #b91c1c;
+    }
+
+    @media (max-width: 480px) {
+      .presensi-status-radio {
+        min-width: 235px;
+        gap: 3px;
+      }
+
+      .presensi-status-radio label {
+        font-size: 11px;
+        padding: 7px 1px;
+      }
+
+      .presensi-status-radio input[type="radio"] {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+// =====================================================
+// UTILITAS
+// =====================================================
+
+function tampilkanPesan(teks, error = false) {
+  if (!pesanEl) return;
+
+  pesanEl.textContent = teks;
+  pesanEl.classList.toggle("presensi-pesan-error", error);
+}
+
+function escapeHTML(nilai) {
+  return String(nilai ?? "").replace(/[&<>"']/g, karakter => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[karakter]);
+}
+
+function tanggalHariIni() {
   const sekarang = new Date();
   const tahun = sekarang.getFullYear();
   const bulan = String(sekarang.getMonth() + 1).padStart(2, "0");
-  const tanggal = String(sekarang.getDate()).padStart(2, "0");
-  return `${tahun}-${bulan}-${tanggal}`;
+  const hari = String(sekarang.getDate()).padStart(2, "0");
+
+  return `${tahun}-${bulan}-${hari}`;
 }
 
-function tampilkanPesan(teks, tipe = "info") {
-  const el = $("pesan");
-  el.hidden = false;
-  el.textContent = teks;
-  el.style.background = tipe === "error" ? "#fbe7e7" :
-    tipe === "sukses" ? "#e4f5e9" : "#edf3fa";
-  el.style.color = tipe === "error" ? "#8c2020" :
-    tipe === "sukses" ? "#176334" : "#173a5e";
+function formatWaktu(jam) {
+  return String(jam ?? "-");
 }
+
+function ambilJadwalTerpilih() {
+  const id = jadwalEl?.value;
+
+  return daftarJadwal.find(jadwal => jadwal.id === id) || null;
+}
+
+function ambilStatusSiswa(nisn) {
+  const radioTerpilih = document.querySelector(
+    `input[name="status-${nisn}"]:checked`
+  );
+
+  return radioTerpilih?.value || "Hadir";
+}
+
+// =====================================================
+// PEMERIKSAAN PROFIL GURU
+// =====================================================
 
 async function periksaGuru(user) {
-  const snap = await getDoc(doc(db, "users", user.uid));
+  const refProfil = doc(db, "users", user.uid);
+  const snapshot = await getDoc(refProfil);
 
-  if (!snap.exists()) {
-    throw new Error("Profil guru tidak ditemukan di Firestore.");
-  }
-
-  const data = snap.data();
-
-  if (data.role !== "guru" || data.aktif !== true) {
-    throw new Error("Akses ditolak. Akun bukan guru aktif.");
-  }
-
-  guruAktif = {
-    uid: user.uid,
-    nama: data.nama || user.email || "Guru"
-  };
-
-  $("namaGuru").textContent = `Guru: ${guruAktif.nama}`;
-}
-
-async function muatJadwalGuru() {
-  const q = query(
-    collection(db, "jadwal"),
-    where("guruUid", "==", guruAktif.uid),
-    where("aktif", "==", true)
-  );
-
-  const snap = await getDocs(q);
-
-  daftarJadwal = snap.docs.map(d => ({
-    id: d.id,
-    ...d.data()
-  }));
-
-  daftarJadwal.sort((a, b) =>
-    (a.hari || "").localeCompare(b.hari || "", "id") ||
-    Number(a.jamMulai || 0) - Number(b.jamMulai || 0) ||
-    (a.kelas || "").localeCompare(b.kelas || "", "id")
-  );
-
-  const select = $("jadwal");
-  select.replaceChildren();
-
-  const awal = document.createElement("option");
-  awal.value = "";
-  awal.textContent = daftarJadwal.length
-    ? "Pilih jadwal mengajar"
-    : "Belum ada jadwal aktif";
-  select.appendChild(awal);
-
-  for (const j of daftarJadwal) {
-    const opt = document.createElement("option");
-    opt.value = j.id;
-    opt.textContent =
-      `${j.hari} | ${j.kelas} | ${j.mataPelajaran} | Jam ${j.jamMulai}-${j.jamSelesai}`;
-    select.appendChild(opt);
-  }
-
-  select.disabled = daftarJadwal.length === 0;
-
-  if (!daftarJadwal.length) {
-    tampilkanPesan(
-      "Belum ada jadwal aktif untuk akun guru ini. Hubungi admin untuk memeriksa jadwal.",
-      "error"
+  if (!snapshot.exists()) {
+    throw new Error(
+      "Profil pengguna tidak ditemukan pada koleksi users."
     );
   }
-}
 
-function buatIdPresensi(tanggal, jadwalId, nisn) {
-  // NISN harus berupa angka agar aman digunakan pada ID dokumen.
-  // ID jadwal dari Firestore tidak mengandung tanda slash.
-  return `${tanggal}__${jadwalId}__${nisn}`;
-}
+  const profil = snapshot.data();
 
-async function muatPresensiSiswa() {
-  siapSimpan = false;
-  $("btnSimpan").disabled = true;
-  $("btnHadirSemua").disabled = true;
-
-  const tanggal = $("tanggal").value;
-  const jadwalId = $("jadwal").value;
-
-  if (!tanggal || !jadwalId) {
-    tampilkanPesan("Pilih tanggal dan jadwal terlebih dahulu.", "error");
-    return;
+  if (profil.aktif !== true) {
+    throw new Error("Akun guru tidak aktif.");
   }
 
-  jadwalTerpilih = daftarJadwal.find(j => j.id === jadwalId);
+  if (profil.role !== "guru") {
+    throw new Error("Akun ini bukan akun guru.");
+  }
 
-  if (!jadwalTerpilih || jadwalTerpilih.guruUid !== guruAktif.uid) {
-    tampilkanPesan("Jadwal tidak valid untuk akun guru ini.", "error");
-    return;
+  return {
+    uid: user.uid,
+    nama: profil.nama || user.email || "Guru",
+    email: user.email || ""
+  };
+}
+
+// =====================================================
+// MEMUAT JADWAL MILIK GURU
+// =====================================================
+
+async function muatJadwalGuru() {
+  tampilkanPesan("Memuat jadwal guru...");
+
+  if (jadwalEl) {
+    jadwalEl.innerHTML = '<option value="">Memuat jadwal...</option>';
+    jadwalEl.disabled = true;
   }
 
   try {
-    // Data siswa memakai NISN sebagai ID dokumen sesuai Tahap 4.
-    const qSiswa = query(
-      collection(db, "siswa"),
-      where("kelas", "==", jadwalTerpilih.kelas),
+    const q = query(
+      collection(db, "jadwal"),
+      where("guruUid", "==", guruAktif.uid),
       where("aktif", "==", true)
     );
 
-    const snapSiswa = await getDocs(qSiswa);
+    const snapshot = await getDocs(q);
 
-    daftarSiswa = snapSiswa.docs.map(d => ({
-      id: d.id,
-      ...d.data()
-    })).sort((a, b) =>
-      (a.nama || "").localeCompare(b.nama || "", "id")
-    );
+    daftarJadwal = snapshot.docs.map(dok => ({
+      id: dok.id,
+      ...dok.data()
+    }));
 
-    if (daftarSiswa.some(s => !/^\d{10}$/.test(String(s.nisn || s.id)))) {
-      tampilkanPesan(
-        "Ada data siswa yang NISN-nya bukan 10 digit. Periksa data siswa sebelum melanjutkan.",
-        "error"
+    daftarJadwal.sort((a, b) => {
+      const kelasA = String(a.kelas || "");
+      const kelasB = String(b.kelas || "");
+
+      if (kelasA !== kelasB) {
+        return kelasA.localeCompare(kelasB, "id");
+      }
+
+      return Number(a.jamMulai || 0) - Number(b.jamMulai || 0);
+    });
+
+    if (!jadwalEl) {
+      throw new Error(
+        'Elemen HTML dengan id "jadwal" tidak ditemukan.'
       );
+    }
+
+    jadwalEl.innerHTML = "";
+
+    if (daftarJadwal.length === 0) {
+      jadwalEl.innerHTML =
+        '<option value="">Jadwal aktif tidak ditemukan</option>';
+
+      tampilkanPesan(
+        "Jadwal guru tidak ditemukan. Periksa koleksi jadwal, " +
+        "guruUid, dan field aktif: true.",
+        true
+      );
+
+      if (infoJadwalEl) infoJadwalEl.textContent = "";
       return;
     }
 
-    // Membaca presensi milik guru sendiri. Filter tanggal dan jadwal
-    // dilakukan di browser setelah query dibatasi dengan guruUid.
+    jadwalEl.insertAdjacentHTML(
+      "beforeend",
+      '<option value="">-- Pilih jadwal --</option>'
+    );
+
+    daftarJadwal.forEach(jadwal => {
+      const option = document.createElement("option");
+      option.value = jadwal.id;
+      option.textContent =
+        `${jadwal.kelas || "-"} | ` +
+        `${jadwal.mataPelajaran || "-"} | ` +
+        `Jam ${formatWaktu(jadwal.jamMulai)}-${formatWaktu(jadwal.jamSelesai)}`;
+
+      jadwalEl.appendChild(option);
+    });
+
+    jadwalEl.disabled = false;
+    tampilkanPesan("Jadwal berhasil dimuat. Pilih tanggal dan jadwal.");
+  } catch (error) {
+    console.error("Gagal memuat jadwal guru:", error);
+
+    tampilkanPesan(
+      error.code === "permission-denied"
+        ? "Akses jadwal ditolak. Periksa Firestore Rules."
+        : `Jadwal gagal dimuat: ${error.message}`,
+      true
+    );
+  }
+}
+
+// =====================================================
+// MEMUAT DATA SISWA DALAM KELAS TERPILIH
+// =====================================================
+
+async function muatSiswa() {
+  if (sedangMemuat || sedangMenyimpan) return;
+
+  const jadwal = ambilJadwalTerpilih();
+  const tanggal = tanggalEl?.value;
+
+  if (!tanggal) {
+    tampilkanPesan("Silakan pilih tanggal presensi.", true);
+    return;
+  }
+
+  if (!jadwal) {
+    tampilkanPesan("Silakan pilih jadwal pelajaran.", true);
+    return;
+  }
+
+  sedangMemuat = true;
+
+  if (btnMuat) btnMuat.disabled = true;
+  if (btnSimpan) btnSimpan.disabled = true;
+  if (tabelSiswaEl) {
+    tabelSiswaEl.innerHTML =
+      '<tr><td colspan="4">Memuat data siswa...</td></tr>';
+  }
+
+  try {
+    if (infoJadwalEl) {
+      infoJadwalEl.textContent =
+        `${jadwal.kelas} | ${jadwal.mataPelajaran} | ` +
+        `Jam ${jadwal.jamMulai}-${jadwal.jamSelesai} | ${tanggal}`;
+    }
+
+    // Baca siswa berdasarkan kelas jadwal.
+    const qSiswa = query(
+      collection(db, "siswa"),
+      where("kelas", "==", jadwal.kelas),
+      where("aktif", "==", true)
+    );
+
+    const snapshotSiswa = await getDocs(qSiswa);
+
+    daftarSiswa = snapshotSiswa.docs.map(dok => ({
+      id: dok.id,
+      ...dok.data()
+    }));
+
+    // Urutkan nama siswa.
+    daftarSiswa.sort((a, b) =>
+      String(a.nama || "").localeCompare(
+        String(b.nama || ""),
+        "id"
+      )
+    );
+
+    if (daftarSiswa.length === 0) {
+      // Periksa apakah siswa kelas ini ada tetapi tidak aktif,
+      // atau field aktif belum diisi dengan Boolean true.
+      const qSemuaKelas = query(
+        collection(db, "siswa"),
+        where("kelas", "==", jadwal.kelas)
+      );
+
+      const semuaSiswa = await getDocs(qSemuaKelas);
+
+      if (semuaSiswa.empty) {
+        throw new Error(
+          `Tidak ditemukan data siswa untuk kelas "${jadwal.kelas}". ` +
+          "Periksa ejaan field kelas pada koleksi siswa dan jadwal."
+        );
+      }
+
+      throw new Error(
+        `Ada ${semuaSiswa.size} data siswa pada kelas "${jadwal.kelas}", ` +
+        "tetapi tidak ada yang memenuhi aktif: true. " +
+        "Pastikan field aktif bertipe Boolean true, bukan teks."
+      );
+    }
+
+    // Memuat data presensi sebelumnya untuk guru.
+    // Mengambil data guru ini lalu menyaring tanggal dan jadwal
+    // agar sesuai dengan struktur kode sebelumnya.
     const qPresensi = query(
       collection(db, "presensi"),
       where("guruUid", "==", guruAktif.uid)
     );
 
-    const snapPresensi = await getDocs(qPresensi);
+    const snapshotPresensi = await getDocs(qPresensi);
 
-    const tersimpan = new Map();
+    presensiTersimpan = {};
 
-    for (const d of snapPresensi.docs) {
-      const p = d.data();
+    snapshotPresensi.docs.forEach(dok => {
+      const data = dok.data();
 
-      if (p.tanggal === tanggal && p.jadwalId === jadwalId) {
-        tersimpan.set(String(p.siswaId), p.status);
+      if (
+        data.tanggal === tanggal &&
+        data.jadwalId === jadwal.id
+      ) {
+        const nisn = String(data.nisn || data.siswaId || "");
+        if (nisn) presensiTersimpan[nisn] = data.status;
       }
-    }
+    });
 
-    statusSiswa = new Map();
-
-    for (const s of daftarSiswa) {
-      const nisn = String(s.nisn || s.id);
-      statusSiswa.set(
-        nisn,
-        tersimpan.get(nisn) || "Hadir"
-      );
-    }
-
-    $("infoJadwal").textContent =
-      `${jadwalTerpilih.hari} | ${jadwalTerpilih.kelas} | ` +
-      `${jadwalTerpilih.mataPelajaran} | ` +
-      `Jam ${jadwalTerpilih.jamMulai}-${jadwalTerpilih.jamSelesai} | ${tanggal}`;
-
-    tampilkanSiswa();
-
-    siapSimpan = true;
-    $("btnSimpan").disabled = daftarSiswa.length === 0;
-    $("btnHadirSemua").disabled = daftarSiswa.length === 0;
+    tampilkanDaftarSiswa();
+    hitungRekap();
 
     tampilkanPesan(
-      daftarSiswa.length
-        ? `Berhasil memuat ${daftarSiswa.length} siswa. Periksa status sebelum menyimpan.`
-        : "Tidak ada siswa aktif pada kelas ini. Periksa koleksi siswa.",
-      daftarSiswa.length ? "sukses" : "error"
+      `Berhasil memuat ${daftarSiswa.length} siswa kelas ${jadwal.kelas}.`
     );
+
+    if (btnSimpan) btnSimpan.disabled = false;
   } catch (error) {
-    console.error("Gagal memuat presensi:", error);
+    console.error("Gagal memuat siswa/presensi:", error);
+
+    if (tabelSiswaEl) {
+      tabelSiswaEl.innerHTML =
+        `<tr><td colspan="4">${escapeHTML(error.message)}</td></tr>`;
+    }
+
+    daftarSiswa = [];
+    presensiTersimpan = {};
+    hitungRekap();
+
     tampilkanPesan(
-      "Gagal memuat siswa atau presensi. Periksa Firestore Rules dan data kelas.",
-      "error"
+      error.code === "permission-denied"
+        ? "Akses baca ditolak oleh Firestore Rules. " +
+          "Pastikan guru diizinkan membaca koleksi siswa dan presensi."
+        : error.message || "Gagal memuat data siswa.",
+      true
     );
+  } finally {
+    sedangMemuat = false;
+
+    if (btnMuat) btnMuat.disabled = false;
+
+    if (btnSimpan) {
+      btnSimpan.disabled =
+        daftarSiswa.length === 0 || sedangMenyimpan;
+    }
   }
 }
 
-function tampilkanSiswa() {
-  const tbody = $("tabelSiswa");
-  tbody.replaceChildren();
+// =====================================================
+// TAMPILKAN TABEL DENGAN 4 KOLOM RADIO
+// =====================================================
 
-  if (!daftarSiswa.length) {
-    const tr = document.createElement("tr");
-    const td = document.createElement("td");
-    td.colSpan = 5;
-    td.textContent = "Tidak ada siswa pada kelas ini.";
-    tr.appendChild(td);
-    tbody.appendChild(tr);
-    perbaruiRingkasan();
+function tampilkanDaftarSiswa() {
+  if (!tabelSiswaEl) {
+    throw new Error(
+      'Elemen HTML dengan id "tabelSiswa" tidak ditemukan.'
+    );
+  }
+
+  if (daftarSiswa.length === 0) {
+    tabelSiswaEl.innerHTML =
+      '<tr><td colspan="4">Tidak ada siswa untuk ditampilkan.</td></tr>';
     return;
   }
 
-  daftarSiswa.forEach((s, index) => {
-    const nisn = String(s.nisn || s.id);
+  tabelSiswaEl.innerHTML = "";
+
+  daftarSiswa.forEach((siswa, index) => {
+    const nisn = String(siswa.nisn || siswa.id || "");
+    const nama = String(siswa.nama || "Tanpa nama");
+    const statusTersimpan = presensiTersimpan[nisn];
+    const statusAwal = PILIHAN_STATUS.includes(statusTersimpan)
+      ? statusTersimpan
+      : "Hadir";
+
     const tr = document.createElement("tr");
 
-    const kolom = [
-      String(index + 1),
-      nisn,
-      s.nama || "(Nama belum diisi)",
-      s.kelas || ""
-    ];
+    const nomorTd = document.createElement("td");
+    nomorTd.textContent = String(index + 1);
 
-    for (const teks of kolom) {
-      const td = document.createElement("td");
-      td.textContent = teks;
-      tr.appendChild(td);
-    }
+    const namaTd = document.createElement("td");
+    namaTd.className = "presensi-nama-siswa";
+    namaTd.innerHTML = `
+      <div>${escapeHTML(nama)}</div>
+      <div class="presensi-nisn">NISN: ${escapeHTML(nisn)}</div>
+    `;
 
-    const tdStatus = document.createElement("td");
-    const select = document.createElement("select");
-    select.setAttribute("aria-label", `Status ${s.nama || nisn}`);
+    const statusTd = document.createElement("td");
+    statusTd.colSpan = 2;
 
-    for (const status of STATUS) {
-      const opt = document.createElement("option");
-      opt.value = status;
-      opt.textContent = status;
-      select.appendChild(opt);
-    }
+    const grup = document.createElement("div");
+    grup.className = "presensi-status-radio";
 
-    select.value = statusSiswa.get(nisn) || "Hadir";
+    PILIHAN_STATUS.forEach(status => {
+      const label = document.createElement("label");
+      const radio = document.createElement("input");
 
-    select.addEventListener("change", () => {
-      statusSiswa.set(nisn, select.value);
-      perbaruiRingkasan();
+      radio.type = "radio";
+      radio.name = `status-${nisn}`;
+      radio.value = status;
+      radio.checked = statusAwal === status;
+      radio.setAttribute(
+        "aria-label",
+        `${nama}: ${status}`
+      );
+
+      const teks = document.createElement("span");
+      teks.textContent = status;
+
+      label.append(radio, teks);
+      grup.appendChild(label);
+
+      radio.addEventListener("change", hitungRekap);
     });
 
-    tdStatus.appendChild(select);
-    tr.appendChild(tdStatus);
-    tbody.appendChild(tr);
+    statusTd.appendChild(grup);
+    tr.append(nomorTd, namaTd, statusTd);
+    tabelSiswaEl.appendChild(tr);
   });
 
-  perbaruiRingkasan();
+  hitungRekap();
 }
 
-function perbaruiRingkasan() {
+// =====================================================
+// REKAP JUMLAH STATUS
+// =====================================================
+
+function hitungRekap() {
   const jumlah = {
     Hadir: 0,
     Sakit: 0,
@@ -308,142 +574,273 @@ function perbaruiRingkasan() {
     Alpa: 0
   };
 
-  for (const status of statusSiswa.values()) {
-    if (Object.hasOwn(jumlah, status)) {
+  daftarSiswa.forEach(siswa => {
+    const nisn = String(siswa.nisn || siswa.id || "");
+    const status = ambilStatusSiswa(nisn);
+
+    if (Object.prototype.hasOwnProperty.call(jumlah, status)) {
       jumlah[status]++;
     }
+  });
+
+  if (totalSiswaEl) {
+    totalSiswaEl.textContent = String(daftarSiswa.length);
   }
 
-  $("totalSiswa").textContent = `Siswa: ${daftarSiswa.length}`;
-  $("totalHadir").textContent = `Hadir: ${jumlah.Hadir}`;
-  $("totalSakit").textContent = `Sakit: ${jumlah.Sakit}`;
-  $("totalIzin").textContent = `Izin: ${jumlah.Izin}`;
-  $("totalAlpa").textContent = `Alpa: ${jumlah.Alpa}`;
+  if (totalHadirEl) totalHadirEl.textContent = String(jumlah.Hadir);
+  if (totalSakitEl) totalSakitEl.textContent = String(jumlah.Sakit);
+  if (totalIzinEl) totalIzinEl.textContent = String(jumlah.Izin);
+  if (totalAlpaEl) totalAlpaEl.textContent = String(jumlah.Alpa);
 }
 
-$("btnHadirSemua").addEventListener("click", () => {
-  if (!siapSimpan) return;
+// =====================================================
+// TOMBOL HADIR SEMUA
+// =====================================================
 
-  for (const s of daftarSiswa) {
-    statusSiswa.set(String(s.nisn || s.id), "Hadir");
+function tandaiSemuaHadir() {
+  if (daftarSiswa.length === 0) {
+    tampilkanPesan("Muat daftar siswa terlebih dahulu.", true);
+    return;
   }
 
-  tampilkanSiswa();
+  daftarSiswa.forEach(siswa => {
+    const nisn = String(siswa.nisn || siswa.id || "");
+    const radioHadir = document.querySelector(
+      `input[name="status-${nisn}"][value="Hadir"]`
+    );
+
+    if (radioHadir) radioHadir.checked = true;
+  });
+
+  hitungRekap();
   tampilkanPesan(
-    "Semua siswa diatur menjadi Hadir. Tekan Simpan Presensi untuk menyimpan perubahan.",
-    "info"
+    "Semua siswa ditandai Hadir. Tekan Simpan Presensi untuk menyimpan."
   );
-});
+}
 
-$("btnMuat").addEventListener("click", muatPresensiSiswa);
+// =====================================================
+// SIMPAN PRESENSI KE FIRESTORE
+// =====================================================
 
-$("jadwal").addEventListener("change", () => {
-  siapSimpan = false;
-  $("btnSimpan").disabled = true;
-  $("btnHadirSemua").disabled = true;
-  $("tabelSiswa").innerHTML =
-    '<tr><td colspan="5">Klik Tampilkan Siswa untuk memuat jadwal.</td></tr>';
-});
+async function simpanPresensi() {
+  if (sedangMenyimpan || sedangMemuat) return;
 
-$("tanggal").addEventListener("change", () => {
-  siapSimpan = false;
-  $("btnSimpan").disabled = true;
-  $("btnHadirSemua").disabled = true;
-  $("tabelSiswa").innerHTML =
-    '<tr><td colspan="5">Klik Tampilkan Siswa untuk memuat presensi tanggal ini.</td></tr>';
-});
-
-$("btnSimpan").addEventListener("click", async () => {
-  if (!siapSimpan || sedangMenyimpan || !jadwalTerpilih) return;
-
-  if (!daftarSiswa.length) {
-    tampilkanPesan("Tidak ada data siswa untuk disimpan.", "error");
+  if (!auth.currentUser || !guruAktif) {
+    tampilkanPesan("Sesi login tidak ditemukan. Silakan login kembali.", true);
     return;
   }
 
-  const tanggal = $("tanggal").value;
+  const jadwal = ambilJadwalTerpilih();
+  const tanggal = tanggalEl?.value;
 
-  if (!tanggal) {
-    tampilkanPesan("Tanggal presensi wajib diisi.", "error");
+  if (!tanggal || !jadwal) {
+    tampilkanPesan("Pilih tanggal dan jadwal terlebih dahulu.", true);
     return;
   }
 
-  if (!confirm(
-    `Simpan presensi ${daftarSiswa.length} siswa untuk ` +
-    `${jadwalTerpilih.kelas} tanggal ${tanggal}?`
-  )) return;
+  if (daftarSiswa.length === 0) {
+    tampilkanPesan("Daftar siswa masih kosong. Muat siswa terlebih dahulu.", true);
+    return;
+  }
 
   sedangMenyimpan = true;
-  $("btnSimpan").disabled = true;
-  $("btnHadirSemua").disabled = true;
 
-  let tersimpan = 0;
+  if (btnSimpan) {
+    btnSimpan.disabled = true;
+    btnSimpan.textContent = "Menyimpan...";
+  }
 
   try {
-    // setDoc dengan ID deterministik mencegah duplikat untuk
-    // kombinasi tanggal + jadwal + NISN yang sama.
-    for (const s of daftarSiswa) {
-      const nisn = String(s.nisn || s.id);
-      const id = buatIdPresensi(tanggal, jadwalTerpilih.id, nisn);
+    let berhasil = 0;
 
-      await setDoc(doc(db, "presensi", id), {
+    for (const siswa of daftarSiswa) {
+      const nisn = String(siswa.nisn || siswa.id || "").trim();
+      const namaSiswa = String(siswa.nama || "").trim();
+      const status = ambilStatusSiswa(nisn);
+
+      if (!nisn || !PILIHAN_STATUS.includes(status)) {
+        throw new Error(
+          `NISN atau status tidak valid untuk siswa ${namaSiswa || "(tanpa nama)"}.`
+        );
+      }
+
+      // ID deterministik mencegah duplikasi presensi
+      // untuk siswa, tanggal, dan jadwal yang sama.
+      const idPresensi = `${tanggal}__${jadwal.id}__${nisn}`;
+
+      const dataPresensi = {
         tanggal,
-        jadwalId: jadwalTerpilih.id,
+        jadwalId: jadwal.id,
         guruUid: guruAktif.uid,
         guruNama: guruAktif.nama,
-        kelas: jadwalTerpilih.kelas,
-        mataPelajaran: jadwalTerpilih.mataPelajaran,
-        jamMulai: Number(jadwalTerpilih.jamMulai),
-        jamSelesai: Number(jadwalTerpilih.jamSelesai),
+        kelas: jadwal.kelas,
+        mataPelajaran: jadwal.mataPelajaran,
+        jamMulai: Number(jadwal.jamMulai),
+        jamSelesai: Number(jadwal.jamSelesai),
         siswaId: nisn,
         nisn,
-        namaSiswa: s.nama || "",
-        status: statusSiswa.get(nisn) || "Hadir",
+        namaSiswa,
+        status,
         diperbaruiPada: serverTimestamp()
-      }, { merge: true });
+      };
 
-      tersimpan++;
+      await setDoc(
+        doc(db, "presensi", idPresensi),
+        dataPresensi,
+        { merge: true }
+      );
+
+      berhasil++;
     }
 
+    // Simpan kembali status lokal setelah berhasil.
+    daftarSiswa.forEach(siswa => {
+      const nisn = String(siswa.nisn || siswa.id || "");
+      presensiTersimpan[nisn] = ambilStatusSiswa(nisn);
+    });
+
+    hitungRekap();
+
     tampilkanPesan(
-      `Berhasil menyimpan ${tersimpan} dari ${daftarSiswa.length} presensi.`,
-      "sukses"
+      `Berhasil menyimpan presensi ${berhasil} siswa ` +
+      `kelas ${jadwal.kelas} tanggal ${tanggal}.`
     );
   } catch (error) {
     console.error("Gagal menyimpan presensi:", error);
+
     tampilkanPesan(
-      `Penyimpanan berhenti setelah ${tersimpan} siswa. ` +
-      "Sebagian data mungkin sudah tersimpan. Periksa Firestore sebelum mengulang.",
-      "error"
+      error.code === "permission-denied"
+        ? "Penyimpanan ditolak oleh Firestore Rules. " +
+          "Periksa UID guru, jadwal aktif, kelas siswa, dan aturan presensi."
+        : `Presensi gagal disimpan: ${error.message}. ` +
+          "Sebagian data mungkin sudah tersimpan; periksa data sebelum mencoba lagi.",
+      true
     );
   } finally {
     sedangMenyimpan = false;
-    $("btnSimpan").disabled = !siapSimpan;
-    $("btnHadirSemua").disabled = !siapSimpan;
+
+    if (btnSimpan) {
+      btnSimpan.disabled = daftarSiswa.length === 0;
+      btnSimpan.textContent = "Simpan Presensi";
+    }
   }
-});
+}
 
-$("btnKeluar").addEventListener("click", async () => {
-  await signOut(auth);
-  location.replace("./login.html");
-});
+// =====================================================
+// EVENT TOMBOL
+// =====================================================
 
-$("tanggal").value = tanggalLokal();
+if (btnMuat) {
+  btnMuat.addEventListener("click", muatSiswa);
+}
+
+if (btnHadirSemua) {
+  btnHadirSemua.addEventListener("click", tandaiSemuaHadir);
+}
+
+if (btnSimpan) {
+  btnSimpan.addEventListener("click", simpanPresensi);
+}
+
+if (jadwalEl) {
+  jadwalEl.addEventListener("change", () => {
+    daftarSiswa = [];
+    presensiTersimpan = {};
+
+    if (tabelSiswaEl) {
+      tabelSiswaEl.innerHTML =
+        '<tr><td colspan="4">Tekan Tampilkan Siswa untuk memuat daftar.</td></tr>';
+    }
+
+    hitungRekap();
+
+    if (infoJadwalEl) {
+      const jadwal = ambilJadwalTerpilih();
+
+      infoJadwalEl.textContent = jadwal
+        ? `${jadwal.kelas} | ${jadwal.mataPelajaran} | ` +
+          `Jam ${jadwal.jamMulai}-${jadwal.jamSelesai}`
+        : "";
+    }
+
+    if (btnSimpan) btnSimpan.disabled = true;
+  });
+}
+
+if (tanggalEl) {
+  tanggalEl.addEventListener("change", () => {
+    daftarSiswa = [];
+    presensiTersimpan = {};
+
+    if (tabelSiswaEl) {
+      tabelSiswaEl.innerHTML =
+        '<tr><td colspan="4">Tekan Tampilkan Siswa untuk memuat daftar.</td></tr>';
+    }
+
+    hitungRekap();
+
+    if (btnSimpan) btnSimpan.disabled = true;
+  });
+}
+
+if (btnKeluar) {
+  btnKeluar.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.replace("./login.html");
+    } catch (error) {
+      console.error("Gagal logout:", error);
+      tampilkanPesan("Gagal keluar. Silakan coba kembali.", true);
+    }
+  });
+}
+
+// =====================================================
+// MULAI APLIKASI
+// =====================================================
+
+pasangCSSRadio();
+
+if (tanggalEl && !tanggalEl.value) {
+  tanggalEl.value = tanggalHariIni();
+}
+
+if (btnSimpan) btnSimpan.disabled = true;
+
+if (tabelSiswaEl) {
+  tabelSiswaEl.innerHTML =
+    '<tr><td colspan="4">Memeriksa sesi login...</td></tr>';
+}
 
 onAuthStateChanged(auth, async user => {
   if (!user) {
-    location.replace("./login.html");
+    window.location.replace("./login.html");
     return;
   }
 
   try {
-    await periksaGuru(user);
+    guruAktif = await periksaGuru(user);
+
+    if (namaGuruEl) {
+      namaGuruEl.textContent = guruAktif.nama;
+    }
+
     await muatJadwalGuru();
   } catch (error) {
-    console.error(error);
+    console.error("Pemeriksaan akun guru gagal:", error);
+
     tampilkanPesan(
-      error.message || "Gagal memeriksa akun guru.",
-      "error"
+      `${error.message} Silakan periksa akun dan profil Firestore.`,
+      true
     );
+
+    if (
+      error.message.includes("Profil pengguna") ||
+      error.message.includes("bukan akun guru") ||
+      error.message.includes("tidak aktif")
+    ) {
+      // Jangan logout otomatis; tampilkan pesan agar penyebabnya
+      // dapat diperiksa terlebih dahulu.
+    }
   }
 });
