@@ -195,6 +195,7 @@ function escapeHTML(nilai) {
   })[karakter]);
 }
 
+
 function tanggalHariIni() {
   const sekarang = new Date();
   const tahun = sekarang.getFullYear();
@@ -203,6 +204,28 @@ function tanggalHariIni() {
 
   return `${tahun}-${bulan}-${hari}`;
 }
+
+// Mengubah tanggal input menjadi nama hari dalam bahasa Indonesia.
+function namaHariDariTanggal(tanggal) {
+  if (!tanggal) return "";
+
+  const [tahun, bulan, hari] = tanggal.split("-").map(Number);
+
+  const tanggalObjek = new Date(tahun, bulan - 1, hari);
+
+  const namaHari = [
+    "Minggu",
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu"
+  ];
+
+  return namaHari[tanggalObjek.getDay()];
+}
+
 
 function formatWaktu(jam) {
   return String(jam ?? "-");
@@ -258,7 +281,15 @@ async function periksaGuru(user) {
 // =====================================================
 
 async function muatJadwalGuru() {
-  tampilkanPesan("Memuat jadwal guru...");
+  const tanggal = tanggalEl?.value;
+  const hariDipilih = namaHariDariTanggal(tanggal);
+
+  if (!hariDipilih) {
+    tampilkanPesan("Pilih tanggal terlebih dahulu.", true);
+    return;
+  }
+
+  tampilkanPesan(`Memuat jadwal hari ${hariDipilih}...`);
 
   if (jadwalEl) {
     jadwalEl.innerHTML = '<option value="">Memuat jadwal...</option>';
@@ -274,10 +305,16 @@ async function muatJadwalGuru() {
 
     const snapshot = await getDocs(q);
 
-    daftarJadwal = snapshot.docs.map(dok => ({
-      id: dok.id,
-      ...dok.data()
-    }));
+    // Hanya tampilkan jadwal dengan hari yang sama.
+    daftarJadwal = snapshot.docs
+      .map(dok => ({
+        id: dok.id,
+        ...dok.data()
+      }))
+      .filter(jadwal =>
+        String(jadwal.hari || "").trim().toLowerCase() ===
+        hariDipilih.toLowerCase()
+      );
 
     daftarJadwal.sort((a, b) => {
       const kelasA = String(a.kelas || "");
@@ -290,21 +327,15 @@ async function muatJadwalGuru() {
       return Number(a.jamMulai || 0) - Number(b.jamMulai || 0);
     });
 
-    if (!jadwalEl) {
-      throw new Error(
-        'Elemen HTML dengan id "jadwal" tidak ditemukan.'
-      );
-    }
-
-    jadwalEl.innerHTML = "";
+    jadwalEl.innerHTML =
+      '<option value="">-- Pilih jadwal --</option>';
 
     if (daftarJadwal.length === 0) {
-      jadwalEl.innerHTML =
-        '<option value="">Jadwal aktif tidak ditemukan</option>';
+      jadwalEl.disabled = true;
 
       tampilkanPesan(
-        "Jadwal guru tidak ditemukan. Periksa koleksi jadwal, " +
-        "guruUid, dan field aktif: true.",
+        `Tidak ada jadwal aktif untuk hari ${hariDipilih}. ` +
+        "Periksa field hari, guruUid, dan aktif pada koleksi jadwal.",
         true
       );
 
@@ -312,35 +343,35 @@ async function muatJadwalGuru() {
       return;
     }
 
-    jadwalEl.insertAdjacentHTML(
-      "beforeend",
-      '<option value="">-- Pilih jadwal --</option>'
-    );
-
     daftarJadwal.forEach(jadwal => {
       const option = document.createElement("option");
       option.value = jadwal.id;
       option.textContent =
         `${jadwal.kelas || "-"} | ` +
         `${jadwal.mataPelajaran || "-"} | ` +
-        `Jam ${formatWaktu(jadwal.jamMulai)}-${formatWaktu(jadwal.jamSelesai)}`;
+        `Jam ${jadwal.jamMulai}-${jadwal.jamSelesai}`;
 
       jadwalEl.appendChild(option);
     });
 
     jadwalEl.disabled = false;
-    tampilkanPesan("Jadwal berhasil dimuat. Pilih tanggal dan jadwal.");
+
+    tampilkanPesan(
+      `${daftarJadwal.length} jadwal ditemukan untuk hari ${hariDipilih}.`
+    );
+
   } catch (error) {
-    console.error("Gagal memuat jadwal guru:", error);
+    console.error("Gagal memuat jadwal:", error);
 
     tampilkanPesan(
       error.code === "permission-denied"
-        ? "Akses jadwal ditolak. Periksa Firestore Rules."
+        ? "Akses jadwal ditolak oleh Firestore Rules."
         : `Jadwal gagal dimuat: ${error.message}`,
       true
     );
   }
 }
+
 
 // =====================================================
 // MEMUAT DATA SISWA DALAM KELAS TERPILIH
