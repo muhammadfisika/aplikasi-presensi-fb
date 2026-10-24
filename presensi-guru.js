@@ -944,6 +944,16 @@ if (jadwalEl) {
     }
 
     if (btnSimpan) btnSimpan.disabled = true;
+
+const jadwal = ambilJadwalTerpilih();
+const tanggal = tanggalEl?.value;
+
+if (jadwal && tanggal) {
+  muatAktivitasPembelajaran(jadwal, tanggal);
+}
+
+
+    
   });
 }
 
@@ -976,6 +986,15 @@ if (tanggalEl) {
     }
 
     await muatJadwalGuru();
+
+
+
+    const jadwal = ambilJadwalTerpilih();
+const tanggal = tanggalEl?.value;
+
+if (jadwal && tanggal) {
+  muatAktivitasPembelajaran(jadwal, tanggal);
+}
   });
 }
 
