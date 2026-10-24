@@ -798,21 +798,38 @@ if (jadwalEl) {
   });
 }
 
+
 if (tanggalEl) {
-  tanggalEl.addEventListener("change", () => {
+  tanggalEl.addEventListener("change", async () => {
     daftarSiswa = [];
     presensiTersimpan = {};
 
     if (tabelSiswaEl) {
       tabelSiswaEl.innerHTML =
-        '<tr><td colspan="4">Tekan Tampilkan Siswa untuk memuat daftar.</td></tr>';
+        '<tr><td colspan="4">Pilih jadwal untuk tanggal ini.</td></tr>';
+    }
+
+    if (infoJadwalEl) {
+      infoJadwalEl.textContent = "";
+    }
+
+    if (btnSimpan) {
+      btnSimpan.disabled = true;
     }
 
     hitungRekap();
 
-    if (btnSimpan) btnSimpan.disabled = true;
+    // Jadwal lama tidak boleh tetap terpilih.
+    if (jadwalEl) {
+      jadwalEl.innerHTML =
+        '<option value="">-- Memuat jadwal --</option>';
+      jadwalEl.disabled = true;
+    }
+
+    await muatJadwalGuru();
   });
 }
+
 
 if (btnKeluar) {
   btnKeluar.addEventListener("click", async () => {
