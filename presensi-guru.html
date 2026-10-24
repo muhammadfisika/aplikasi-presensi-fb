@@ -129,6 +129,107 @@
       padding: 8px 12px;
       border-radius: 8px;
     }
+
+    .status-radio {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  min-width: 240px;
+}
+
+.status-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 2px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.status-option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #16803d;
+}
+
+.status-option:has(input:checked) {
+  border-color: #16803d;
+  background: #ecfdf3;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .status-radio {
+    min-width: 220px;
+  }
+}
+    
+#panelInputJadwal {
+  margin: 16px 0;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+}
+
+#panelInputJadwal[hidden] {
+  display: none;
+}
+
+#panelInputJadwal label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+#panelInputJadwal input,
+#panelInputJadwal select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  box-sizing: border-box;
+}
+
+.tombol-jadwal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.tombol-jadwal button,
+#btnBukaFormJadwal {
+  padding: 10px 15px;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+#btnSimpanJadwal {
+  background: #166534;
+  color: white;
+}
+
+#btnBatalJadwal {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+#pesanInputJadwal {
+  overflow-wrap: anywhere;
+}
+
+
+
+    
   </style>
 </head>
 
@@ -136,10 +237,99 @@
   <main class="wrap">
     <h1>Presensi Siswa</h1>
     <p>SMAN 2 Rangkasbitung</p>
-
+<button
+  type="button" class="secondary" onclick="window.location.href='./rekap-guru.html'">
+  Rekap Presensi
+</button>
+    <button type="button" id="btnBukaFormJadwal" class="secondary">
+  + Input Jadwal
+</button>
+    
     <p id="namaGuru" class="muted">Memeriksa akun guru...</p>
     <div id="pesan" role="status" hidden></div>
+<!-- form input jadwal guru---->
+<section id="panelInputJadwal" hidden>
+  <h3>Input Jadwal Mengajar</h3>
 
+  <label for="inputHari">Hari Mengajar</label>
+  <select id="inputHari" required>
+    <option value="">-- Pilih hari --</option>
+    <option value="Senin">Senin</option>
+    <option value="Selasa">Selasa</option>
+    <option value="Rabu">Rabu</option>
+    <option value="Kamis">Kamis</option>
+    <option value="Jumat">Jumat</option>
+    <option value="Sabtu">Sabtu</option>
+    <option value="Minggu">Minggu</option>
+  </select>
+
+  <label for="inputKelas">Kelas</label>
+  <select id="inputKelas" required>
+    <option value="">-- Pilih Kelas --</option>
+    <option value="X - 1">X - 1</option>
+    <option value="X - 2">X - 2</option>
+    <option value="X - 3">X - 3</option>
+    <option value="X - 4">X - 4</option>
+    <option value="X - 5">X - 5</option>
+    <option value="X - 6">X - 6</option>
+    <option value="X - 7">X - 7</option>
+    <option value="X - 8">X - 8</option>
+    <option value="X - 9">X - 9</option>
+    <option value="X - 10">X - 10</option>
+    <option value="X - 11">X - 11</option>
+    <option value="XI - 1">XI - 1</option>
+    <option value="XI - 2">XI - 2</option>
+    <option value="XI - 3">XI - 3</option>
+    <option value="XI - 4">XI - 4</option>
+    <option value="XI - 5">XI - 5</option>
+    <option value="XI - 6">XI - 6</option>
+    <option value="XI - 7">XI - 7</option>
+    <option value="XI - 8">XI - 8</option>
+    <option value="XI - 9">XI - 9</option>
+    <option value="XI - 10">XI - 10</option>
+    <option value="XI - 11">XI - 11</option>
+    <option value="XII - 1">XII - 1</option>
+    <option value="XII - 2">XII - 2</option>
+    <option value="XII - 3">XII - 3</option>
+    <option value="XII - 4">XII - 4</option>
+    <option value="XII - 5">XII - 5</option>
+    <option value="XII - 6">XII - 6</option>
+    <option value="XII - 7">XII - 7</option>
+    <option value="XII - 8">XII - 8</option>
+    <option value="XII - 9">XII - 9</option>
+    <option value="XII - 10">XII - 10</option>
+    <option value="XII - 11">XII - 11</option>
+    <option value="XII - 12">XII - 12</option>
+  </select>
+  
+  <label for="inputMapel">Mata Pelajaran</label>
+  <input
+    type="text"
+    id="inputMapel"
+    placeholder="Contoh: Fisika"
+    required
+  >
+
+  <label for="inputJamMulai">Jam Mulai</label>
+  <input type="text" id="inputJamMulai" required>
+
+  <label for="inputJamSelesai">Jam Selesai</label>
+  <input type="text" id="inputJamSelesai" required>
+
+  <div class="tombol-jadwal">
+    <button type="button" id="btnSimpanJadwal">
+      Simpan Jadwal
+    </button>
+
+    <button type="button" id="btnBatalJadwal">
+      Batal
+    </button>
+  </div>
+
+  <p id="pesanInputJadwal" role="status"></p>
+</section>
+
+    <!-- -->
     <section class="panel">
       <h2>Pilih Jadwal</h2>
 
@@ -197,9 +387,8 @@
           <thead>
             <tr>
               <th>No.</th>
-              <th>NISN</th>
-              <th>Nama Siswa</th>
-              <th>Kelas</th>
+              <th>Nama-NISN</th>
+              
               <th>Status Kehadiran</th>
             </tr>
           </thead>
@@ -220,5 +409,8 @@
   </main>
 
   <script type="module" src="./presensi-guru.js"></script>
+  
+  
+  
 </body>
 </html>
