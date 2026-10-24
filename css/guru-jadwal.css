@@ -1,0 +1,237 @@
+
+.guru-jadwal-container {
+  width: min(1200px, 94%);
+  margin: 24px auto;
+  color: #1f2937;
+}
+
+.gj-header,
+.gj-section-heading,
+.gj-header-actions,
+.gj-form-actions,
+.gj-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gj-header {
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.gj-header h1 {
+  margin-bottom: 6px;
+}
+
+.gj-header p,
+.gj-section-heading p {
+  margin-top: 4px;
+  color: #64748b;
+}
+
+.gj-card {
+  margin-bottom: 20px;
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgb(15 23 42 / 5%);
+}
+
+.gj-card h2 {
+  margin-top: 0;
+}
+
+.gj-section-heading {
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.gj-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.gj-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gj-button-primary {
+  background: #166534;
+}
+
+.gj-button-secondary {
+  background: #475569;
+}
+
+.gj-button-danger {
+  background: #b91c1c;
+}
+
+.gj-button-edit {
+  background: #1d4ed8;
+}
+
+.gj-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.gj-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 850px;
+}
+
+.gj-table th,
+.gj-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.gj-table th {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.gj-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.gj-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.gj-status-active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.gj-status-inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.gj-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.gj-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.gj-field label {
+  font-weight: 600;
+}
+
+.gj-field input,
+.gj-field select {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f2937;
+  font: inherit;
+}
+
+.gj-field input:focus,
+.gj-field select:focus {
+  outline: 2px solid #86efac;
+  border-color: #15803d;
+}
+
+.gj-form-actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.gj-message {
+  min-height: 1.4em;
+  overflow-wrap: anywhere;
+}
+
+.gj-success {
+  color: #166534;
+}
+
+.gj-error {
+  color: #b91c1c;
+}
+
+.gj-footer {
+  padding: 20px 8px;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .guru-jadwal-container {
+    width: 94%;
+    margin: 12px auto;
+  }
+
+  .gj-card {
+    padding: 15px;
+  }
+
+  .gj-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gj-header,
+  .gj-header-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gj-header-actions .gj-button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gj-section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gj-section-heading .gj-button {
+    width: 100%;
+  }
+
+  .gj-row-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
