@@ -475,15 +475,21 @@ function validasiCSVJadwal(baris) {
       alasan.push("UID guru tidak ditemukan atau tidak aktif");
     }
 
-    if (
-      !Number.isInteger(jamMulai) ||
-      !Number.isInteger(jamSelesai) ||
-      jamMulai < 1 ||
-      jamSelesai < jamMulai ||
-      jamSelesai > 20
-    ) {
-      alasan.push("Nomor jam tidak valid");
-    }
+   //pengecekan format waktu
+const hasilJamMulai = validasiFormatJam(jamMulai);
+const hasilJamSelesai = validasiFormatJam(jamSelesai);
+
+if (!hasilJamMulai.valid) {
+  statusValidasi = hasilJamMulai.pesan;
+} else if (!hasilJamSelesai.valid) {
+  statusValidasi = hasilJamSelesai.pesan;
+} else if (hasilJamMulai.menit >= hasilJamSelesai.menit) {
+  statusValidasi =
+    "Jam selesai harus lebih besar daripada jam mulai.";
+} else {
+  statusValidasi = "Valid";
+}
+
 
     // Cek benturan antarbaris dalam file.
     const bentrokDalamFile = hasil.some(prev => {
