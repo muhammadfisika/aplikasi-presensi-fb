@@ -323,7 +323,33 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
+//penambahan validasi fungsi waktu
 
+function validasiFormatJam(nilai) {
+  const jam = String(nilai ?? "").trim();
+
+  // Mendukung format HH:mm, misalnya 08:00 atau 13:30.
+  const cocok = jam.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+
+  if (!cocok) {
+    return {
+      valid: false,
+      menit: null,
+      pesan: `Format jam "${jam}" tidak valid. Gunakan HH:mm, misalnya 08:00.`
+    };
+  }
+
+  const jamAngka = Number(cocok[1]);
+  const menitAngka = Number(cocok[2]);
+
+  return {
+    valid: true,
+    menit: jamAngka * 60 + menitAngka,
+    pesan: ""
+  };
+}
+
+//=======
 //PENAMBAHAN FUNGSI UNTUK IMPORT CSV JADWAL
 
 /* ==========================================
@@ -422,6 +448,7 @@ function parseCSVJadwal(teks) {
     return obj;
   });
 }
+
 
 function validasiCSVJadwal(baris) {
   const dataGuru = new Map(guru.map(g => [g.uid, g]));
