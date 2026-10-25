@@ -258,7 +258,7 @@ function renderDaftarJadwal() {
       </td>
       <td>
         <div class="gj-row-actions">
-          <button type="button" class="danger" data-aksi="edit">
+          <button type="button" class="edit" data-aksi="edit">
             Edit
           </button>
           <button type="button" class="danger" data-aksi="hapus">
